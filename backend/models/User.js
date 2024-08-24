@@ -20,7 +20,7 @@ const PatientSchema = new Schema({
     enum: ["M", "F", "Other"],
 
   },
-  userID : {
+  patientID : {
     type: String,
     required: true,
     unique: true

@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 const imageSchema = new mongoose.Schema({
-  userId: {
+  patientID: {
     type : Schema.Types.String,
     ref : "User",
     required: true,

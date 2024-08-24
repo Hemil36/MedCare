@@ -68,7 +68,6 @@ const Identification = ({ errors, register, control }) => {
             <span>Identification Document</span>
           </Label>
 
-
           <div className=" flex justify-center items-center bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
             <div {...getRootProps()} className="file-upload w-full">
               <Controller
@@ -93,36 +92,37 @@ const Identification = ({ errors, register, control }) => {
                   ></input>
                 )}
               />
-              {
-                file && file.length>0 ?<>
-                  <img src={file} height={500} width={500} className=" overflow-hidden" />
-                
-                </>:<>
-                <div className="file-upload_label text-center">
-                <p className="text-14-regular ">
-                  <span className="text-green-500">Click to upload </span>
-                  or drag and drop
-                </p>
-                <p className="text-12-regular">
-                  SVG, PNG, JPG or GIF (max. 800x400px)
-                </p>
-              </div>
+              {file && file.length > 0 ? (
+                <>
+                  <img
+                    src={file}
+                    height={500}
+                    width={500}
+                    className=" overflow-hidden"
+                  />
                 </>
-              }
-             
-              {
-                errors.identificationDocument && (
-                  <span className="text-red-700">
-                    {" "}
-                    {errors.identificationDocument.message}
-                  </span>
-                )
-              }
+              ) : (
+                <>
+                  <div className="file-upload_label text-center">
+                    <p className="text-14-regular ">
+                      <span className="text-green-500">Click to upload </span>
+                      or drag and drop
+                    </p>
+                    <p className="text-12-regular">
+                      SVG, PNG, JPG or GIF (max. 800x400px)
+                    </p>
+                  </div>
+                </>
+              )}
 
+              {errors.identificationDocument && (
+                <span className="text-red-700">
+                  {" "}
+                  {errors.identificationDocument.message}
+                </span>
+              )}
             </div>
-            <div className="">
-              
-            </div>
+            <div className=""></div>
           </div>
         </div>
         {

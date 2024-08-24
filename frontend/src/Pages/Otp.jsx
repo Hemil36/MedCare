@@ -1,8 +1,4 @@
-
-"use client";
-
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+// import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import {
@@ -20,44 +16,90 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import React from "react";
-export const Otp = () => {
-  const router = useRouter();
-  const path = usePathname();
-  const [open, setOpen] = useState(false);
+import { X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getEmail, getpatientID } from "@/lib/store/UserSlice";
+import { verifyOTP,login } from "@/lib/store/AsyncThunks";
+import { toast } from "@/components/ui/use-toast";
+import { set } from "react-hook-form";
+
+export const Otp = ({ setLoading , setOpen , open , type }) => {
   const [passkey, setPasskey] = useState("");
   const [error, setError] = useState("");
-
-
-
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const patientID = useSelector(getpatientID);
+      const email = useSelector(getEmail);
 
   const closeModal = () => {
     setOpen(false);
-    router.push("/");
+
   };
 
-  const validatePasskey = (e
-  ) => {
+  const validatePasskey = async (e) => {
     e.preventDefault();
 
-  
+    if(type === "new"){
+
+    try {
+      const t = await dispatch(verifyOTP({ otp: passkey })).unwrap();
+      console.log("jio")
+      navigate("/register");
+      toast({
+        title: "Success",
+        message: "OTP Verified",
+        type: "success",
+      });
+    } catch (err) {
+      toast({
+        title: "Invalid OTP"
+      });
+      console.log(err);
+    }
+  }
+  else{
+    try {
+      
+
+      const t = await dispatch(verifyOTP({ otp: passkey })).unwrap();
+
+      const t2 = await dispatch(login({patientID , email}));
+      console.log(t2)
+    
+    
+
+      navigate("/user");
+      toast({
+        title: "Success",
+        message: "OTP Verified",
+        type: "success",
+      });
+    } catch (err) {
+      toast({
+        title: "Invalid OTP"
+      });
+      console.log(err);
+    }
+  }
+
+
   };
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogContent className="shad-alert-dialog">
+      <AlertDialogContent className="shad-alert-dialog jakarta">
         <AlertDialogHeader>
-          <AlertDialogTitle className="flex items-start justify-between">
+          <AlertDialogTitle className="flex items-start justify-between text-white">
             Admin Access Verification
-            <Image
-              src="/assets/icons/close.svg"
-              alt="close"
-              width={20}
-              height={20}
-              onClick={() => closeModal()}
+            <X
               className="cursor-pointer"
+              onClick={() => {
+                setLoading(false), closeModal();
+              }}
             />
           </AlertDialogTitle>
-          <AlertDialogDescription>
+          <AlertDialogDescription className="text-white">
             To access the admin page, please enter the passkey.
           </AlertDialogDescription>
         </AlertDialogHeader>

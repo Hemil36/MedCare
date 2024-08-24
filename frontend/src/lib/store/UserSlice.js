@@ -1,70 +1,23 @@
 import { createSlice , createAsyncThunk } from "@reduxjs/toolkit"
-import axios from "axios"
-
-
+import axios from "axios";
 
 const initialState = {
     user: {
         name : null,
         email: null,
         phone: null,
-        userID: "WJOJ-BN1M-O0LJ"
-
+        patientID: null,
+        accessToken: null   
     },
     loggedIn: false,
     loading : false,
-    error  : null
+    error  : null,
+    search : "",
+    profile :null
 }
 
-export const register = createAsyncThunk('/patient/register', async ({data} , {rejectWithValue}) => {
- 
-    
-  try {
-      const response = await axios.post('http://localhost:3000/api/register', data);
-      return response.data; // Assuming you want to return the response data on success
-    } catch (error) {
-      console.log(error, "error");
-      return rejectWithValue(error.response.data.message);
-    }
-
-}
-)
-
-export const getAppointmentDetails = createAsyncThunk('/patient/getAppointmentDetails', async ({appointmentID} , {rejectWithValue}) => {
-    try {
-        console.log(appointmentID)
-        const response = await axios.post('http://localhost:3000/api/getappointmentdetails', {appointmentID});
-        return response.data; // Assuming you want to return the response data on success
-        } catch (error) {
-        console.log(error, "error");
-        return rejectWithValue(error);
-        }
-})
 
 
-export const getDoctor = createAsyncThunk('/doctor/getDoctor', async (_, {rejectWithValue}) => {
-    
-        
-    try {
-        const response = await axios.get('http://localhost:3000/api/getdoctor');
-        return response.data; // Assuming you want to return the response data on success
-        } catch (error) {
-        console.log(error, "error");
-        return rejectWithValue(error);
-        }
-
-})
-
-export const getAppointment = createAsyncThunk('/patient/scheduleappointment', async ({doctorID, userID} , {rejectWithValue}) => {
-        try {
-            const response = await axios.post('http://localhost:3000/api/schedule', {doctorID, userID});
-            console.log(response)
-            return response.data; // Assuming you want to return the response data on success
-            } catch (error) {
-            console.log(error, "error");
-            return rejectWithValue(error);
-            }
-})
 const userSlice = createSlice({
     name: 'user',
     initialState,
@@ -82,38 +35,62 @@ const userSlice = createSlice({
         clearLoading(state){
             state.loading = false
         },
+        setSearch(state, action){
+            state.search = action.payload
+        },
         setHome (state, action){
            
             state.user.email = action.payload.email
             state.user.phone = action.payload.phone
             state.user.name = action.payload.name
+        },
+        setPatientID(state, action){
+            state.user.patientID = action.payload
+        },
+        setLogin(state, action){
+            state.user.patientID = action.payload.patientID
+            state.user.email = action.payload.email
+        },
+        setAccessToken(state, action){
+            state.user.accessToken = action.payload
         }
-    }
-    ,extraReducers (builder) {
-        builder.addCase(register.fulfilled, (state, action) => {
-            console.log("Sucess")
-
-            state.user.userID = action.payload.userId
+        ,
+        setLoginSuccessfull(state, action){
+            state.user.patientID = action.payload.patientID
+            state.user.accessToken = action.payload.accesstoken
+            state.user.name = action.payload.name
             state.loggedIn = true
-            state.loading = false
-        })
-        builder.addCase(register.rejected, (state, action) => {
-            state.loggedIn = false
-            state.error = action.payload
-        })
-        builder.addCase(register.pending, (state, action) => {
-            state.loading = true
-        })
-    
+        },
+        setProfile(state, action){
+            state.profile = action.payload
+        }
+        ,
+        logout(state , action){
+            state.user=null
+            state.profile=null
+        }
+        
     }
+   
 })
+// const axio = AxiosPrivate()
 
 export const loading = (state) => state.user.loading
-export const getUserId = (state) => state.user.user.userID
-export const { setUser, clearUser , setHome , setLoading , clearLoading } = userSlice.actions
-
+export const getpatientID = (state) => state.user.user.patientID
+export const { setUser, clearUser ,setSearch, setHome , setLoading , clearLoading , setPatientID ,logout, setLogin , setAccessToken , setLoginSuccessfull , setProfile } = userSlice.actions
 export const getUser = state => state.user.user
 export const getError = state => state.error
+export const getAccessToken = state => state.user.user.accessToken  
+export const getEmail = state => state.user.user.email
+export const loggedIn = state => state.user.loggedIn
+export const getSearch = state => state.user.search
+export const getName = state => state.user.user.name
+export const getProfile = state => state.user.profile
 
 
-export default userSlice.reducer
+
+export default userSlice.reducer;
+
+
+
+

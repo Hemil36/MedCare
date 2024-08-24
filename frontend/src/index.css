@@ -255,7 +255,7 @@
   }
 
   .shad-otp-slot {
-    @apply text-36-bold justify-center flex border border-dark-500 rounded-lg size-16 gap-4 !important;
+    @apply text-36-bold justify-center flex border border-dark-500 rounded-lg size-16 gap-4 text-green-500  !important;
   }
 
   .shad-alert-dialog {
@@ -301,6 +301,9 @@
   background-color: #1a1d21 !important;
   border-color: #363a3d !important;
   color: #abb8c4 !important;
+  ::-webkit-scrollbar {
+    width: 2px;
+  }
 }
 
 .react-datepicker__current-month,
@@ -308,6 +311,20 @@
 .react-datepicker-time__header {
   color: #ffffff !important;
 }
+
+.tab-height{
+  height : calc(100vh - 4rem)
+ 
+}
+
+.op{
+  ::-webkit-scrollbar {
+    width: 0px;
+  }
+}
+
+
+
 
 .react-datepicker__triangle {
   fill: #1a1d21 !important;

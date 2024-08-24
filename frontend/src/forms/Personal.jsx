@@ -88,27 +88,7 @@ const Personal = ({register,control,errors}) => {
             </span>
           </Label>
           <div className=" flex items-center bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
-            <Phone className="ml-2 " color="#ffffff" />
-            <Input
-              id="phone"
-              placeholder="Enter your phone"
-              className=" border-0 shad-input text-zinc-100 font-normal"
-              autoComplete="off"
-              {...register("phone")}
-            />
-          </div>
-          {
-            errors.phone && <span className="text-red-700"> {errors.phone.message} </span>
-          }
-        </div>
-      </div>
-
-<div className="flex flex-col md:flex-row gap-2">
-      <div className=" flex-1 text-gray-400 my-2">
-      <Label htmlFor="name" >
-          <span className={cn('',{'text-red-700' : error.name})}> Date of Birth </span>
-        </Label> 
-        <div className=" flex items-center bg-dark-400 rounded-md mt-1 p-[0.6rem] gap-2  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
+            <Phone className="ml-2 " color="#ffffff" />  <div className=" flex items-center bg-dark-400 rounded-md mt-1 p-[0.6rem] gap-2  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
             <Calendar className="ml-2 " color="#ffffff" />
             
             <Controller
@@ -129,6 +109,26 @@ const Personal = ({register,control,errors}) => {
               )}
             />
           </div>
+            <Input
+              id="phone"
+              placeholder="Enter your phone"
+              className=" border-0 shad-input text-zinc-100 font-normal"
+              autoComplete="off"
+              {...register("phone")}
+            />
+          </div>
+          {
+            errors.phone && <span className="text-red-700"> {errors.phone.message} </span>
+          }
+        </div>
+      </div>
+
+<div className="flex flex-col md:flex-row gap-2">
+      <div className=" flex-1 text-gray-400 my-2">
+      <Label htmlFor="name" >
+          <span className={cn('',{'text-red-700' : error.name})}> Date of Birth </span>
+        </Label> 
+      
         {
             errors.birthDate && <span className="text-red-700"> {errors.birthDate.message} </span>
         }

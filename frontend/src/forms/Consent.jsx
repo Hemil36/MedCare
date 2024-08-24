@@ -8,9 +8,9 @@ const Consent = ({register,control,loading}) => {
   return (
     <div className=' py-4'>
 
-    <h1 className=" text-3xl font-bold"> Consent & Privacy</h1>
+    <h1 className=" text-md md:text-3xl font-bold"> Consent & Privacy</h1>
     <div className='  justify-start gap-2  w-full mt-2'>
-        <div className=' flex items-center gap-2 py-2 '>
+        <div className='flex items-center gap-2 py-2 '>
         <Controller
               name="privacyConsent"
               control={control}
@@ -22,7 +22,7 @@ const Consent = ({register,control,loading}) => {
         </Checkbox>
               )}
             />
-            <span className="text-gray-400">I acknowledge that I have reviewed and agree to the privacy policy</span>
+            <span className="md:text-md text-sm text-gray-400">I acknowledge that I have reviewed and agree to the privacy policy</span>
 
         </div>
         <div className=' flex items-center gap-2 py-2'>
@@ -38,7 +38,7 @@ const Consent = ({register,control,loading}) => {
         </Checkbox>
               )}
             />
-            <span className="text-gray-400">I consent to the use and disclosure of my health information for treatment purposes.</span>
+            <span className="md:text-md text-sm text-gray-400">I consent to the use and disclosure of my health information for treatment purposes.</span>
         
         </div>
         <Button className="bg-green-500 text-white rounded-md p-2 m-2 w-full " type="submit">

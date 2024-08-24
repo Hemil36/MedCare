@@ -1,34 +1,54 @@
-import Appointment from "../models/AppointmentRecord";
-import doctor from "../models/Doctor";
-import Patient from "../models/User";
+import doctor from "../models/Doctor.js";
+import Patient from "../models/User.js";
 
-export const scheduleappointment = async (req, res) => {
-//   const {
-//     doctorID,
-//     userID
-// } = req.body;
+export const getPatient = async (req, res) => {
 
-console.log(req.body)
-//   try {
+    const { patientID } = req.body;
 
-//     const doctor = doctor.findOne({doctorID});
-//     const user = Patient.findOne({userID});
-//     if(!doctor){
-//       return res.status(400).json({message: "Doctor does not exist"});
-//     }
-//     if(!user){
-//       return res.status(400).json({message: "User does not exist"});
-//     }
-//     const appointment = new Appointment({
-//       doctorID,
-//       userID,
-//       date 
-//     });
-//     await appointment.save().then((result) => {
-//         console.log(result)
-//     }).catch((err) => console.log(err));
-//     res.status(201).json(appointment);
-//   } catch (error) {
-//     console.log(error);
-//   }
+
+
+    try {
+        const patient = await Patient.find({patientID});
+        res.status(200).json(patient);
+    } catch (error) {
+       return res.status(404).json({ message: error.message });
+    }
+}
+
+export const updatePatient = async (req, res) => {
+    const { patientID , data } = req.body;
+    console.log(patientID , data);
+  
+
+    try {
+        const patient = await Patient.findOne ({patientID});
+        patient.email = data.email;
+        patient.phone = data.phone;
+        patient.address = data.address;
+        patient.occupation = data.occupation;
+        patient.emergencyContactName = data.emergencyContactName;
+        patient.emergencyPhone = data.emergencyPhone;
+        await patient.save();
+        res.status(200).json(patient);
+    }
+    catch (error) {
+        return res.status(404).json({ error : "error" });
+    }
+
+}
+
+export const patientExist = async (req, res) => {
+    const { email } = req.body;
+    try {
+        const patient = await Patient.find({email});
+        const doctor = await doctor.find({email})
+
+       if(patient.length !=0 || doctor.length !=0)
+        res.status(400).json("User already exists");
+
+       res.status(200).json("User does not exist");
+    }
+    catch (error) {
+        return res.status(400).json({ message: error.message });
+    }
 }

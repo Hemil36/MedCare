@@ -5,7 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import logofull from "@/assets/logo-full.svg";
 import success from "@/assets/success.gif";
 import { useDispatch } from "react-redux";
-import { getAppointmentDetails } from "@/lib/store/UserSlice";
+import { getAppointmentDetails } from "@/lib/store/AsyncThunks";
 import calender from "@/assets/calendar.svg"
 const RequestSuccess =  () => {
 
@@ -18,9 +18,8 @@ const RequestSuccess =  () => {
       const f= async () => {
         try {
           const response = await dispatch(getAppointmentDetails({appointmentID})).unwrap();
-          console.log(response);
-          setAppointment(response.appointment);
-          setDoctor(response.doctorDetails);
+          setAppointment(response?.appointment);
+          setDoctor(response?.doctorDetails);
         } catch (error) {
           console.log(error, "error");
         }
@@ -29,7 +28,7 @@ const RequestSuccess =  () => {
 
     }, []);
 
-    const date = new Date(appointment.date);
+    const date = new Date(appointment?.date) ;
     
 //   const appointmentId = (searchParams?.appointmentId ) || "";
 //   const appointment = await getAppointment(appointmentId);
@@ -69,7 +68,7 @@ const RequestSuccess =  () => {
               height={100}
               className="size-6"
             /> 
-            <p className="whitespace-nowrap">Dr. {doctor?.name}</p>
+            <p className="whitespace-nowrap"> {doctor?.name}</p>
           </div>
           <div className="flex gap-2">
             <img
@@ -78,12 +77,12 @@ const RequestSuccess =  () => {
               width={24}
               alt="calendar"
             />
-             <p> {` ${date.toDateString()}`}</p> 
+             <p> {` ${date?.toDateString()}`}</p> 
           </div>
         </section>
 
         <Button variant="outline" className="shad-primary-btn" asChild>
-          {/* <Link href={`/patients/${userId}/new-appointment`}>
+          {/* <Link href={`/patients/${patientID}/new-appointment`}>
             New Appointment
           </Link> */}
         </Button>

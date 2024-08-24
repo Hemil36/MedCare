@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const appointmentSchema = new mongoose.Schema({
-    userID: { type: String ,required: true },
+    patientID: { type: String ,required: true },
     date: { type: Date, required: true },
     time: { type: String },
     notes: { type: String },
     doctorID : { type: String, required: true },
-    status: { type: String, default: "pending" },
+    status: { type: String, default: "pending" }
   });
 
 

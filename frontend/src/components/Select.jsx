@@ -2,12 +2,12 @@
 
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
-import * as React from "react";
-
+import React from "react";
 import { cn } from "@/lib/utils";
+import { useDispatch, useSelector } from "react-redux";
+import { getSearch, setSearch } from "@/lib/store/UserSlice";
 
 const Select = SelectPrimitive.Root;
-
 const SelectGroup = SelectPrimitive.Group;
 
 const SelectValue = SelectPrimitive.Value;
@@ -67,9 +67,14 @@ const SelectScrollDownButton = React.forwardRef((props, ref) => {
 SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;
 
 const SelectContent = React.forwardRef((props, ref) => {
+
+  const [search, setSearh] = React.useState("pop");
+  const dispatch = useDispatch();
+  
   const { className, children, position = "popper", ...rest } = props;
   return (
     <SelectPrimitive.Portal>
+
       <SelectPrimitive.Content
         ref={ref}
         className={cn(
@@ -81,6 +86,9 @@ const SelectContent = React.forwardRef((props, ref) => {
         position={position}
         {...rest}
       >
+      <input placeholder="Search Doctors"  className=" flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none bg-transparent  focus:text-slate-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:focus:bg-slate-800 dark:focus:text-slate-50"
+  onChange={(e)=>{setSearh(e.target.value)  , dispatch(setSearch(e.target.value)) }}  />
+
         <SelectScrollUpButton />
         <SelectPrimitive.Viewport
           className={cn(
@@ -88,8 +96,10 @@ const SelectContent = React.forwardRef((props, ref) => {
             position === "popper" &&
               "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]"
           )}
+
         >
           {children}
+
         </SelectPrimitive.Viewport>
         <SelectScrollDownButton />
       </SelectPrimitive.Content>
@@ -110,9 +120,12 @@ const SelectLabel = React.forwardRef((props, ref) => {
 });
 SelectLabel.displayName = SelectPrimitive.Label.displayName;
 
-const SelectItem = React.forwardRef((props, ref) => {
+const SelectItem = React.forwardRef((props, ref,search) => {
   const { className, children, ...rest } = props;
+
+
   return (
+    
     <SelectPrimitive.Item
       ref={ref}
       className={cn(
