@@ -13,20 +13,24 @@ router.get("/getdoctor",verifyJWT , doctorController.getdoctor)
 router.post("/schedule",verifyJWT ,doctorController.scheduleappointment)
 router.post("/getappointmentdetails",verifyJWT ,doctorController.getAppointmentDetails)
 router.get("/getappointment",verifyJWT ,doctorController.getAppointment)
+router.post("/getappointmentbydoctor",verifyJWT,doctorController.getDocAppointment)
 router.post("/approveappointment",verifyJWT ,doctorController.approveAppointment);
+router.post("/recordappointment",verifyJWT ,doctorController.recordAppointment);
 router.post("/cancelappointment",verifyJWT ,doctorController.cancelAppointment);
-
 router.post("/generateotp",authController.localVariables,authController.OTPSender)
 router.post("/verifyotp",authController.verifyOTP)
 router.post("/login",authController.login)
+router.post("/login/doctor",authController.loginDoctor)
 router.get("/refresh",authController.handleRefreshToken)
 router.post("/getpatientappointment",verifyJWT,doctorController.getAppointmentByPatient)
 router.get("/isauth",verifyRefresh)
 router.post("/verifyuser", authController.verifyUser)
 router.post("/verifydoctor",doctorController.verifyDoctor)
+router.post("/verifyexistdoctor",doctorController.veryExistingDoctor)
 router.post("/getuser",verifyJWT,getPatient)
 router.post("/updateuser",verifyJWT,updatePatient)
 router.post("/patientexist",patientExist)
+router.post("/getdoctordetails",verifyJWT,doctorController.getDoctorDetails)
 router.post("/logout",authController.logout)
 
 

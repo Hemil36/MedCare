@@ -36,7 +36,7 @@ await mongoose.connect("mongodb+srv://hemildudhat04:hemil04@cluster0.ifcde31.mon
   console.log("Database connected successfully");
 }).catch((err) => {
     console.log(err);
-    });
+});
 
 
 
@@ -105,9 +105,9 @@ try{
         const name1 = `${patientID}_${name}.pdf`;
        
         
-     const t = InputFile.fromBuffer(fileBuffer, name1);
+        const t = InputFile.fromBuffer(fileBuffer, name1);
 
-     const response = await storage1.createFile('Image',name1, t);
+        const response = await storage1.createFile('Image',name1, t);
 
     
     //  console.log(response)

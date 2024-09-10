@@ -41,14 +41,14 @@ export const patientExist = async (req, res) => {
     const { email } = req.body;
     try {
         const patient = await Patient.find({email});
-        const doctor = await doctor.find({email})
 
-       if(patient.length !=0 || doctor.length !=0)
-        res.status(400).json("User already exists");
+       if(patient.length !=0 )
+        return res.status(400).json("User already exists");
 
-       res.status(200).json("User does not exist");
+       return res.status(200).json("User does not exist");
+
     }
     catch (error) {
-        return res.status(400).json({ message: error.message });
+        return  res.status(400).json({ message: error.message });
     }
 }

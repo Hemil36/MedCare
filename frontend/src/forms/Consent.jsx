@@ -4,7 +4,7 @@ import { Check, Loader } from 'lucide-react'
 import React from 'react'
 import { Controller } from 'react-hook-form'
 
-const Consent = ({register,control,loading}) => {
+const Consent = ({register,control,loading,type}) => {
   return (
     <div className=' py-4'>
 
@@ -25,7 +25,7 @@ const Consent = ({register,control,loading}) => {
             <span className="md:text-md text-sm text-gray-400">I acknowledge that I have reviewed and agree to the privacy policy</span>
 
         </div>
-        <div className=' flex items-center gap-2 py-2'>
+        {type == "patient" && <div className=' flex items-center gap-2 py-2'>
 
         <Controller
               name="treatmentConsent"
@@ -40,7 +40,7 @@ const Consent = ({register,control,loading}) => {
             />
             <span className="md:text-md text-sm text-gray-400">I consent to the use and disclosure of my health information for treatment purposes.</span>
         
-        </div>
+        </div> }
         <Button className="bg-green-500 text-white rounded-md p-2 m-2 w-full " type="submit">
           {loading ? <>
           <Loader className='animate-spin' />

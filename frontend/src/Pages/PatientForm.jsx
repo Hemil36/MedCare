@@ -3,17 +3,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { setHome, setLogin, setPatientID } from "@/lib/store/UserSlice";
+import { getLoading, setHome, setLogin, setPatientID } from "@/lib/store/UserSlice";
 import { generateOTP, patientExist, verifyUser } from "@/lib/store/AsyncThunks";
 import { cn } from "@/lib/utils";
 import { User, Phone, Mail, OctagonX, Loader } from "lucide-react";
 
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import useFormHandler from "@/forms/validation/home";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const PatientForm = ({ setOpen, loading, setLoading, type, setType }) => {
+const PatientForm = ({ setOpen,  type, setType , setOldType , setNewType , oldType , newType }) => {
+ 
   const { toast } = useToast();
   const emailVerify = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const nameVerify = /^[a-zA-Z]+(?:[-'][a-zA-Z]+)*$/;
@@ -21,15 +23,10 @@ const PatientForm = ({ setOpen, loading, setLoading, type, setType }) => {
   const phoneVerify = /^[0-9]{10}$/;
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [oldType, setOldType] = useState();
-  const [newSignup, setNewSignup] = useState(false);
-  const [error, setError] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    patientID: "",
-    doctorID: "",
-  });
+  const loading = useSelector(getLoading);
+
+
+  
   useEffect(() => {
     toast({
       title: "Welcome",
@@ -37,124 +34,9 @@ const PatientForm = ({ setOpen, loading, setLoading, type, setType }) => {
     });
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const Error = {
-      name: "",
-      email: "",
-      phone: "",
-      patientID: "",
-      doctorID: "",
-    };
+  const {handleSubmit ,error } = useFormHandler({setOpen,type, oldType, newType});
 
-    if (type === "new") {
-      if (!nameVerify.test(e.target.name.value)) {
-        Error.name = "Invalid Name";
-      }
-      if (!emailVerify.test(e.target.email.value)) {
-        Error.email = "Invalid Email";
-      }
-
-      if (!phoneVerify.test(e.target.PhoneNumber.value)) {
-        Error.phone = "Invalid Phone Number";
-      }
-
-      if (Error.name || Error.email || Error.phone) {
-        return setError(Error);
-      } else {
-        dispatch(
-          setHome({
-            name: e.target.name.value,
-            email: e.target.email.value,
-            phone: e.target.PhoneNumber.value,
-          })
-        );
-
-        try {
-          setLoading(true);
-          console.log(e.target.email.value);
-          const exist = await dispatch(
-            patientExist({ email: e.target.email.value })
-          );
-          if (exist.payload) {
-            toast({
-              title: "User Exists",
-              description: "User already exists",
-            });
-            setLoading(false);
-            return;
-          }
-          setOpen(true);
-          console.log("jio");
-
-          const t = await dispatch(
-            generateOTP({ email: e.target.email.value })
-          );
-
-          console.log(t);
-        } catch (e) {
-          console.log(e);
-        }
-      }
-    } else {
-      if (oldType === "patient") {
-        if (!emailVerify.test(e.target.email.value)) {
-          Error.email = "Invalid Email";
-        }
-        if (!MedIDVerify.test(e.target.patientID.value)) {
-          Error.patientID = "Invalid MedID";
-        }
-
-        if (Error.email || Error.patientID) {
-          return setError(Error);
-        }
-        setLoading(true);
-        console.log(e.target.patientID.value);
-
-        try {
-          const a = await dispatch(
-            verifyUser({
-              email: e.target.email.value,
-              patientID: e.target.patientID.value,
-            })
-          ).unwrap();
-
-          await dispatch(
-            setLogin({
-              email: e.target.email.value,
-              patientID: e.target.patientID.value,
-            })
-          );
-          const t = await dispatch(
-            generateOTP({ email: e.target.email.value })
-          );
-          console.log(t);
-
-          setOpen(true);
-        } catch (e) {
-          toast({
-            title: "Invalid Credentials",
-            description: "Please check your credentials",
-          });
-
-          console.log(e);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        console.log(e.target.doctorID.value)
-        if (!e.target.doctorID.value) {
-          Error.doctorID = "Invalid DoctorID";
-        }
-        if (!emailVerify.test(e.target.email.value)) {
-          Error.email = "Invalid Email";
-        }
-        setError(Error);
-      }
-    }
-  };
-
-  const { setTheme } = useTheme();
+ 
   return (
     <div>
       <div className=" py-4">
@@ -166,7 +48,7 @@ const PatientForm = ({ setOpen, loading, setLoading, type, setType }) => {
             <Tabs
               defaultValue="patient"
               className="w-[400px] mx-auto md:mx-0"
-              onValueChange={(e) => setNewSignup(e)}
+              onValueChange={(e) => setNewType(e)}
             >
               <TabsList>
                 <TabsTrigger value="patient">Patient</TabsTrigger>
@@ -300,15 +182,14 @@ const PatientForm = ({ setOpen, loading, setLoading, type, setType }) => {
                     <span
                       className={cn("", { "text-red-700": error.doctorID })}
                     >
-                      {console.log(error)}
                       {!error.doctorID ? "DoctorID" : error.doctorID}
                     </span>
                   </Label>
                   <div className=" flex items-center bg-dark-400 rounded-md mt-1 focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
                     <User className="ml-2 " color="#ffffff" />
                     <Input
-                      id="doctorid"
-                      name="doctorid"
+                      id="doctorID"
+                      name="doctorID"
                       placeholder="Enter your name"
                       className=" border-0 shad-input text-zinc-100 font-normal"
                     />

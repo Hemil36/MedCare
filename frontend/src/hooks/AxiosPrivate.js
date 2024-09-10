@@ -7,7 +7,6 @@ import { setAccessToken } from '../lib/store/UserSlice';
 const AxiosPrivate = () => {
   const refresh = RefreshToken();
   const accessToken = store.getState().user.user.accessToken;
-  console.log(accessToken);
 
   axiosurl.interceptors.request.use(
     (config) => {

@@ -59,11 +59,14 @@ export const verifyUser = createAsyncThunk('/patient/verifyUser', async ({patien
 }
 )
 
-export const register = createAsyncThunk('/patient/register', async ({data} , {rejectWithValue}) => {
+
+
+export const register = createAsyncThunk('/patient/register', async ({data , type} , {rejectWithValue}) => {
  
     
     try {
-        const response = await axios.post('http://localhost:3000/api/register', data);
+        const response = await axios.post('http://localhost:3000/api/register', {data,type});
+        
         store.dispatch(setPatientID(response.data.patientID));
         return response.data; // Assuming you want to return the response data on success
       } catch (error) {
@@ -100,16 +103,14 @@ export const register = createAsyncThunk('/patient/register', async ({data} , {r
   export const patientExist = createAsyncThunk('/patient/patientExist', async ({email} , {rejectWithValue}) => {
     try {
         const response = await axios.post('http://localhost:3000/api/patientexist', {email});
-console.log(response)
         
-if(response.status === 200)
-    return false;
+        if(response.status === 200)
+            return false;
 
-return true;
+        return true;
         // Assuming you want to return the response data on success
         } catch (error) {
             
-        console.log(error, "error");
         return rejectWithValue(true);
   }})
   
@@ -125,6 +126,18 @@ return true;
           }
   
   })
+
+  export const getDoctorDetails = createAsyncThunk('/doctor/getDoctorDetails', async ({doctorID} , {rejectWithValue}) => {
+
+        try {
+            const response = await axiosPrivate.post('http://localhost:3000/api/getdoctordetails', {doctorID});
+            return response.data; // Assuming you want to return the response data on success
+            } catch (error) {
+            console.log(error, "error");
+            return rejectWithValue(error);
+            }
+    })
+    
 
 
   
@@ -192,6 +205,28 @@ return true;
           return rejectWithValue(error);
           }
   })
+
+  export const verifyDoctor = createAsyncThunk('/doctor/verifyDoctor', async ({doctorID , email} , {rejectWithValue}) => {
+    try {
+        const response = await axios.post('http://localhost:3000/api/verifydoctor', {doctorID , email});
+        return response.data.message; // Assuming you want to return the response data on success
+        } catch (error) {
+        console.log(error, "error");
+        return rejectWithValue(error.response.data.message);
+        }
+}
+)
+
+export const verifyExistDoctor = createAsyncThunk('/doctor/verifyexistDoctor', async ({ email} , {rejectWithValue}) => {
+    try {
+        const response = await axios.post('http://localhost:3000/api/verifyexistdoctor', {email});
+        return response.data.message; // Assuming you want to return the response data on success
+        } catch (error) {
+        console.log(error, "error");
+        return rejectWithValue(error.response.data.message);
+        }
+}
+)
   
   export const verifyOTP = createAsyncThunk('/patient/verifyOTP', async ({otp} , {rejectWithValue}) => {
           try {
@@ -207,6 +242,22 @@ return true;
               return rejectWithValue(error);
               }
   })
+
+
+  export const recordAppointment = createAsyncThunk('/doctor/recordAppointment', async ({appointmentID , symptoms , notes , prescription} , {rejectWithValue}) => {
+        try {
+            const response = await axiosPrivate.post('http://localhost:3000/api/recordappointment', {appointmentID , symptoms , notes , prescription});
+            console.log(response)
+            if(response.status === 201)
+            return response.data;
+        else throw ("op") // Assuming you want to return the response data on success
+            } catch (error) {
+            console.log(error, "error");
+            return rejectWithValue(error);
+            }
+        }
+        )
+    
   
   export const login = createAsyncThunk('/patient/login', async ({patientID , email} , {rejectWithValue}) => {
   
@@ -232,6 +283,31 @@ return true;
           }
   
   })
+
+export const loginDoctor = createAsyncThunk('/doctor/loginDoctor', async ({doctorId , email} , {rejectWithValue}) => {
+    
+    try {
+          
+        const response = await axios.post('http://localhost:3000/api/login/doctor', {doctorId , email},{
+          withCredentials :true
+        });
+        console.log(response)
+        if(response.status === 200)
+        {
+
+        await store.dispatch(setLoginSuccessfull(response.data));
+              return response.data;
+          }
+        
+
+     return rejectWithValue(response.response.data.error);
+
+        } catch (error) {
+        console.log(error, "error");
+        return rejectWithValue(error);
+        }
+
+})
   
 
   export const getAppointmentbyPatient = createAsyncThunk('/patient/getAppointmentbyPatient', async ({patientID} , {rejectWithValue}) => {

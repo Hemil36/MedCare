@@ -8,6 +8,8 @@ const appointmentSchema = new mongoose.Schema({
     time: { type: String },
     notes: { type: String },
     doctorID : { type: String, required: true },
+    symptoms: { type: String },
+    prescription: { type: String },
     status: { type: String, default: "pending" }
   });
 

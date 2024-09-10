@@ -1,27 +1,33 @@
 import mongoose from "mongoose";
+const { Schema } = mongoose;
 
 const doctorSchema = new mongoose.Schema({
     name : String,
+    councilID: {
+        type: String,
+        required: true,
+        unique: true,
+    },
     email: {
         type: String,
         required: true,
         unique: true,
     },
-    password: {
-        type: String,
-        required: true,
-    },
+    
     avatar: {
         type: String,
     },
-    dateofbirth: {
-        type: Date,
+   
+    adhaarNumber: {
+        type: String,
         required: true,
-    },
-    adhaarCard: {
-        type: Number,
+        unique: true
+      },
+      identificationDocument: {
+        type: Schema.Types.Mixed,
         required: true,
-    },
+      
+      },
     phone: {
         type: Number,
         required: true,
@@ -34,10 +40,6 @@ const doctorSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    experience: {
-        type: Number,
-        required: true,
-    },
     qualification: {
         type: String,
         required: true,
@@ -45,7 +47,7 @@ const doctorSchema = new mongoose.Schema({
     clinicAddress: {
         type: String,
         required: true,
-    },
+    }
 
 })
 

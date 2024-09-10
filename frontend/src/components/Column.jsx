@@ -1,6 +1,7 @@
 
 
 
+import { Link } from "react-router-dom";
 import { AppointmentDialog } from "./AppointmentDialog"
 import { StatusBadge } from "./Status";
 import React from "react";
@@ -78,7 +79,14 @@ export const columns = [
             description="Are you sure you want to cancel your appointment?"
           />
 
-          
+       {
+         appointment?.appointment?.status === "scheduled" ?
+         <button >
+           <Link to={`/doctor/appointment/${appointment.appointment._id}`} className=" capitalize text-[#ffd147]">
+          Record Appointment
+         </Link>
+         </button> 
+         :<>
 
          <AppointmentDialog
             patientId={appointment?.patientID}
@@ -89,6 +97,9 @@ export const columns = [
             title="Schedule Appointment"
             description="Please confirm the following details to schedule."
           />
+         </>
+       }
+
           
         </div>
       );

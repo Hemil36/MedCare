@@ -1,11 +1,10 @@
-
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
   getPaginationRowModel,
   getSortedRowModel,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -14,39 +13,37 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 
+import React, { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+export function DataTable({ columns, data }) {
+  const [sorting, setSorting] = React.useState([]);
+  const [filtering, setFiltering] = React.useState([]);
+  useEffect(() => {
+    const data2 = data.filter((d) => d != null);
+    setFiltering(data2);
+  },[data]);
+  // data=filtering
+  console.log(filtering)
 
-import React from "react"
-import { Button } from "@/components/ui/button"
-export function DataTable({
-  columns,
-  data }) {
-
-    const [sorting, setSorting] = React.useState([])
 
   const table = useReactTable({
-    data,
+    data:filtering,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    initialState :{
-      sorting :[
-        { id : "schedule",
-          desc : true
-        }
-      ]
-    }
-   
-
-  })
+    initialState: {
+      sorting: [{ id: "schedule", desc: true }],
+    },
+  });
 
   return (
     <div className="rounded-md border data-table">
-      <Table className = "shad-table">
+      <Table className="shad-table">
         <TableHeader className="shad-table-row-header">
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="shad-table-row" >
+            <TableRow key={headerGroup.id} className="shad-table-row">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead key={header.id}>
@@ -57,34 +54,48 @@ export function DataTable({
                           header.getContext()
                         )}
                   </TableHead>
-                )
+                );
               })}
             </TableRow>
           ))}
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext() )}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
+            table.getRowModel().rows.map((row) => {
+              if (
+                row.original.appointment.status === "completed" ||
+                row.original.appointment.status === "cancelled"
+              )
+                return;
+
+              return (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                      
+                    </TableCell>
+                    
+                  ))}
+                </TableRow>
+              );
+            })
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
                 No results.
+                
               </TableCell>
             </TableRow>
-          )}
+          )
+          }
         </TableBody>
-        
       </Table>
       <div className="table-actions">
         <Button
@@ -102,11 +113,10 @@ export function DataTable({
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
           className="shad-gray-btn"
-
         >
           Next
         </Button>
       </div>
     </div>
-  )
+  );
 }

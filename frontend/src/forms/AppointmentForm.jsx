@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from '@/components/ui/use-toast';
 import { approveAppointment, cancelAppointment, scheduleAppointment } from '@/lib/store/AsyncThunks';
 import { useNavigate } from 'react-router-dom';
-import { setLoading as op  , loading as loadc} from '@/lib/store/UserSlice';
+import { setLoading as op  , getLoading as loadc} from '@/lib/store/UserSlice';
 
 
 const AppointmentForm = ({type , appointment,setOpen,l}) => {

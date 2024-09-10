@@ -94,7 +94,7 @@ const UserProfile = () => {
 
 
 
-  const [date, setDate] = React.useState(user.birthDate);
+  const [date, setDate] = React.useState(user?.birthDate);
 
   const {
     control,
@@ -107,17 +107,17 @@ const UserProfile = () => {
       name: user?.name,
       email: user?.email,
       phone: user?.phone ,
-      birthDate: user.birthDate,
-      gender : user.gender,
-      address: user.address,
-      occupation: user.occupation,
-      emergencyContactName: user.emergencyContactName,
-      emergencyPhone: user.emergencyPhone,
+      birthDate: user?.birthDate,
+      gender : user?.gender,
+      address: user?.address,
+      occupation: user?.occupation,
+      emergencyContactName: user?.emergencyContactName,
+      emergencyPhone: user?.emergencyPhone,
 
     },
   });
 
-  
+  console.log(user)
   if (!user) {
     return <div>Loading...</div>;
   }

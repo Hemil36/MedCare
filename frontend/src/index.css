@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+.space{
+  padding: 0 ;
+}
 /* ========================================== TAILWIND STYLES */
 @layer base {
   /* Remove scrollbar */
@@ -59,7 +62,9 @@
   .container {
     @apply relative  overflow-y-auto px-[5%];
   }
-
+  .container-1 {
+    @apply relative  overflow-y-auto w-full;
+  }
   .sub-container {
     @apply mx-auto flex size-full flex-col py-10;
   }

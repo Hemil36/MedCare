@@ -7,14 +7,13 @@ import pending from "@/assets/pending.svg";
 import cancelled from "../assets/cancelled.svg";
 import scheduled from "@/assets/appointments.svg";
 import { useDispatch, useSelector } from "react-redux";
-import {  loading } from "@/lib/store/UserSlice";
+import { getLoading as loading } from "@/lib/store/UserSlice";
 import { getAppointment } from "@/lib/store/AsyncThunks";
 import { DataTable } from "@/components/Table";
 import { columns } from "@/components/Column";
 import { Loader } from "lucide-react";
 
 const AdminPage = () => {
- 
   const dispatch = useDispatch();
   const [appointments, setAppointments] = React.useState([]);
   const [pendingCount, setPendingCount] = React.useState(0);
@@ -22,24 +21,25 @@ const AdminPage = () => {
   const [cancelledCount, setCancelledCount] = React.useState(0);
   const [update, setUpdate] = React.useState(false);
   const [dataChange, setDataChange] = React.useState(false);
-  const [loading,setLoading] = useState(null)
+  const [loading, setLoading] = useState(null);
 
   useEffect(() => {
     const handleDataChangeEvent = () => {
       setDataChange((prev) => !prev); // Toggle the state to trigger useEffect
     };
 
-    window.addEventListener('appointmentDataChanged', handleDataChangeEvent);
+    window.addEventListener("appointmentDataChanged", handleDataChangeEvent);
 
     return () => {
-      window.removeEventListener('appointmentDataChanged', handleDataChangeEvent);
+      window.removeEventListener(
+        "appointmentDataChanged",
+        handleDataChangeEvent
+      );
     };
   }, []);
 
-
   useEffect(() => {
-
-    setLoading(true)
+    setLoading(true);
 
     const getAppointments = async () => {
       try {
@@ -47,13 +47,13 @@ const AdminPage = () => {
         console.log(response);
         if (response.length > 0) {
           const pending = response.filter(
-            (appointment) => appointment.appointment.status === "pending"
+            (appointment) => appointment?.appointment.status === "pending"
           );
           const scheduled = response.filter(
-            (appointment) => appointment.appointment.status === "scheduled"
+            (appointment) => appointment?.appointment.status === "scheduled"
           );
           const cancelled = response.filter(
-            (appointment) => appointment.appointment.status === "cancelled"
+            (appointment) => appointment?.appointment.status === "cancelled"
           );
           setPendingCount(pending.length);
           setScheduledCount(scheduled.length);
@@ -62,21 +62,30 @@ const AdminPage = () => {
         setAppointments(response);
       } catch (e) {
         console.log(e);
+      } finally {
+        setLoading(false);
       }
-      finally{
-        setLoading(false)
-      }
-
     };
 
     getAppointments();
-
-    
   }, [dataChange]);
 
   return (
-    <div className="mx-auto flex max-w-7xl flex-col space-y-14">
-     <div className="pt-4" />
+    <div className="mx-auto flex max-w-7xl flex-col ">
+      <div className=" py-6 flex justify-between items-center">
+        <h1 className="text-left text-2xl font-bold   ">
+          MedID
+        </h1>
+        <div className=" flex gap-3">
+          <Link to="/" className="text-green-500">
+            Home
+          </Link>
+          <Link to="/profile" className="text-green-500">
+            Profile
+          </Link>
+          </div>
+      </div>
+      <div className="pt-4" />
 
       <main className="admin-main">
         <section className="w-full space-y-4">
@@ -106,10 +115,11 @@ const AdminPage = () => {
             icon={cancelled}
           />
         </section>
-{
-  loading ?           <Loader className='animate-spin' />:  <DataTable columns={columns}  data={appointments}  /> 
-
-}
+        {loading ? (
+          <Loader className="animate-spin" />
+        ) : (
+          <DataTable columns={columns} data={appointments} />
+        )}
       </main>
     </div>
   );

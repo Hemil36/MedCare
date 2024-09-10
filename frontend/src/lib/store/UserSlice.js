@@ -1,5 +1,7 @@
 import { createSlice , createAsyncThunk } from "@reduxjs/toolkit"
 import axios from "axios";
+import { set } from "date-fns";
+import { act } from "react";
 
 const initialState = {
     user: {
@@ -7,13 +9,15 @@ const initialState = {
         email: null,
         phone: null,
         patientID: null,
+        doctorID: null,
         accessToken: null   
     },
     loggedIn: false,
     loading : false,
     error  : null,
     search : "",
-    profile :null
+    profile :null,
+    otp:false
 }
 
 
@@ -30,7 +34,7 @@ const userSlice = createSlice({
         }
         ,
         setLoading(state, action){
-            state.loading = true
+            state.loading = action.payload
         },
         clearLoading(state){
             state.loading = false
@@ -68,16 +72,27 @@ const userSlice = createSlice({
         logout(state , action){
             state.user=null
             state.profile=null
+        },
+        setdoctorLogin(state, action){
+            state.user.doctorID = action.payload.doctorID
+            state.user.email = action.payload.email
+        },
+        setDoctorId(state, action){
+            state.user.doctorID = action.payload
+        },
+        setOtp(state, action){
+            state.otp = action.payload
         }
+        
         
     }
    
 })
 // const axio = AxiosPrivate()
 
-export const loading = (state) => state.user.loading
+export const getLoading = (state) => state.user.loading
 export const getpatientID = (state) => state.user.user.patientID
-export const { setUser, clearUser ,setSearch, setHome , setLoading , clearLoading , setPatientID ,logout, setLogin , setAccessToken , setLoginSuccessfull , setProfile } = userSlice.actions
+export const { setUser, clearUser ,setOtp, setDoctorId ,setSearch, setHome , setLoading , clearLoading ,setdoctorLogin, setPatientID ,logout, setLogin , setAccessToken , setLoginSuccessfull , setProfile } = userSlice.actions
 export const getUser = state => state.user.user
 export const getError = state => state.error
 export const getAccessToken = state => state.user.user.accessToken  
@@ -85,7 +100,10 @@ export const getEmail = state => state.user.user.email
 export const loggedIn = state => state.user.loggedIn
 export const getSearch = state => state.user.search
 export const getName = state => state.user.user.name
-export const getProfile = state => state.user.profile
+export const getProfile = state => state.user.user
+export const getOtp = state => state.user.otp
+export const getDoctorID = state => state.user.user.doctorID
+
 
 
 

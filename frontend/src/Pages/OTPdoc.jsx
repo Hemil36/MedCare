@@ -23,7 +23,7 @@ import { getEmail, getpatientID, setLoading, setOtp } from "@/lib/store/UserSlic
 import { verifyOTP,login, loginDoctor } from "@/lib/store/AsyncThunks";
 import { toast } from "@/components/ui/use-toast";
 
-export const Otp = ({  setOpen , open , type , newType,oldType }) => {
+export const OtpDoc = ({setOpen,setVerify}) => {
   const [passkey, setPasskey] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -38,67 +38,23 @@ export const Otp = ({  setOpen , open , type , newType,oldType }) => {
 
   const validatePasskey = async (e) => {
     e.preventDefault();
-
-
-    if(type === "new"){
-
-    try {
-      const t = await dispatch(verifyOTP({ otp: passkey })).unwrap();
-      dispatch(setOtp(true));
-      if(newType ==="patient"){
-      navigate("/register");
-      }
-      else{
-        navigate("/register/doctor");
-      }
-      toast({
-        title: "Success",
-        message: "OTP Verified",
-        type: "success",
-      });
-    } catch (err) {
-      toast({
-        title: "Invalid OTP"
-      });
-      console.log(err);
+    try{
+    const t = await dispatch(verifyOTP({ otp: passkey })).unwrap();
+    dispatch(setOtp(true));
+    setVerify(true);
+    closeModal();
     }
-  }
-  else{
-    try {
-      
-
-      console.log(oldType)
-      const t = await dispatch(verifyOTP({ otp: passkey })).unwrap();
-
-
-      if(oldType == "patient"){
-      const t2 = await dispatch(login({patientID , email}));
-      console.log(t2)
-      navigate("/user");
-      console.log(t2)
-      } else{
-        const t2 = await dispatch(loginDoctor({patientID , email}));
-        navigate("/doctor");
-        console.log(t2)
-      }
-    
-      
-
-      toast({
-        title: "Success",
-        message: "OTP Verified",
-        type: "success",
-      });
-    } catch (err) {
-      toast({
-        title: "Invalid OTP"
-      });
-      console.log(err);
+    catch(e){
+      console.log(e);
     }
+
+ 
+
+
   }
 
 
-  };
+  
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -109,7 +65,8 @@ export const Otp = ({  setOpen , open , type , newType,oldType }) => {
             <X
               className="cursor-pointer"
               onClick={() => {
-                dispatch(setLoading(false)), closeModal();
+                // dispatch(setLoading(false)),
+                 closeModal();
               }}
             />
           </AlertDialogTitle>

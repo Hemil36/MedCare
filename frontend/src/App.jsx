@@ -5,7 +5,7 @@ import { useTheme } from './components/theme-provider'
 import Home from './Pages/home'
 import React from 'react'
 import { Toaster } from './components/ui/toaster'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Outlet, Route, Routes, useNavigate } from 'react-router-dom'
 import Register from './Pages/Register'
 import Appointment from './Pages/Appointment'
 import RequestSuccess from './Pages/SuccessPage'
@@ -16,6 +16,31 @@ import Patient from './Pages/Patient'
 import Test from './Pages/Test'
 import axios from 'axios'
 import RegisterDoctor from './Pages/RegisterDoctor'
+import { useSelector } from 'react-redux'
+import { getOtp } from './lib/store/UserSlice'
+import DoctorAppointment from './Pages/DoctorAppointment'
+import PrescriptionGenerator from './Prescription'
+import DocProfile from './Pages/DocProfile'
+
+const Otpveri = ()=>{
+  const otp = useSelector(getOtp)
+  const[auth , setAuth] = useState(false)
+
+    useEffect(() => {
+        const Auth = async ()=>{
+           otp ? setAuth(true) : navigate("/")
+        }
+    
+        Auth()
+      },[])
+
+    const navigate = useNavigate(); 
+
+    return otp ? <Outlet /> : null;
+
+}
+
+
 
 function App() {
   const [count, setCount] = useState(0)
@@ -30,17 +55,20 @@ function App() {
 
       <BrowserRouter>
       <Routes>
-        <Route path="/test" element={<Test />} /> 
+        <Route path="/test" element={<PrescriptionGenerator />} /> 
         <Route path="/" element={<Home />} />
+      <Route  element={<Otpveri />} >
         <Route path='/register' element={<Register />} />
         <Route path='/register/doctor' element={<RegisterDoctor />} />
-
+        </Route>
 
         <Route element={<Auth auth={auth}  />} >
         <Route path='/user' element={<Patient/>} />
         <Route path='/patient/:patientID/appointment' element={<Appointment type="create" />} />
         <Route path="/patient/:patientID/appointment/success" element={<RequestSuccess />} />
         <Route path="/doctor" element={<AdminPage />} />
+        <Route path="/doctor/appointment/:appointmentID" element={<DoctorAppointment />} />
+        <Route path='/doctor/profile' element={<DocProfile />} />
         </Route>
       </Routes>
       </BrowserRouter>

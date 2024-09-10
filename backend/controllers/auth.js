@@ -4,7 +4,8 @@ import { nanoid } from "nanoid";
 import { customAlphabet } from "nanoid";
 import nodemailer from "nodemailer";
 import Patient from "../models/User.js";
-import { createAccountEmail } from "./email.js";
+import Doctor from "../models/Doctor.js";
+import { createAccountDoctorEmail, createAccountEmail } from "./email.js";
 
 const id = nanoid(10);
 
@@ -67,8 +68,7 @@ export const OTPSender = async (req,res) => {
 
 export const verifyOTP = async (req,res)=>{
     const { otp } = req.body;
-    // console.log(otp);
-    // console.log(req.app.locals.OTP);
+   
     if(parseInt(req.app.locals.OTP) === parseInt(otp)){
         req.app.locals.OTP = null; // reset the OTP value
         console.log("OTP verified successfully");
@@ -77,6 +77,7 @@ export const verifyOTP = async (req,res)=>{
 
     return res.status(400).json({ error: "Invalid OTP"});
 }
+
 
 
 export const login = async (req, res) => {
@@ -106,6 +107,31 @@ export const login = async (req, res) => {
 
     }
 }
+export const loginDoctor = async (req, res) => {
+  try{
+
+    const {doctorId , email} = req.body;
+    // console.log(doctorId , email);
+    
+    const patient = await User.findOne({doctorId , email});
+
+    if(!patient){
+        return res.status(400).json({ message : "User not found"});
+    }
+    // console.log(process.env.REFRESH_TOKEN_SECRET);
+    const accesstoken = jwt.sign({doctorId: patient.doctorId , name: patient.name}, process.env.ACCESS_TOKEN_SECRET , { expiresIn: '5s'});
+    const refreshtoken = jwt.sign({doctorId: patient.doctorId , name: patient.name}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '1hr'});
+
+    res.cookie('jwt', refreshtoken, { httpOnly: true , secure: true , sameSite: 'none'});
+  return  res.status(200).json({ accesstoken , doctorId : patient.doctorId , name:patient.name});
+
+
+}
+catch (error) {
+  console.log(error);
+
+}}
+
  function generateCustomId() {
     const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const nanoid = customAlphabet(alphabet, 16);
@@ -121,7 +147,12 @@ const randomString = nanoid();
 export const register = async (req, res) => {
 
     const {
-        name,
+       
+        type
+        
+      } = req.body;
+
+      const { name,
         email,
         phone,
         birthDate,
@@ -132,16 +163,16 @@ export const register = async (req, res) => {
         pastMedicalHistory,
         identificationType,
         adhaarNumber,
-        identificationDocument,
-        
-      } = req.body;
+        identificationDocument} = req.body.data
       
+      if(type == "doctor"){
+        return registerDoctor(req, res);
+      }
     
     try{
 
         
         const user = await User.findOne({email }) || await User.findOne({phone}) || await User.findOne({adhaarNumber});
-        // console.log(user);
         if(user){
             return res.status(400).json({ message : "User already exist"});
         }
@@ -155,6 +186,67 @@ export const register = async (req, res) => {
         res.status(403).json({error :"Error"});
         console.log(error);
     }
+    }
+
+
+    export const registerDoctor = async (req, res) => {
+        const {
+          name,
+          email,
+          phone,
+          birthDate,
+          gender,
+          emergencyContactName,
+          emergencyPhone,
+          councilID,
+          speciality,
+          graduationYear,
+          degree,
+          colleage,
+          identificationType,
+          adhaarNumber,
+          identificationDocument , clinicaddress } = req.body.data;
+
+        try {
+          const doctor = await Doctor.findOne({councilID}) ;
+          console.log(doctor);
+          if (doctor) {
+            return res.status(400).json({ message: 'Doctor already exists' });
+          }
+          const nanoid = customAlphabet('1234567890abcdef', 4)
+          const doctorId = "DOC"+nanoid(); 
+          const newDoctor = new Doctor({
+            name,
+            email,
+            phone,
+            birthDate,
+            gender,
+            emergencyContactName,
+            emergencyPhone,
+            councilID,
+            speciality,
+            graduationYear,
+            qualification : degree,
+            colleage,
+            identificationType,
+            adhaarNumber,
+            identificationDocument,
+            doctorId,
+            clinicAddress: clinicaddress
+          });
+          await newDoctor.save();
+
+          await createAccountDoctorEmail({ doctorId, doctorName:name, email});
+
+          res.status(201).json({ message: 'Doctor registered successfully', doctorId });
+
+        } catch (error) {
+          res.status(403).json({ error: 'Error' });
+          console.log(error);
+        }
+
+
+
     }
 
     export const verifyUser = async (req, res) => {
@@ -172,6 +264,8 @@ export const register = async (req, res) => {
             res.status(403).json({error});
           }
     }
+
+    
 
 
  export   const handleRefreshToken = async (req, res) => {

@@ -35,14 +35,14 @@ const user = useSelector(getUser)
   const [loading, setLoading] = React.useState(false)
   const dispatch = useDispatch()
   const error = useSelector(getError)
-const navigate = useNavigate ()
+  const navigate = useNavigate ()
   const login = async (e)=>{
     console.log(e)
 
     setLoading(true)
 
     try{
-     const response =  await dispatch(Post({data: e})).unwrap() 
+     const response =  await dispatch(Post({data: e , type : "patient"})).unwrap() 
      console.log(response)
      
       toast({
@@ -53,8 +53,7 @@ const navigate = useNavigate ()
         isClosable: true,
       
       })
-      
-
+  
       navigate("/user")
     }
     catch

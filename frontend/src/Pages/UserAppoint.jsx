@@ -133,6 +133,8 @@ const UserAppoint = () => {
                   </TableHeader>
                   <TableBody>
                     {appointments.map((appointment) => {
+                      console.log(appointment)
+                      console.log(appointments)
                       const date = new Date(appointment.appointment.date);
                       return (
                         <Dialog key={appointment._id}>
@@ -220,6 +222,7 @@ const UserAppoint = () => {
                                     " No  Notes"
                                   }
                                   className="col-span-3 shad-input"
+                                  
                                 />
                               </div>
                             </div>

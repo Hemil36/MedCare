@@ -163,6 +163,34 @@ const html =({ patientName,patientID})=>{
 </body>`
     )
 }
+  }
+
+export const createAccountDoctorEmail = ({doctorId,doctorName,email})=>{
+       
+    const html =({ doctorName,doctorId})=>{
+        return(
+           `<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0;">
+        <div style="width: 100%; max-width: 600px; margin: 20px auto; background-color: #fff; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+           
+            <div style="margin-top: 20px;">
+                <h1 style="font-size: 24px; color: #333;">Account Created Successfully</h1>
+                <p>Dear ${doctorName},</p>
+                <p>We are pleased to inform you that your account has been successfully created. Please find the details of your account below:</p>
+                <div style="margin: 20px 0; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd;">
+                    <p><strong>Account Details:</strong></p>
+                   <p><strong>Account ID:</strong> ${doctorId}</p>
+                </div>
+                <p>You can now log in to your account using your medID.</p>
+                <p>Thank you for choosing Medid. We look forward to serving you.</p>
+            </div>
+            <div style="text-align: center; margin-top: 20px; font-size: 14px; color: #777;">
+               
+                <p>Medid</p>
+            </div>
+        </div>
+    </body>`
+        )
+    }
     const mailOptions = {
         from: {
           name: 'MedID',
@@ -170,7 +198,7 @@ const html =({ patientName,patientID})=>{
         }, // sender address
         to: email, // recipient address
         subject: 'MedID Account Created',
-        html: html({ patientName,patientID}),
+        html: html({doctorId,doctorName}),
       };
 
       transporter.sendMail(mailOptions, (error, info) => {

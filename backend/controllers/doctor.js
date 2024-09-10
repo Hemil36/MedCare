@@ -19,6 +19,48 @@ export const getdoctor = async (req, res) => {
 
 }
 
+export const getDoctorDetails = async (req, res) => {
+    const { doctorID } = req.body;
+    if(!doctorID){
+        return res.status(400).json({message: "Please enter doctorID"});
+    }
+    try {
+        const doctorDetails = await doctor.findOne({doctorID});
+        if(!doctorDetails){
+            return res.status(400).json({message: "Doctor not found"});
+        }
+        res.status(200).json(doctorDetails);
+    } catch (error) {
+        res.json(error);
+        console.log(error);
+    }
+}
+
+
+export const recordAppointment = async (req, res) => {
+    const { appointmentID , symptoms , notes , prescription } = req.body;
+    if(!appointmentID){
+        return res.status(400).json({message: "Please enter appointmentID"});
+    }
+    try {
+        const objectid  = new mongoose.Types.ObjectId(appointmentID)
+        const appointment = await Appointment.findById({_id: objectid});
+        if(!appointment){
+            return res.status(400).json({message: "Appointment not found"});
+        }
+        appointment.status = "completed";
+        appointment.symptoms = symptoms;
+        appointment.notes = notes;
+        appointment.prescription = prescription;
+        await appointment.save();
+        res.status(201).json(appointment);
+    } catch (error) {
+        res.json(error);
+        console.log(error);
+    }
+}
+
+
 export const scheduleappointment = async (req, res) => {
 
     const { doctorID, patientID,date , email , patientName , address , doctorName} = req.body;
@@ -81,7 +123,8 @@ export const getAppointment = async (req, res) => {
 
         const newData = await Promise.all(  appointment.map(async (data) => {
             try{
-
+                if(data.status === "completed" || data.status === "cancelled")
+                    return;
                 const doctorDetails = await doctor.findOne({ doctorID : data.doctorID });
                 const patientDetails = await Patient.findOne({ patientID : data.patientID.toString() });
                 return {appointment: data, doctorDetails , patientDetails};
@@ -90,6 +133,37 @@ export const getAppointment = async (req, res) => {
                 console.log(e);
             }
         }));
+        console.log(newData);
+        res.status(200).json(newData);
+    } catch (error) {
+        res.json(error);
+        console.log(error);
+    }
+}
+export const getDocAppointment = async (req, res) => {
+
+    const data = req.body;
+    console.log(req.body);
+  
+
+    try {
+        const appointment = await Appointment.find({
+            patientID: data.patientID ,
+        });
+
+        const newData = await Promise.all(  appointment.map(async (data) => {
+            try{
+
+                const doctorDetails = await doctor.findOne({ doctorId : data.doctorID });
+
+               return  {appointment: data, doctorDetails};
+            }
+            catch(e){
+                console.log(e);
+            }}));
+                
+
+       
         res.status(200).json(newData);
     } catch (error) {
         res.json(error);
@@ -171,15 +245,33 @@ export const getAppointmentByPatient = async (req, res) =>
 
     export const  verifyDoctor = async (req, res) => {
         const { doctorID , email } = req.body;
-        // console.log(patientID , email);
+        console.log(req.body);
         try{
-            const user = await doctor.findOne({doctorID });
-            if(user.email === email){
+            const user = await doctor.findOne({doctorId:doctorID});
+            console.log(user)
+            if(user?.email === email){
                 return res.status(200).json({ message : "Doctor found"});
             }
             return res.status(400).json({ message : "Invalid Credentials"});
         }
         catch (error) {
-            res.status(403).json({message : "Invalid Credentials"});
+            console.log(error);
+            res.status(403).json({message : "Error"});
+        }
+    }
+
+
+    export const veryExistingDoctor = async (req, res) => {
+        const { email } = req.body;
+        try{
+            const user = await doctor.findOne({email});
+            if(user){
+                return res.status(400).json({ message : "Doctor found"});
+            }
+            return res.status(200).json({ message : ""});
+        }
+        catch (error) {
+            console.log(error);
+            res.status(403).json({message : "Error"});
         }
     }
