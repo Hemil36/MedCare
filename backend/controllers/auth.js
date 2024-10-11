@@ -117,8 +117,8 @@ export const login = async (req, res) => {
             return res.status(400).json({ message : "User not found"});
         }
         // console.log(process.env.REFRESH_TOKEN_SECRET);
-        const accesstoken = jwt.sign({patientID: patient.patientID , name: patient.name}, process.env.ACCESS_TOKEN_SECRET , { expiresIn: '5s'});
-        const refreshtoken = jwt.sign({patientID: patient.patientID , name: patient.name}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '1hr'});
+        const accesstoken = jwt.sign({patientID: patient.patientID , name: patient.name}, process.env.ACCESS_TOKEN_SECRET , { expiresIn: '1hr'});
+        const refreshtoken = jwt.sign({patientID: patient.patientID , name: patient.name}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '10hr'});
 
         res.cookie('jwt', refreshtoken, { httpOnly: true , secure: true , sameSite: 'none'});
       return  res.status(200).json({ accesstoken , patientID : patient.patientID , name:patient.name});

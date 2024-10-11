@@ -4,19 +4,23 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logofull from "@/assets/logo-full.svg";
 import success from "@/assets/success.gif";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getAppointmentDetails } from "@/lib/store/AsyncThunks";
 import calender from "@/assets/calendar.svg"
+import { getDoctorName } from "@/lib/store/UserSlice";
 const RequestSuccess =  () => {
 
     const query = new URLSearchParams(useLocation().search);
     const appointmentID = query.get("appointmentID");
   const dispatch = useDispatch();
   const[appointment, setAppointment] = useState({});
-  const[doctor, setDoctor] = useState({});
+
+  // const[doctor, setDoctor] = useState({});
+  const docname = useSelector(getDoctorName);
     useEffect(() => {
       const f= async () => {
         try {
+          
           const response = await dispatch(getAppointmentDetails({appointmentID})).unwrap();
           setAppointment(response?.appointment);
           console.log(response, "response");
@@ -62,14 +66,8 @@ const RequestSuccess =  () => {
         <section className="request-details">
           <p>Requested appointment details: </p>
           <div className="flex items-center gap-3">
-            <img
-              src={doctor?.photo}
-              alt="doctor"
-              width={100}
-              height={100}
-              className="size-6"
-            /> 
-            <p className="whitespace-nowrap"> {doctor?.name}</p>
+            
+            <p className="whitespace-nowrap"> Dr. {docname}</p>
           </div>
           <div className="flex gap-2">
             <img

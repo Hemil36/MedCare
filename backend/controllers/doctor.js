@@ -163,7 +163,7 @@ const sendEmailWithPDF = async ({data}) => {
 export const scheduleappointment = async (req, res) => {
 
     const { doctorID, patientID,date, email , patientName , address , doctorName} = req.body;
-    console.log( "body")
+    console.log(req.body , "body")
     if(!doctorID || !patientID){
         return res.status(400).json({message: "Please enter doctorID and patientID"});
     }
@@ -174,7 +174,7 @@ export const scheduleappointment = async (req, res) => {
             patientID,
             date: date
         });
-        (await appointment.populate('doctorId')).save();
+        (await appointment.populate('doctorID')).save();
 try{
 
    await appointmentEmail({email, date,  doctorName, patientName,address})
@@ -183,7 +183,7 @@ catch(err){
     console.log(err)
 }
 
-        res.status(201).json({appointmentId : appointment._id , });
+        res.status(201).json(appointment._id);
     } catch (error) {
         res.json(error)
     }
@@ -197,7 +197,6 @@ export const getAppointmentDetails = async (req, res) => {
     }
     try {
         const objectid  = new mongoose.Types.ObjectId(appointmentID)
-        console.log("HERE")
         const appointment = await Appointment.findById({_id: objectid});
 
         const doctorDetails = await doctor.findOne({ doctorID : appointment.doctorID.toString() });
@@ -326,8 +325,7 @@ export const getAppointmentByPatient = async (req, res) =>
             }
             const newData = await Promise.all(  appointment.map(async (data) => {
                 try{
-                    const doctorDetails = await doctor.findOne({ doctorId : data.doctorID });
-                    
+                    const doctorDetails = await doctor.findOne({ doctorID : data.doctorID });
                     const patientDetails = await Patient.findOne({ patientID : data.patientID.toString() });
                     return {appointment: data, doctorDetails : doctorDetails.name , patientDetails : patientDetails.name};
                 }

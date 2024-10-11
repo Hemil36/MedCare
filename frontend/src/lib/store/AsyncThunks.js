@@ -159,7 +159,8 @@ export const register = createAsyncThunk('/patient/register', async ({data , typ
 
   
   export const scheduleAppointment = createAsyncThunk('/patient/scheduleappointment', async ({doctorID, patientID , date,patientName , address,doctorName,email} , {rejectWithValue}) => {
-          try {
+          console.log(address)
+    try {
               const response = await axiosPrivate.post('http://localhost:3000/api/schedule', {doctorID, patientID , date,patientName , address , doctorName,email });
               console.log(response)
               return response.data; // Assuming you want to return the response data on success

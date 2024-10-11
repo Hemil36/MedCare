@@ -39,6 +39,7 @@ import {
   getName,
   getpatientID,
   getSearch,
+  setDoctorName,
   setSearch,
 } from "@/lib/store/UserSlice";
 import { set } from "date-fns";
@@ -94,17 +95,20 @@ const Appointment = ({ type }) => {
       console.log(data);
       const doc = doctor?.find((doc)=>{return doc.doctorId === data.doctor })
       console.log(doc)
+    
       const appointmentID = await dispatch(
         scheduleAppointment({
           doctorID: data.doctor,
           patientID,
           date,
-          address: doc.address,
+          address: doc.clinicAddress,
           patientName,
           doctorName : doc.name,
           email
         })
       ).unwrap();
+
+      dispatch(setDoctorName(doc.name));
 
       navigate(
         `/patient/${patientID}/appointment/success?appointmentID=${appointmentID}`
