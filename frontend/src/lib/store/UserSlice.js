@@ -52,15 +52,16 @@ const userSlice = createSlice({
             state.user.patientID = action.payload
         },
         setLogin(state, action){
-            state.user.patientID = action.payload.patientID
+            console.log(action.payload)
             state.user.email = action.payload.email
+            state.user.patientID = action.payload.patientID
+            console.log(state.user)
         },
         setAccessToken(state, action){
             state.user.accessToken = action.payload
         }
         ,
         setLoginSuccessfull(state, action){
-            state.user.patientID = action.payload.patientID
             state.user.accessToken = action.payload.accesstoken
             state.user.name = action.payload.name
             state.loggedIn = true

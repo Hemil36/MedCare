@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 import { Calendar, Eye, Loader, Mail, Phone, User } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Otp } from "./Otp";
 import AxiosPrivate from "@/hooks/AxiosPrivate";
@@ -51,7 +51,7 @@ const DoctorAppointment = () => {
   const urlParams = new useParams();
   const myParam = urlParams.appointmentID;
   const patientID = currentAppointment?.appointment?.patientID
-  console.log(patient)
+  // console.log(patient)
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const doctorId = useSelector(getDoctorID)
@@ -76,7 +76,7 @@ const DoctorAppointment = () => {
         const response = await axios.post("http://localhost:3000/api/getuser", {
           patientID,
         });
-        console.log(response)
+        // console.log(response)
         setPatient(response.data[0]);
       } catch (error) {
         console.log(error);
@@ -88,15 +88,19 @@ const DoctorAppointment = () => {
 
   const submit = async (e) => {
     e.preventDefault();
-    const { symptoms, prescription, notes } = e.target;
-    console.log(symptoms.value, prescription.value, notes.value);
+    const { symptoms, notes , diagnosis } = e.target;
+    // console.log(symptoms.value, prescription.value, notes.value);
+    console.log(diagnosis.value)
     try {
       await dispatch(
         recordAppointment({
           appointmentID: myParam,
           symptoms: symptoms.value,
-          prescription: prescription.value,
+          prescription: medications,
           notes: notes.value,
+          patientName: patient.name,
+          diagnosis : diagnosis.value,
+          email: patient.email,
         })
       ).unwrap();
       toast({
@@ -139,6 +143,46 @@ const DoctorAppointment = () => {
 }
 
   },[verify])
+  const doctorID = useSelector((state) => state.user.user.doctorID);
+  const [medications, setMedications] = useState([
+   
+  ]);
+
+  const [newMed, setNewMed] = useState({
+    name: '',
+    dose: '',
+    frequency: '',
+    duration: '',
+  });
+
+  // Handler to update an existing medication in the table
+  const handleChange = (id, field, value) => {
+    const updatedMedications = medications.map((med) => 
+      med.id === id ? { ...med, [field]: value } : med
+    );
+    setMedications(updatedMedications);
+  };
+
+  const addRow = () => {
+    if (newMed.name && newMed.dose && newMed.frequency && newMed.duration) {
+      const newEntry = { id: medications.length + 1, ...newMed };
+      setMedications([...medications, newEntry]);
+      setNewMed({ name: '', dose: '', frequency: '', duration: '' }); // Reset input fields after adding
+    }
+    else toast({
+      title: "Please fill all fields",
+    })
+  };
+
+  const deleteRow = (id) => {
+    setMedications(medications.filter((med) => med.id !== id));
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewMed({ ...newMed, [name]: value });
+  };
+  
 
   return (
     <div className="flex h-screen ">
@@ -148,10 +192,10 @@ const DoctorAppointment = () => {
       <div className=" flex justify-between p-5">
         <h1 className=" text-left text-2xl font-bold  ">MedID</h1>
         <div className="flex gap-4">
-          <Link to="/user" className="text-green-500">
+        <Link to={`/doctor/${doctorID}`} className="text-green-500">
             Home
           </Link>
-          <Link to="/profile" className="text-green-500">
+          <Link to={`/doctor/${doctorID}/profile/`} className="text-green-500">
             Profile
           </Link>
         </div>
@@ -365,13 +409,21 @@ const DoctorAppointment = () => {
           </div>
             
        { !verify &&   <Button className="bg-green-500 p-2 rounded-md w-fit " onClick={async (e)=>{setOpen(true)
-          console.log(patient)
+          // console.log(patient)
             await dispatch(generateOTP({ email : patient.email}));
           }}>Get Patient's History</Button>}
 
           <form onSubmit={submit}>
         <section className="flex flex-col md:flex-row gap-2">
 
+          <div className="w-full">
+            <h3 className=" font-semibold">Diagnosis</h3>
+            <div className=" flex items-center  bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
+
+            <Input className=" flex-growth border-0 shad-input text-zinc-100 font-normal" id="diagnosis" />
+            </div>
+        
+          </div>
           <div className="w-full">
             <h3 className=" font-semibold">Symptoms</h3>
             <div className=" flex items-center  bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
@@ -380,15 +432,133 @@ const DoctorAppointment = () => {
             </div>
         
           </div>
-          <div className="w-full">
-            <h3 className=" font-semibold">Prescription</h3>
-            <div className=" flex items-center  bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
-
-            <Input className=" flex-growth border-0 shad-input text-zinc-100 font-normal" id="prescription" />
-            </div>
-        
-          </div>
+          
+          
         </section>
+        <div style={{ padding: '20px' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr style={{  textAlign: 'left' }}>
+            <th style={{ padding: '10px', border: '1px solid ' }}>#</th>
+            <th style={{ padding: '10px', border: '1px solid ' }}>Medication</th>
+            <th style={{ padding: '10px', border: '1px solid ' }}>Dose</th>
+            <th style={{ padding: '10px', border: '1px solid ' }}>Frequency</th>
+            <th style={{ padding: '10px', border: '1px solid ' }}>Duration</th>
+            <th style={{ padding: '10px', border: '1px solid ' }}>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {medications.map((med) => (
+            <tr key={med.id}>
+              <td style={{ padding: '10px', border: '1px solid ' }}>{med.id}</td>
+              <td style={{ padding: '10px', border: '1px solid ' }}>
+                <Input
+                className="flex-growth border-0 shad-input text-zinc-100 font-normal"
+                type="text"
+                  value={med.name}
+                  onChange={(e) => handleChange(med.id, 'name', e.target.value)}
+                  style={{ width: '100%' }}
+                />
+              </td>
+              <td style={{ padding: '10px', border: '1px solid ' }}>
+                <Input
+                className="flex-growth border-0 shad-input text-zinc-100 font-normal"
+                type="text"
+                  value={med.dose}
+                  onChange={(e) => handleChange(med.id, 'dose', e.target.value)}
+                  style={{ width: '100%' }}
+                />
+              </td>
+              <td style={{ padding: '10px', border: '1px solid ' }}>
+                <Input
+                className="flex-growth border-0 shad-input text-zinc-100 font-normal"
+                type="text"
+                  value={med.frequency}
+                  onChange={(e) => handleChange(med.id, 'frequency', e.target.value)}
+                  style={{ width: '100%' }}
+                />
+              </td>
+              <td style={{ padding: '10px', border: '1px solid ' }}>
+                <Input
+                className="flex-growth border-0 shad-input text-zinc-100 font-normal"
+                type="text"
+                  value={med.duration}
+                  onChange={(e) => handleChange(med.id, 'duration', e.target.value)}
+                  style={{ width: '100%' }}
+                />
+              </td>
+              <td style={{ padding: '10px', border: '1px solid ' }}>
+                <button onClick={() => deleteRow(med.id)}>Delete</button>
+              </td>
+            </tr>
+          ))}
+           <tr>
+            <td style={{ padding: '10px', border: '1px solid #ddd' }}>{medications.length + 1}</td>
+            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+              <Input
+                type="text"
+                name="name"
+                placeholder="Medication Name"
+                value={newMed.name}
+                onChange={handleInputChange}
+                style={{ width: '100%' }}
+                className="flex-growth border-0 shad-input text-zinc-100 font-normal"
+
+              />
+            </td>
+            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+              <Input
+                type="text"
+                name="dose"
+                placeholder="Dose"
+                value={newMed.dose}
+                onChange={handleInputChange}
+                style={{ width: '100%' }}
+                className="flex-growth border-0 shad-input text-zinc-100 font-normal"
+
+              />
+            </td>
+            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+             
+          <select
+            defaultValue="adhaar"
+            className=" bg-dark-400 text-white w-full p-2 rounded-md"
+            name="frequency"
+            value={newMed.frequency}
+            onChange={handleInputChange}
+          >
+             <option value="0-0-1-after">0-0-1 After Meal</option>
+    <option value="0-1-1-after Meal">0-1-1 After Meal</option>
+    <option value="1-0-1-after Meal">1-0-1 After Meal</option>
+    <option value="1-1-1-after Meal">1-1-1 After Meal</option>
+    <option value="0-0-1-before Meal">0-0-1 Before Meal</option>
+    <option value="0-1-1-before Meal">0-1-1 Before Meal</option>
+    <option value="1-0-1-before Meal">1-0-1 Before Meal</option>
+    <option value="1-1-1-before Meal">1-1-1 Before Meal</option>
+
+            </select >
+            </td>
+            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+              <Input
+                type="text"
+                name="duration"
+                placeholder="Duration"
+                value={newMed.duration}
+                onChange={handleInputChange}
+                style={{ width: '100%' }}
+                className="flex-growth border-0 shad-input text-zinc-100 font-normal"
+
+              />
+            </td>
+            <td style={{ padding: '10px', border: '1px solid ' }} className="text-green-400">
+              <button type="button" onClick={addRow}>Add Medication</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+   
+    </div>
           <div className="w-full">
             <h3 className=" font-semibold">Notes</h3>
             <div className=" flex items-center  bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">

@@ -32,6 +32,8 @@ router.post("/updateuser",verifyJWT,updatePatient)
 router.post("/patientexist",patientExist)
 router.post("/getdoctordetails",verifyJWT,doctorController.getDoctorDetails)
 router.post("/logout",authController.logout)
+router.post("/updatedoctordetails",verifyJWT,doctorController.updateDoctorDetails)
+router.post("/forgotid" , authController.forgotID)
 
 
 export default router;

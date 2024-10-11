@@ -28,7 +28,7 @@ const PatientSchema = new Schema({
   address: String,
   occupation: String,
   emergencyContactName: String,
-  emergencyPhone: String,
+  emergencyPhone: Number,
   insuranceProvider: String,
   insurancePolicyNumber: String,
   currentMedication: String,

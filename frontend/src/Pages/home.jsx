@@ -18,11 +18,11 @@ const [open, setOpen] = React.useState(false);
 const loading = useSelector(getLoading)
 const [type, setType] = React.useState("new");
 const[oldType, setOldType] = React.useState("patient");
-const [newType, setNewType] = React.useState("doctor");
+const [newType, setNewType] = React.useState("patient");
 
   return (
     <div className="flex h-screen max-h-screen  ">
-      {open && <Otp setOpen={setOpen} open={open} type={type} ldType={oldType} NewType={newType} />}
+      {open && <Otp setOpen={setOpen} open={open} type={type} oldType={oldType} newType={newType} />}
 
 <h1 className=" text-left text-2xl font-bold absolute top-4 left-4">MedID</h1>
       <section className="remove-scrollbar container my-auto md:flex md:flex-row md:gap-20 ">

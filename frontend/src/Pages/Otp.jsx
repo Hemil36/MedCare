@@ -38,6 +38,7 @@ export const Otp = ({  setOpen , open , type , newType,oldType }) => {
 
   const validatePasskey = async (e) => {
     e.preventDefault();
+    console.log(newType)
 
 
     if(type === "new"){

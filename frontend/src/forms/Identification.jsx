@@ -80,11 +80,7 @@ const Identification = ({ errors, register, control }) => {
                     type="file"
                     {...getInputProps()}
                     onChange={async (data) => {
-                      // console.log(data.target.files[0].size);
-                      // if(data.target.files[0].size > 7152){
-                      //       return toast({
-                      //         title: "File size too large"})
-                      // }
+                     
                       const t = await onUpload(data);
                       setFile(t);
                       field.onChange(t);

@@ -1,19 +1,23 @@
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet, PDFDownloadLink } from '@react-pdf/renderer';
+import CryptoJS from 'crypto-js';
 
-// Custom professional styles
+// Custom styles reflecting the uploaded image
 const styles = StyleSheet.create({
   page: {
-    padding: 30,
+    padding: 40,
     fontFamily: 'Helvetica',
-    backgroundColor: '#f8f8f8',
+    backgroundColor: '#f7f7f7',
+    border: '1px solid #e0e0e0',
+    color: '#333',
   },
   headerSection: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 20,
-    borderBottom: '1 solid #eee',
+    marginBottom: 30,
+    borderBottomWidth: 2,
+    borderBottomColor: '#ddd',
     paddingBottom: 10,
   },
   headerLeft: {
@@ -23,7 +27,14 @@ const styles = StyleSheet.create({
   headerRight: {
     fontSize: 10,
     textAlign: 'right',
-    color: '#888',
+    color: '#555',
+  },
+  title:{
+    fontSize: 20,
+    marginBottom: 20,
+    color: '#333',
+    fontWeight: 'bold',
+    
   },
   patientInfo: {
     fontSize: 11,
@@ -31,38 +42,39 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   diagnosis: {
-    fontSize: 12,
-    color: '#3A42D1', // Professional blue shade
-    marginBottom: 20,
+    fontSize: 14,
+    color: '#2b5797', // Professional dark blue shade
+    marginBottom: 15,
     fontWeight: 'bold',
     textTransform: 'uppercase',
   },
   table: {
     display: 'table',
     width: 'auto',
-    marginVertical: 10,
+    marginVertical: 15,
     borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: '#D3D3D3',
+    borderColor: '#ccc',
     borderRadius: 5,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#fff',
   },
   tableRow: {
     flexDirection: 'row',
-    borderBottomColor: '#D3D3D3',
+    borderBottomColor: '#eee',
     borderBottomWidth: 1,
-    paddingVertical: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 5,
   },
   tableRowHeader: {
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#e0e7ff',
     paddingVertical: 10,
   },
   tableColHeader: {
     fontWeight: 'bold',
-    color: '#6A008A',
+    color: '#0a58ca',
     fontSize: 10,
     textAlign: 'left',
-    paddingLeft: 8,
+    paddingLeft: 5,
   },
   tableCol: {
     width: '20%',
@@ -78,20 +90,22 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
     marginTop: 20,
-    paddingTop: 10,
-    borderTop: '1 solid #eee',
+    paddingTop: 15,
+    borderTop: '1 solid #ddd',
   },
   followUp: {
     fontSize: 11,
     fontWeight: 'bold',
-    color: '#3A42D1',
-    marginTop: 20,
+    color: '#2b5797',
+    marginTop: 25,
   },
 });
 
-// Professional Prescription PDF component
+// Prescription PDF component
 const ProfessionalPrescriptionPDF = ({ data }) => {
   const { patientName, patientAge, contactNumber, diagnosis, medicines, followUpDate } = data;
+  const hash = generateHash({ patientName, diagnosis, medicines, followUpDate });
+
 
   return (
     <Document>
@@ -99,8 +113,9 @@ const ProfessionalPrescriptionPDF = ({ data }) => {
         {/* Header Section */}
         <View style={styles.headerSection}>
           <View style={styles.headerLeft}>
-            <Text>{patientName}, Male, {patientAge} year(s)</Text>
-            <Text>+{contactNumber}</Text>
+          <Text style={styles.title}>MedCare</Text>
+            <Text>Patient : {patientName}</Text>
+            <Text>Contact Number : +{contactNumber}</Text>
           </View>
           <View style={styles.headerRight}>
             <Text>Prescription Date: {new Date().toLocaleDateString()}</Text>
@@ -145,17 +160,22 @@ const ProfessionalPrescriptionPDF = ({ data }) => {
         ))}
 
         {/* Follow-up Information */}
-        <Text style={styles.followUp}>FOLLOW-UP: Visit on {followUpDate}</Text>
 
         {/* Footer */}
         <Text style={styles.footer}>
           This is a digitally generated prescription.
+        </Text>
+        <Text style={styles.footer}>
+          Digital Signature : {hash}
         </Text>
       </Page>
     </Document>
   );
 };
 
+const generateHash = (data) => {
+  return CryptoJS.SHA256(JSON.stringify(data)).toString(CryptoJS.enc.Hex);
+};
 // Main Component to download the PDF
 const ProfessionalPrescriptionGenerator = () => {
   // Prescription data
@@ -194,7 +214,6 @@ const ProfessionalPrescriptionGenerator = () => {
         remarks: '1ટેબ્લેટ - સવાર નાસ્તા પછી અને રાત્રે.',
       },
     ],
-    followUpDate: 'Thu Jan 04 2024',
   };
 
   return (

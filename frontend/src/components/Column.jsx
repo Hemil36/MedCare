@@ -6,6 +6,12 @@ import { AppointmentDialog } from "./AppointmentDialog"
 import { StatusBadge } from "./Status";
 import React from "react";
 
+const url = window.location.pathname;
+
+const parts = url.split('/'); // This splits the URL into parts
+const doctorID = parts[2];
+console.log(doctorID);
+
 export const columns = [
   {
     header: "#",
@@ -82,7 +88,7 @@ export const columns = [
        {
          appointment?.appointment?.status === "scheduled" ?
          <button >
-           <Link to={`/doctor/appointment/${appointment.appointment._id}`} className=" capitalize text-[#ffd147]">
+           <Link to={`/doctor/${doctorID}/appointment/${appointment.appointment._id}`} className=" capitalize text-[#ffd147]">
           Record Appointment
          </Link>
          </button> 

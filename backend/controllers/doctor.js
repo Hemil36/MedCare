@@ -3,6 +3,9 @@ import Appointment from "../models/AppointmentRecord.js";
 import doctor from "../models/Doctor.js";
 import Patient from "../models/User.js";
 import { appointmentEmail, confirmEmail } from "./email.js";
+import jsPDF from 'jspdf';
+import CryptoJS from 'crypto-js';
+
 export const getdoctor = async (req, res) => {
     try {
         const doctorList = await doctor.find();
@@ -19,13 +22,54 @@ export const getdoctor = async (req, res) => {
 
 }
 
+const transporter = nodemailer.createTransport({
+    service: 'Gmail', // or another email service
+    auth: {
+      user: "medid.helpdesk@gmail.com", // your email
+      pass: "yrrr vsfj dxiv gkdr", // your email password
+    },
+  });
+
+export const updateDoctorDetails = async (req, res) => {
+    const {  name , email ,phone ,clinicPhoneNumber , clinicAddress,photo} = req.body.data;
+    const {doctorID} = req.body;
+    // console.log(req.body);
+   
+    if (!doctorID) {
+        return res.status(400).json({ message: "Please enter doctorID" });
+    }
+    
+    if (!name || !email || !phone || !clinicPhoneNumber || !clinicAddress || !photo) {
+        return res.status(400).json({ message: "All fields are required" });
+    }
+    
+    try {
+        const doctorDetails = await doctor.findOne({doctorId:doctorID});
+        if(!doctorDetails){
+            return res.status(400).json({message: "Doctor not found"});
+        }
+        doctorDetails.name = name;
+        doctorDetails.email = email;
+        doctorDetails.phone = phone;
+        doctorDetails.clinicPhoneNumber = clinicPhoneNumber;
+        doctorDetails.clinicAddress = clinicAddress;
+        doctorDetails.photo = photo;
+        await doctorDetails.save();
+        res.status(200).json(doctorDetails);
+    } catch (error) {
+        res.json(error);
+        console.log(error);
+    }
+}
+
+
 export const getDoctorDetails = async (req, res) => {
     const { doctorID } = req.body;
     if(!doctorID){
         return res.status(400).json({message: "Please enter doctorID"});
     }
     try {
-        const doctorDetails = await doctor.findOne({doctorID});
+        const doctorDetails = await doctor.findOne({doctorId:doctorID});
         if(!doctorDetails){
             return res.status(400).json({message: "Doctor not found"});
         }
@@ -38,7 +82,8 @@ export const getDoctorDetails = async (req, res) => {
 
 
 export const recordAppointment = async (req, res) => {
-    const { appointmentID , symptoms , notes , prescription } = req.body;
+    const { appointmentID , symptoms , notes , prescription ,patientName , diagnosis} = req.body;
+    console.log(req.body);
     if(!appointmentID){
         return res.status(400).json({message: "Please enter appointmentID"});
     }
@@ -52,7 +97,13 @@ export const recordAppointment = async (req, res) => {
         appointment.symptoms = symptoms;
         appointment.notes = notes;
         appointment.prescription = prescription;
+        appointment.diagnosis = diagnosis;
         await appointment.save();
+        await sendEmailWithPDF({data: req.body});
+
+
+        
+
         res.status(201).json(appointment);
     } catch (error) {
         res.json(error);
@@ -60,11 +111,59 @@ export const recordAppointment = async (req, res) => {
     }
 }
 
+import nodemailer from 'nodemailer';
+import { generatePDFKitPrescriptionBuffer } from "./email.js";
+
+// Function to send email with PDF attachment
+const sendEmailWithPDF = async ({data}) => {
+  // Create a transporter object using SMTP transport
+  const email = data.email;
+ 
+
+  // Generate the PDF as a buffer
+  const pdfBuffer = await new Promise((resolve, reject) => {
+    const bufferStream = generatePDFKitPrescriptionBuffer(data);
+    const chunks = [];
+    bufferStream.on('data', chunk => chunks.push(chunk));
+    bufferStream.on('end', () => resolve(Buffer.concat(chunks)));
+    bufferStream.on('error', reject);
+  });
+
+  // Define email options
+  const mailOptions = {
+    from: {
+      name: 'MedID',
+      address: 'medid.helpdesk@gmail.com'
+    }, // sender address
+    to: email, // recipient address
+    subject: 'Your Prescription',
+    text: 'Please find attached your prescription.',
+    attachments: [
+        {
+          filename: 'Prescription.pdf',
+          content: pdfBuffer,
+          encoding: 'base64',
+        },
+      ],
+  };
+
+
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Email sent:', info.response);
+  } catch (error) {
+    console.error('Error sending email:', error);
+  }
+};
+
+// Example usage
+
 
 export const scheduleappointment = async (req, res) => {
 
-    const { doctorID, patientID,date , email , patientName , address , doctorName} = req.body;
-    // console.log(req.body , "body")
+    const { doctorID, patientID,date, email , patientName , address , doctorName} = req.body;
+    console.log( "body")
     if(!doctorID || !patientID){
         return res.status(400).json({message: "Please enter doctorID and patientID"});
     }
@@ -75,7 +174,7 @@ export const scheduleappointment = async (req, res) => {
             patientID,
             date: date
         });
-        (await appointment.populate('doctorID')).save();
+        (await appointment.populate('doctorId')).save();
 try{
 
    await appointmentEmail({email, date,  doctorName, patientName,address})
@@ -84,7 +183,7 @@ catch(err){
     console.log(err)
 }
 
-        res.status(201).json(appointment._id);
+        res.status(201).json({appointmentId : appointment._id , });
     } catch (error) {
         res.json(error)
     }
@@ -98,6 +197,7 @@ export const getAppointmentDetails = async (req, res) => {
     }
     try {
         const objectid  = new mongoose.Types.ObjectId(appointmentID)
+        console.log("HERE")
         const appointment = await Appointment.findById({_id: objectid});
 
         const doctorDetails = await doctor.findOne({ doctorID : appointment.doctorID.toString() });
@@ -133,7 +233,6 @@ export const getAppointment = async (req, res) => {
                 console.log(e);
             }
         }));
-        console.log(newData);
         res.status(200).json(newData);
     } catch (error) {
         res.json(error);
@@ -227,7 +326,8 @@ export const getAppointmentByPatient = async (req, res) =>
             }
             const newData = await Promise.all(  appointment.map(async (data) => {
                 try{
-                    const doctorDetails = await doctor.findOne({ doctorID : data.doctorID });
+                    const doctorDetails = await doctor.findOne({ doctorId : data.doctorID });
+                    
                     const patientDetails = await Patient.findOne({ patientID : data.patientID.toString() });
                     return {appointment: data, doctorDetails : doctorDetails.name , patientDetails : patientDetails.name};
                 }
@@ -275,3 +375,4 @@ export const getAppointmentByPatient = async (req, res) =>
             res.status(403).json({message : "Error"});
         }
     }
+

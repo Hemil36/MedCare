@@ -56,7 +56,7 @@ const UserAppoint = () => {
   }, []);
 
   const sortedAppointments = appointments?.sort(
-    (a, b) => new Date(a.appointment.date) - new Date(b.appointment.date)
+    (a, b) => new Date(a?.appointment.date) - new Date(b?.appointment?.date)
   );
 
   // Get the current date and time
@@ -64,16 +64,16 @@ const UserAppoint = () => {
 
   // Find last appointment (the latest one before now)
   const lastAppointment = sortedAppointments
-    ?.filter((appt) => new Date(appt.appointment.date) < now)
+    ?.filter((appt) => new Date(appt?.appointment?.date) < now)
     .pop();
-  const lastAppointmentDate = new Date(lastAppointment?.appointment.date);
+  const lastAppointmentDate = new Date(lastAppointment?.appointment?.date);
   // Find upcoming appointment (the earliest one after now)
   console.log(lastAppointment);
   const upcomingAppointment = sortedAppointments?.find(
-    (appt) => new Date(appt.appointment.date) > now
+    (appt) => new Date(appt?.appointment?.date) > now
   );
   const upcomingAppointmentDate = new Date(
-    upcomingAppointment?.appointment.date
+    upcomingAppointment?.appointment?.date
   );
   return (
     <div className="w-full h-full">
@@ -132,10 +132,10 @@ const UserAppoint = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {appointments.map((appointment) => {
+                    {appointments?.map((appointment) => {
                       console.log(appointment)
                       console.log(appointments)
-                      const date = new Date(appointment.appointment.date);
+                      const date = new Date(appointment?.appointment?.date);
                       return (
                         <Dialog key={appointment._id}>
                           <DialogTrigger asChild>
@@ -144,7 +144,7 @@ const UserAppoint = () => {
                               className="hover:cursor-pointer"
                             >
                               <TableCell className="font-medium text-nowrap">
-                                {appointment.doctorDetails}
+                                {appointment?.doctorDetails}
                               </TableCell>
                               <TableCell>{date.toDateString()}</TableCell>
                             </TableRow>

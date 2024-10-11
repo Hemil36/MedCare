@@ -48,12 +48,7 @@ export const PatientFormValidation = z.object({
     return byteSize <= 1* 1024 * 1024},{
       "message": "File size too large"
     }),
-    treatmentConsent: z
-      .boolean()
-      .default(false)
-      .refine((value) => value === true, {
-        message: "You must consent to treatment in order to proceed",
-      }),
+   
     privacyConsent: z
       .boolean()
       .default(false)

@@ -19,6 +19,7 @@ const RequestSuccess =  () => {
         try {
           const response = await dispatch(getAppointmentDetails({appointmentID})).unwrap();
           setAppointment(response?.appointment);
+          console.log(response, "response");
           setDoctor(response?.doctorDetails);
         } catch (error) {
           console.log(error, "error");
@@ -28,7 +29,7 @@ const RequestSuccess =  () => {
 
     }, []);
 
-    const date = new Date(appointment?.date) ;
+    const date = new Date(appointment?.date);
     
 //   const appointmentId = (searchParams?.appointmentId ) || "";
 //   const appointment = await getAppointment(appointmentId);
@@ -62,7 +63,7 @@ const RequestSuccess =  () => {
           <p>Requested appointment details: </p>
           <div className="flex items-center gap-3">
             <img
-              src={doctor?.avatar}
+              src={doctor?.photo}
               alt="doctor"
               width={100}
               height={100}

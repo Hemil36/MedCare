@@ -58,7 +58,7 @@ const loading = useSelector(getLoading)
       if (type === 'new' && newType === 'patient') {
           await handleNewUserSubmission(email.value, name.value, PhoneNumber.value);
         
-      }else if(type === 'new' && newType === 'Doctor'){
+      }else if(type === 'new' && newType === 'doctor'){
         await handleDoctorSubmission({email:email.value, name : name.value , PhoneNumber :PhoneNumber.value});
       }
        else if (oldType === 'patient') {
@@ -67,7 +67,7 @@ const loading = useSelector(getLoading)
         await handleExistingDoctorSubmission(email.value, doctorID.value);
       }
     } catch (err) {
-      console.error(err);
+      console.log(err);
       toast({ title: 'Error', description: err.message });
     } finally {
       dispatch(setLoading(false));
@@ -118,12 +118,18 @@ const loading = useSelector(getLoading)
 
   const handleExistingPatientSubmission = async (email, patientID) => {
     
-    const a = await dispatch(verifyUser({ email, patientID })).unwrap();
-    if (!a) throw new Error('Invalid credentials');
+    try{
+   await dispatch(verifyUser({ email, patientID })).unwrap();
+    
 
     await dispatch(setLogin({ email, patientID }));
     await dispatch(generateOTP({ email }));
     setOpen(true);
+    }
+    catch(err){
+      console.log(err)
+      toast({title : err})
+    }
   };
 
   const handleExistingDoctorSubmission = async (email, doctorID) => {

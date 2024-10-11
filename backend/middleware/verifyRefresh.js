@@ -3,7 +3,7 @@ export const verifyRefresh = async (req, res) => {
 
     const cookie = req.cookies.jwt;
     // console.log(cookie)
-
+console.log("refresh")
     if (!cookie) {
         return res.status(403).json({ message: "Token is required" });
     }
@@ -14,6 +14,8 @@ export const verifyRefresh = async (req, res) => {
         {
             return res.status(403).json({ message: "Refresh Token Expired" });
         }
+
+
 
         return res.status(200).json({})
     });

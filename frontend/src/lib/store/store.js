@@ -1,5 +1,5 @@
 // src/lib/store/store.js
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, createStore } from '@reduxjs/toolkit';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
 import userReducer from './UserSlice';
@@ -18,4 +18,10 @@ export const store = configureStore({
   },
 });
 
+// export const store = createStore(persistedReducer);
+
+
 export const persistor = persistStore(store);
+
+// persistor.purge(); // Clears the stored state
+

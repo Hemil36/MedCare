@@ -25,10 +25,10 @@ export const DoctorFormValidation = z.object({
       .string()
       .min(2, "Contact name must be at least 2 characters")
       .max(50, "Contact name must be at most 50 characters"),
-    emergencyPhone: z
+    clinicPhoneNumber: z
       .string()
       .refine(
-        (emergencyPhone) => /^\d{10}$/.test(emergencyPhone),
+        (clinicPhoneNumber) => /^\d{10}$/.test(clinicPhoneNumber),
         "Invalid phone number"
       ),
     identificationType: z.string(),
@@ -37,6 +37,12 @@ export const DoctorFormValidation = z.object({
     return byteSize <= 1* 1024 * 1024},{
       "message": "File size too large"
     }),
+    photo: z.string().min(2, "Upload a valid identification document").refine((str)=> { const byteSize = new TextEncoder().encode(str).length;
+      return byteSize <= 1* 1024 * 1024},{
+        "message": "File size too large"
+      }),
+
+
     speciality: z.string().min(4, "Speciality must be at least 2 characters"),
     graduationYear: z.string().max(new Date().getFullYear()),
     degree: z.string().min(4, "Degree must be at least 2 characters"),

@@ -10,7 +10,7 @@ import { User, Phone, Mail, OctagonX, Loader } from "lucide-react";
 
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useFormHandler from "@/forms/validation/home";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -52,7 +52,7 @@ const PatientForm = ({ setOpen,  type, setType , setOldType , setNewType , oldTy
             >
               <TabsList>
                 <TabsTrigger value="patient">Patient</TabsTrigger>
-                <TabsTrigger value="Doctor">Doctor</TabsTrigger>
+                <TabsTrigger value="doctor">Doctor</TabsTrigger>
               </TabsList>
             </Tabs>
             <div className=" flex-1 text-gray-500 my-2">
@@ -127,7 +127,7 @@ const PatientForm = ({ setOpen,  type, setType , setOldType , setNewType , oldTy
             >
               <TabsList>
                 <TabsTrigger value="patient">Patient</TabsTrigger>
-                <TabsTrigger value="Doctor">Doctor</TabsTrigger>
+                <TabsTrigger value="doctor">Doctor</TabsTrigger>
               </TabsList>
               <TabsContent value="patient">
                 <div className=" flex-1 text-gray-500 my-2">
@@ -176,7 +176,7 @@ const PatientForm = ({ setOpen,  type, setType , setOldType , setNewType , oldTy
                   )}
                 </Button>
               </TabsContent>
-              <TabsContent value="Doctor">
+              <TabsContent value="doctor">
                 <div className=" flex-1 text-gray-500 my-2">
                   <Label htmlFor="name" className="flex">
                     <span
@@ -211,6 +211,7 @@ const PatientForm = ({ setOpen,  type, setType , setOldType , setNewType , oldTy
                     />
                   </div>
                 </div>
+                 
 
                 <Button type="submit" className="mt-4 shad-primary-btn w-full">
                   {loading ? (
@@ -223,6 +224,9 @@ const PatientForm = ({ setOpen,  type, setType , setOldType , setNewType , oldTy
                   )}
                 </Button>
               </TabsContent>
+         <Link to="/forgotId" className="text-green-500">
+                  Forgot ID
+                  </Link>
             </Tabs>
           </>
         )}

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import medicineSchema from "./Medicine.js";
 
 const Schema = mongoose.Schema;
 
@@ -9,8 +10,9 @@ const appointmentSchema = new mongoose.Schema({
     notes: { type: String },
     doctorID : { type: String, required: true },
     symptoms: { type: String },
-    prescription: { type: String },
-    status: { type: String, default: "pending" }
+    prescription: [medicineSchema],
+    status: { type: String, default: "pending" , required: true},
+    diagnosis: { type: String },
   });
 
 

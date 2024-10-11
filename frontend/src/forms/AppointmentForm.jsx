@@ -124,7 +124,7 @@ const AppointmentForm = ({type , appointment,setOpen,l}) => {
                 />
               )}
             />
-              
+             
           </div>
             {
               errors.schedule && <span className="text-red-500 text-sm">{errors.schedule.message}</span>

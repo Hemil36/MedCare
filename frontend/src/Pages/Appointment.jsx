@@ -91,7 +91,9 @@ const Appointment = ({ type }) => {
   const navigate = useNavigate();
   const onSubmit = async (data) => {
     try {
-      const doc = doctor?.find((doc)=>{return doc.doctorID === data.doctor })
+      console.log(data);
+      const doc = doctor?.find((doc)=>{return doc.doctorId === data.doctor })
+      console.log(doc)
       const appointmentID = await dispatch(
         scheduleAppointment({
           doctorID: data.doctor,
@@ -108,6 +110,7 @@ const Appointment = ({ type }) => {
         `/patient/${patientID}/appointment/success?appointmentID=${appointmentID}`
       );
     } catch (e) {
+      console.log(e)
       toast({
         title: "Error",
         description: "Try Again after some time",
@@ -139,13 +142,14 @@ const Appointment = ({ type }) => {
                   render={({ field }) => (
                     <Select
                       onValueChange={(e) => {
+                        console.log(e);
                         field.onChange(e);
                       }}
                       value={field.value}
                     >
                       <SelectTrigger className="shad-select-trigger">
                         {field.value
-                          ? doctor.find((doc) => doc.doctorID === field.value)
+                          ? doctor.find((doc) => doc.doctorId == field.value)
                               .name
                           : "Select Doctor"}
                       </SelectTrigger>
@@ -159,12 +163,13 @@ const Appointment = ({ type }) => {
                             )
                             .map((doc) => (
                               <HoverCard
-                                key={doc.doctorID}
-                                value={doc.doctorID}
+                                key={doc.doctorId}
+                                value={doc.doctorId}
                                 doctor={doc}
                                 className="hover-card"
                               />
                             ))}
+                          
                       </SelectContent>
                     </Select>
                   )}

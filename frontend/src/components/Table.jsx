@@ -25,7 +25,6 @@ export function DataTable({ columns, data }) {
     setFiltering(data2);
   },[data]);
   // data=filtering
-  console.log(filtering)
 
 
   const table = useReactTable({

@@ -36,110 +36,145 @@ import {
   getUser,
   setProfile,
 } from "@/lib/store/UserSlice";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from '@hookform/resolvers/zod';
 import { PatientFormValidation } from "@/forms/validation/patientRegister";
 import { Textarea } from "@/components/ui/textarea";
 import { useDropzone } from "react-dropzone";
-import { getDoctorDetails, updatePatient } from "@/lib/store/AsyncThunks";
+import { getDoctorDetails, updateDoctorDetails, updatePatient } from "@/lib/store/AsyncThunks";
 import { toast } from "@/components/ui/use-toast";
-import { Link, useNavigate } from "react-router-dom";
-import { profileValidation } from "@/forms/validation/UpdateProfile";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { docprofileValidation, profileValidation } from "@/forms/validation/UpdateProfile";
+import { onUpload } from "@/forms/fileUploader";
 
 const DocProfile = () => {
   const dispatch = useDispatch();
   const error = {};
 
   const user = useSelector(getProfile);
-  console.log(user);
+
 
   const [file, setFile] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
   const [doctor, setDoctor] = React.useState(null);
   const navigate = useNavigate();
-  console.log(user);
- 
-  useEffect(() => {
-    const fetchDoctorDetails = async () => {
-      try {
-        const response = await dispatch(getDoctorDetails()).unwrap();
-        setDoctor(response.data);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    if (user.doctorID) {
-      fetchDoctorDetails();
-    }
-  }, [dispatch, user.doctorID]);
-
-  console.log(doctor);
-
-  const onSubmit = async (data) => {
-    console.log(data);
-    try {
-      await dispatch(updatePatient({ patientID: user.patientID, data }));
-      toast({
-        title: "Profile Updated",
-        description: "Your profile has been updated successfully",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-
-      dispatch(setProfile(data));
-    } catch (e) {
-      toast({
-        title: "An Error Occoured",
-      });
-    }
-  };
-
-  const [date, setDate] = React.useState(user?.birthDate);
-
+  const doctorID = useSelector((state) => state.user.user.doctorID);
+  const onDrop = useCallback((acceptedFiles) => {
+    acceptedFiles.forEach((file) => {
+      const reader = new FileReader();
+      
+      reader.onabort = () => console.log("file reading was aborted");
+      reader.onerror = () => console.log("file reading has failed");
+      reader.onload = () => {
+        // Do whatever you want with the file contents
+        const binaryStr = reader.result;
+        console.log(binaryStr);
+      };
+      reader.readAsArrayBuffer(file);
+    });
+  }, []);
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
   const {
     control,
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(profileValidation),
     defaultValues: {
       name: doctor?.name,
       email: doctor?.email,
       phone: doctor?.phone,
       birthDate: doctor?.birthDate,
       gender: doctor?.gender,
-      address: doctor?.address,
-      occupation: doctor?.occupation,
-      emergencyContactName: doctor?.emergencyContactName,
-      emergencyPhone: doctor?.emergencyPhone,
-    },
-  });
+      ClinicPhoneNumber: doctor?.ClinicPhoneNumber,
+      clinicAddress: doctor?.clinicAddress,
+      photo : doctor?.photo
 
-  console.log(doctor);
-  if (!doctor) {
-    return <div>Loading...</div>;
+    }
+  });
+ 
+  useEffect(() => {
+    const fetchDoctorDetails = async () => {
+      try {
+        const response = await dispatch(getDoctorDetails({ doctorID })).unwrap();
+        setDoctor(response);
+        setFile(response.photo);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    if (doctorID) {
+      fetchDoctorDetails();
+    }
+  }, [dispatch, doctorID]);
+
+  useEffect(() => {
+    if (doctor) {
+      reset({
+        name: doctor.name,
+        email: doctor.email,
+        phone: doctor.phone.toString(),
+        birthDate: doctor.birthDate,
+        clinicAddress: doctor.clinicAddress,
+        clinicPhoneNumber: doctor.clinicPhoneNumber.toString(),
+        gender:doctor?.gender,
+        photo: doctor.photo
+
+        // Add other fields as needed
+      });
+    }
+  }, [doctor, reset]);
+//   console.log(doctor);
+
+  
+
+  const [date, setDate] = React.useState(user?.birthDate);
+ 
+const submit =  (data) => {
+
+  try{
+    dispatch(updateDoctorDetails({doctorID: user.doctorID, data}));
+    toast({
+      title: "Profile Updated",
+      description: "Your profile has been updated successfully",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    dispatch(setProfile(data));
   }
+  catch(e){
+    toast({
+      title: "An Error Occoured",
+    });
+  }
+}
+
+ 
+
   return (
     <div className=" h-full w-full px-[5%] pt-[1%] overflow-auto   remove-scrollbar">
       <div className=" flex justify-between pb-4 pt-2">
         <h1 className=" text-left text-2xl font-bold  ">MedID</h1>
         <div className="flex gap-4">
-          <Link to="/user" className="text-green-500">
+        <Link to={`/doctor/${doctorID}`} className="text-green-500">
             Home
           </Link>
-          <Link to="/profile" className="text-green-500">
+          <Link to={`/doctor/${doctorID}/profile/`} className="text-green-500">
             Profile
           </Link>
         </div>
       </div>
       <h1 className="text-2xl font-semibold mb-3">Profile</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(submit)}>
         <div className="overflow-auto pl-2">
           <div className="flex flex-col gap-2">
-            <div className=" flex-1 text-gray-400 my-2">
+            <div className=" flex justify-between w-full">
+<div className="  flex-1 flex-col">
+
+            <div className=" flex-1  text-gray-400 my-2">
               <Label htmlFor="name">
                 <span className={cn("", { "text-red-700": error.name })}>
                   {" "}
@@ -162,6 +197,110 @@ const DocProfile = () => {
                 <span className="text-red-700"> {errors.name.message} </span>
               )}
             </div>
+            <div className=" flex-1  text-gray-400 my-2">
+                <Label htmlFor="email">
+                  <span className={cn("", { "text-red-700": error.email })}>
+                    {" "}
+                    {!error.email ? "Email Address" : error.email}{" "}
+                  </span>
+                </Label>
+                <div className=" flex items-center bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
+                  <Mail className="ml-2 " color="#ffffff" />
+                  <Input
+                    id="email"
+                    placeholder="Enter your email"
+                    className=" border-0 shad-input text-zinc-100 font-normal"
+                    autoComplete="off"
+                    {...register("email")}
+                  />
+                </div>
+                {errors.email && (
+                  <span className="text-red-700"> {errors.email.message} </span>
+                )}
+              </div>
+              <div className=" flex-1  text-gray-400 my-2">
+                <Label htmlFor="phone">
+                  <span className={cn("", { "text-red-700": error.phone })}>
+                    {" "}
+                    {!error.phone ? "Phone number" : error.phone}{" "}
+                  </span>
+                </Label>
+                <div className=" flex items-center bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
+                  <Phone className="ml-2 " color="#ffffff" />
+                  <Input
+                    id="phone"
+                    placeholder="Enter your phone"
+                    className=" border-0 shad-input text-zinc-100 font-normal"
+                    autoComplete="off"
+                    {...register("phone")}
+                  />
+                </div>
+                {errors.phone && (
+                  <span className="text-red-700"> {errors.phone.message} </span>
+                )}
+              </div>
+          </div>
+            
+            <div className=" flex flex-col pl-4 text-gray-400 my-2">
+          <Label htmlFor="verifyDoc">
+            <span>Photo</span>
+          </Label>
+
+          <div className=" flex justify-center items-center bg-dark-400 rounded-md mt-1 w-fit  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
+            <div {...getRootProps()}  className="file-upload w-full">
+              <Controller
+                name="photo"
+                control={control}
+                defaultValue={file}
+                render={({ field }) => (
+                  // />
+                  <input
+                    type="file"
+                    {...getInputProps()}
+
+                    onChange={async (data) => {
+                     
+                      const t = await onUpload(data);
+                      field.onChange(t);
+                      setFile(t);
+                    }}
+                  ></input>
+                )}
+              />
+              {file && file.length > 0 ? (
+                <>
+                  <img
+                    src={file}
+                    height={100}
+                    width={100}
+                    className=" overflow-hidden"
+                  />
+                </>
+              ) : (
+                <>
+                  <div className="file-upload_label text-center">
+                    <p className="text-14-regular ">
+                      <span className="text-green-500">Click to upload </span>
+                      or drag and drop
+                    </p>
+                    <p className="text-12-regular">
+                      SVG, PNG, JPG or GIF (max. 800x400px)
+                    </p>
+                  </div>
+                </>
+              )}
+
+              {errors.photo && (
+                <span className="text-red-700">
+                  {" "}
+                  {errors.photo.message}
+                </span>
+              )}
+            </div>
+            <div className=""></div>
+          </div>
+        </div>
+        </div>
             <div className=" flex  flex-col md:flex-row  gap-2">
               <div className=" flex-1 text-gray-400 my-2">
                 <Label htmlFor="email">
@@ -208,45 +347,35 @@ const DocProfile = () => {
             </div>
 
             <div className="flex flex-col md:flex-row gap-2">
-              <div className=" flex-1 text-gray-400 my-2">
-                <Label htmlFor="name">
-                  <span className={cn("", { "text-red-700": error.name })}>
+            <div className=" flex-1 text-gray-400 my-2">
+                <Label htmlFor="clinicPhoneNumber">
+                  <span
+                    className={cn("", { "text-red-700": error.clinicPhoneNumber })}
+                  >
                     {" "}
-                    Date of Birth{" "}
+                    {!error.clinicPhoneNumber
+                      ? "Clinic Phone Number"
+                      : error.clinicPhoneNumber}{" "}
                   </span>
                 </Label>
-                <div className=" flex items-center bg-dark-400 rounded-md mt-1 p-[0.6rem] gap-2  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
-                  <Calendar className="ml-2 " color="#ffffff" />
-
-                  <Controller
-                    name="birthDate"
-                    control={control}
-                    defaultValue={user.birthDate}
-                    render={({ field }) => (
-                      <DatePicker
-                        selected={date}
-                        onChange={(date) => {
-                          const formattedDate = date
-                            ? date.toISOString().split("T")[0]
-                            : "";
-                          field.onChange(formattedDate);
-                          setDate(date);
-                        }}
-                        className="text-sm"
-                        placeholderText="Select Date"
-                        disabled
-                      />
-                    )}
+                <div className=" flex items-center bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
+                  <Phone className="ml-2 " color="#ffffff" />
+                  <Input
+                    id="clinicPhoneNumber"
+                    placeholder="Enter Clinic Phone Number"
+                    className=" border-0 shad-input text-zinc-100 font-normal"
+                    autoComplete="off"
+                    {...register("clinicPhoneNumber")}
                   />
                 </div>
-                {errors.birthDate && (
+                {errors.clinicPhoneNumber && (
                   <span className="text-red-700">
                     {" "}
-                    {errors.birthDate.message}{" "}
+                    {errors.clinicPhoneNumber.message}{" "}
                   </span>
                 )}
               </div>
-
+            
               <div className=" flex-1 text-gray-400 my-2">
                 <Label htmlFor="phone">
                   <span className={cn("", { "text-red-700": error.phone })}>
@@ -284,113 +413,35 @@ const DocProfile = () => {
               </div>
             </div>
 
+           
+
             <div className=" flex gap-2 flex-col md:flex-row">
-              <div className=" flex-1 text-gray-400 my-2">
-                <Label htmlFor="address">
-                  <span className={cn("", { "text-red-700": error.address })}>
-                    {" "}
-                    {!error.address ? " Address" : error.address}{" "}
-                  </span>
-                </Label>
-                <div className=" flex items-center bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
-                  <Input
-                    id="address"
-                    placeholder="Enter your address"
-                    className=" border-0 shad-input text-zinc-100 font-normal"
-                    autoComplete="off"
-                    {...register("address")}
-                  />
-                </div>
-                {errors.address && (
-                  <span className="text-red-700">
-                    {" "}
-                    {errors.address.message}{" "}
-                  </span>
-                )}
-              </div>
-              <div className=" flex-1 text-gray-400 my-2">
+            <div className=" flex-1 text-gray-400 my-2">
                 <Label htmlFor="Occupation">
                   <span
                     className={cn("", { "text-red-700": error.Occupation })}
                   >
                     {" "}
-                    {!error.Occupation ? "Occupation" : error.Occupation}{" "}
+                    {!error.clinicAddress ? "Clinic address" : error.clinicAddress}{" "}
                   </span>
                 </Label>
                 <div className=" flex items-center bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
-                  <Input
-                    id="occupation"
-                    placeholder="Enter your occupation"
+                  <Textarea
+                    id="clinicAddress"
+                    placeholder="Enter your clinicAddress"
                     className=" border-0 shad-input text-zinc-100 font-normal"
                     autoComplete="off"
-                    {...register("occupation")}
+                    {...register("clinicAddress")}
                   />
                 </div>
-                {errors.occupation && (
+                {errors.clinicAddress && (
                   <span className="text-red-700">
                     {" "}
-                    {errors.occupation.message}{" "}
+                    {errors.clinicAddress.message}{" "}
                   </span>
                 )}
               </div>
-            </div>
-
-            <div className=" flex gap-2 flex-col md:flex-row">
-              <div className=" flex-1 text-gray-400 my-2">
-                <Label htmlFor="emergencyName">
-                  <span
-                    className={cn("", { "text-red-700": error.emergencyName })}
-                  >
-                    {" "}
-                    {!error.emergencyName
-                      ? " Emergency Contact Person"
-                      : error.emergencyName}{" "}
-                  </span>
-                </Label>
-                <div className=" flex items-center bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
-                  <Input
-                    id="emergencyName"
-                    placeholder="Enter your emergency Name"
-                    className=" border-0 shad-input text-zinc-100 font-normal"
-                    autoComplete="off"
-                    {...register("emergencyContactName")}
-                  />
-                </div>
-                {errors.emergencyContactName && (
-                  <span className="text-red-700">
-                    {" "}
-                    {errors.emergencyContactName.message}{" "}
-                  </span>
-                )}
-              </div>
-              <div className=" flex-1 text-gray-400 my-2">
-                <Label htmlFor="emergencyPhone">
-                  <span
-                    className={cn("", { "text-red-700": error.emergencyPhone })}
-                  >
-                    {" "}
-                    {!error.emergencyPhone
-                      ? "Emergency Phone Number"
-                      : error.emergencyPhone}{" "}
-                  </span>
-                </Label>
-                <div className=" flex items-center bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
-                  <Phone className="ml-2 " color="#ffffff" />
-                  <Input
-                    id="occupation"
-                    placeholder="Enter emergency Phone Number"
-                    className=" border-0 shad-input text-zinc-100 font-normal"
-                    autoComplete="off"
-                    {...register("emergencyPhone")}
-                  />
-                </div>
-                {errors.emergencyPhone && (
-                  <span className="text-red-700">
-                    {" "}
-                    {errors.emergencyPhone.message}{" "}
-                  </span>
-                )}
-              </div>
+              
             </div>
 
             {/* <FormField type="name" error={error} message="invalid emergencyPhone" placeholder="Enter name" /> */}

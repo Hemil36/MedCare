@@ -21,7 +21,6 @@ const Auth = ({}) => {
               }
               if(res.status === 200){
                 setAuth(true)
-                console.log("Verified")
               }
     
             }
@@ -37,7 +36,6 @@ const Auth = ({}) => {
 
     const navigate = useNavigate(); // Correctly use useNavigate hook
 
-    console.log(auth);
    // Add dependencies to useEffect
 
     return auth ? <Outlet /> : null;

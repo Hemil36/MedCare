@@ -21,6 +21,8 @@ import { getOtp } from './lib/store/UserSlice'
 import DoctorAppointment from './Pages/DoctorAppointment'
 import PrescriptionGenerator from './Prescription'
 import DocProfile from './Pages/DocProfile'
+import DocAuth from './lib/DocAuth'
+import ForgotId from './Pages/ForgotId'
 
 const Otpveri = ()=>{
   const otp = useSelector(getOtp)
@@ -55,20 +57,23 @@ function App() {
 
       <BrowserRouter>
       <Routes>
-        <Route path="/test" element={<PrescriptionGenerator />} /> 
+        <Route path="/forgotId" element={<ForgotId />} /> 
         <Route path="/" element={<Home />} />
       <Route  element={<Otpveri />} >
         <Route path='/register' element={<Register />} />
-        <Route path='/register/doctor' element={<RegisterDoctor />} />
         </Route>
+        <Route path='/register/doctor' element={<RegisterDoctor />} />
 
         <Route element={<Auth auth={auth}  />} >
         <Route path='/user' element={<Patient/>} />
         <Route path='/patient/:patientID/appointment' element={<Appointment type="create" />} />
         <Route path="/patient/:patientID/appointment/success" element={<RequestSuccess />} />
-        <Route path="/doctor" element={<AdminPage />} />
-        <Route path="/doctor/appointment/:appointmentID" element={<DoctorAppointment />} />
-        <Route path='/doctor/profile' element={<DocProfile />} />
+        
+        <Route element={<DocAuth />} >
+        <Route path="/doctor/:doctorID" element={<AdminPage />} />
+        <Route path="/doctor/:doctorID/appointment/:appointmentID" element={<DoctorAppointment />} />
+        <Route path='/doctor/:doctorID/profile' element={<DocProfile />} />
+        </Route>
         </Route>
       </Routes>
       </BrowserRouter>

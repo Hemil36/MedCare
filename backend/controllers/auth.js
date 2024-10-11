@@ -5,7 +5,7 @@ import { customAlphabet } from "nanoid";
 import nodemailer from "nodemailer";
 import Patient from "../models/User.js";
 import Doctor from "../models/Doctor.js";
-import { createAccountDoctorEmail, createAccountEmail } from "./email.js";
+import { createAccountDoctorEmail, createAccountEmail, forgotemail } from "./email.js";
 
 const id = nanoid(10);
 
@@ -15,6 +15,29 @@ export function localVariables(req, res, next){
     }
     next()
 }
+
+export const forgotID = async (req, res) => {
+  const { email } = req.body;
+  try {
+      const user = await User.findOne ( { email  });
+      const doctor = await Doctor.findOne ( {email  });
+      if (!user || !doctor) {
+        return res.status(400).json({ message: 'User not found' });
+      }
+
+      if(user){
+        await forgotemail({id: user.patientID, name: user.name, email});
+      }
+      if(doctor){
+        await forgotemail({id: doctor.doctorId, name: doctor.name, email});
+      }
+
+      return res.status(200).json({ message: 'Email sent successfully' });
+    } catch (error) {
+      console.log(error);
+      res.status(403).json({ error });
+    }
+  }
 
 const transporter = nodemailer.createTransport({
     service: 'Gmail', // or another email service
@@ -120,7 +143,7 @@ export const loginDoctor = async (req, res) => {
     }
     // console.log(process.env.REFRESH_TOKEN_SECRET);
     const accesstoken = jwt.sign({doctorId: patient.doctorId , name: patient.name}, process.env.ACCESS_TOKEN_SECRET , { expiresIn: '5s'});
-    const refreshtoken = jwt.sign({doctorId: patient.doctorId , name: patient.name}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '1hr'});
+    const refreshtoken = jwt.sign({doctorId: patient.doctorId , name: patient.name}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '9hr'});
 
     res.cookie('jwt', refreshtoken, { httpOnly: true , secure: true , sameSite: 'none'});
   return  res.status(200).json({ accesstoken , doctorId : patient.doctorId , name:patient.name});
@@ -197,7 +220,7 @@ export const register = async (req, res) => {
           birthDate,
           gender,
           emergencyContactName,
-          emergencyPhone,
+          clinicPhoneNumber,
           councilID,
           speciality,
           graduationYear,
@@ -205,7 +228,9 @@ export const register = async (req, res) => {
           colleage,
           identificationType,
           adhaarNumber,
-          identificationDocument , clinicaddress } = req.body.data;
+          identificationDocument , clinicaddress,
+          photo
+         } = req.body.data;
 
         try {
           const doctor = await Doctor.findOne({councilID}) ;
@@ -222,7 +247,7 @@ export const register = async (req, res) => {
             birthDate,
             gender,
             emergencyContactName,
-            emergencyPhone,
+            clinicPhoneNumber,
             councilID,
             speciality,
             graduationYear,
@@ -232,7 +257,8 @@ export const register = async (req, res) => {
             adhaarNumber,
             identificationDocument,
             doctorId,
-            clinicAddress: clinicaddress
+            clinicAddress: clinicaddress,
+            photo
           });
           await newDoctor.save();
 

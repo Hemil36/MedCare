@@ -22,6 +22,7 @@ const AdminPage = () => {
   const [update, setUpdate] = React.useState(false);
   const [dataChange, setDataChange] = React.useState(false);
   const [loading, setLoading] = useState(null);
+  const doctorID = useSelector((state) => state.user.user.doctorID);
 
   useEffect(() => {
     const handleDataChangeEvent = () => {
@@ -44,7 +45,6 @@ const AdminPage = () => {
     const getAppointments = async () => {
       try {
         const response = await dispatch(getAppointment()).unwrap();
-        console.log(response);
         if (response.length > 0) {
           const pending = response.filter(
             (appointment) => appointment?.appointment.status === "pending"
@@ -69,6 +69,7 @@ const AdminPage = () => {
 
     getAppointments();
   }, [dataChange]);
+  const link =`/doctor/${doctorID}/profile/`
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col ">
@@ -77,10 +78,10 @@ const AdminPage = () => {
           MedID
         </h1>
         <div className=" flex gap-3">
-          <Link to="/" className="text-green-500">
+          <Link to={`/doctor/${doctorID}`} className="text-green-500">
             Home
           </Link>
-          <Link to="/profile" className="text-green-500">
+          <Link to={`/doctor/${doctorID}/profile/`} className="text-green-500">
             Profile
           </Link>
           </div>

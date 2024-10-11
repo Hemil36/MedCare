@@ -10,7 +10,7 @@ import {
   Phone,
   User,
 } from "lucide-react";
-import React from "react";
+import React, { useCallback } from "react";
 import {
   Popover,
   PopoverContent,
@@ -32,10 +32,29 @@ import { format } from "date-fns";
 import { Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { getUser } from "@/lib/store/UserSlice";
+import { onUpload } from "./fileUploader";
+import { useDropzone } from "react-dropzone";
 
 const DoctorPersonal = ({ register, control, errors }) => {
   const error = {};
+  const [file, setFile] = React.useState(null);
+  
   const [date, setDate] = React.useState(new Date());
+  const onDrop = useCallback((acceptedFiles) => {
+    acceptedFiles.forEach((file) => {
+      const reader = new FileReader();
+      
+      reader.onabort = () => console.log("file reading was aborted");
+      reader.onerror = () => console.log("file reading has failed");
+      reader.onload = () => {
+        // Do whatever you want with the file contents
+        const binaryStr = reader.result;
+        console.log(binaryStr);
+      };
+      reader.readAsArrayBuffer(file);
+    });
+  }, []);
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
     <div className="flex flex-col gap-2">
@@ -61,6 +80,65 @@ const DoctorPersonal = ({ register, control, errors }) => {
           <span className="text-red-700"> {errors.name.message} </span>
         )}
       </div>
+      <div className=" flex-1 text-gray-400 my-2">
+          <Label htmlFor="verifyDoc">
+            <span>Photo</span>
+          </Label>
+
+          <div className=" flex justify-center items-center bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
+            <div {...getRootProps()}  className="file-upload w-full">
+              <Controller
+                name="personal"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  // />
+                  <input
+                    type="file"
+                    {...getInputProps()}
+
+                    onChange={async (data) => {
+                     
+                      const t = await onUpload(data);
+                      setFile(t);
+                      field.onChange(t);
+                    }}
+                  ></input>
+                )}
+              />
+              {file && file.length > 0 ? (
+                <>
+                  <img
+                    src={file}
+                    height={100}
+                    width={100}
+                    className=" overflow-hidden"
+                  />
+                </>
+              ) : (
+                <>
+                  <div className="file-upload_label text-center">
+                    <p className="text-14-regular ">
+                      <span className="text-green-500">Click to upload </span>
+                      or drag and drop
+                    </p>
+                    <p className="text-12-regular">
+                      SVG, PNG, JPG or GIF (max. 800x400px)
+                    </p>
+                  </div>
+                </>
+              )}
+
+              {errors.photo && (
+                <span className="text-red-700">
+                  {" "}
+                  {errors.photo.message}
+                </span>
+              )}
+            </div>
+            <div className=""></div>
+          </div>
+        </div>
       <div className=" flex  flex-col md:flex-row  gap-2">
         <div className=" flex-1 text-gray-400 my-2">
           <Label htmlFor="email">
@@ -225,12 +303,12 @@ const DoctorPersonal = ({ register, control, errors }) => {
           )}
         </div>
         <div className=" flex-1 text-gray-400 my-2">
-          <Label htmlFor="emergencyPhone">
-            <span className={cn("", { "text-red-700": error.emergencyPhone })}>
+          <Label htmlFor="clinicPhoneNumber">
+            <span className={cn("", { "text-red-700": error.clinicPhoneNumber })}>
               {" "}
-              {!error.emergencyPhone
-                ? "Emergency Phone Number"
-                : error.emergencyPhone}{" "}
+              {!error.clinicPhoneNumber
+                ? "Clinic Phone Number"
+                : error.clinicPhoneNumber}{" "}
             </span>
           </Label>
           <div className=" flex items-center bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
@@ -240,13 +318,13 @@ const DoctorPersonal = ({ register, control, errors }) => {
               placeholder="Enter emergency Phone Number"
               className=" border-0 shad-input text-zinc-100 font-normal"
               autoComplete="off"
-              {...register("emergencyPhone")}
+              {...register("clinicPhoneNumber")}
             />
           </div>
-          {errors.emergencyPhone && (
+          {errors.clinicPhoneNumber && (
             <span className="text-red-700">
               {" "}
-              {errors.emergencyPhone.message}{" "}
+              {errors.clinicPhoneNumber.message}{" "}
             </span>
           )}
         </div>

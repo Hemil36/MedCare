@@ -17,6 +17,11 @@ const doctorSchema = new mongoose.Schema({
     avatar: {
         type: String,
     },
+    gender :{
+        type: String,
+        required: true,
+    
+    },
    
     adhaarNumber: {
         type: String,
@@ -28,6 +33,11 @@ const doctorSchema = new mongoose.Schema({
         required: true,
       
       },
+        photo: {
+            type: Schema.Types.Mixed,
+            required: true,
+        
+        },
     phone: {
         type: Number,
         required: true,
@@ -47,7 +57,11 @@ const doctorSchema = new mongoose.Schema({
     clinicAddress: {
         type: String,
         required: true,
-    }
+    },
+    clinicPhoneNumber: {
+        type: Number,
+        required: true,
+    },
 
 })
 

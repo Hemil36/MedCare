@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -12,8 +12,12 @@ import { register as regis }  from '@/lib/store/AsyncThunks';
 import { toast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { getName, getUser } from '@/lib/store/UserSlice';
+import { useDropzone } from "react-dropzone";
 
 const RegisterDoctor = () => {
+
+  
+ 
   const user = useSelector(getUser)
 
     const {control,
@@ -36,6 +40,7 @@ const RegisterDoctor = () => {
       const navigate = useNavigate();
 
       const onSubmit = async (e) => {
+        console.log(e)
 
 
         try{
