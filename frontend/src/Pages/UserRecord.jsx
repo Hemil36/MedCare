@@ -93,7 +93,7 @@ const patientID = useSelector(getpatientID);
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
   return (
     <div className="w-full h-full overflow-hidden ">
-      <h1 className=" text-4xl font-bold ">Reports</h1>
+      <h1 className=" text-3xl font-bold ">Reports</h1>
       {records ?
       <> <div className="pt-5">
 

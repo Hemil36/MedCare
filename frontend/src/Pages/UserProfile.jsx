@@ -50,6 +50,7 @@ const UserProfile = () => {
   
   const [file, setFile] = React.useState(null);
   const [open, setOpen] = React.useState(false);
+  const[profile , setProfile] = React.useState(null)
   const [value, setValue] = React.useState("");
   const navigate = useNavigate();
   const onDrop = useCallback((acceptedFiles) => {
@@ -92,6 +93,8 @@ const UserProfile = () => {
 
   }
 
+  
+
 
 
   const [date, setDate] = React.useState(user?.birthDate);
@@ -117,7 +120,6 @@ const UserProfile = () => {
     },
   });
 
-  console.log(user)
   if (!user) {
     return <div>Loading...</div>;
   }
@@ -248,7 +250,7 @@ const UserProfile = () => {
                 <Controller
                   name="gender"
                   control={control}
-                  defaultValue={user.gender}
+                  defaultValue={user?.gender}
                   render={({ field }) => (
                     <Hipo
                       className="flex h-11 gap-6 justify-center xl:justify-between  j"

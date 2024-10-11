@@ -56,7 +56,7 @@ const UserAppoint = () => {
   }, []);
 
   const sortedAppointments = appointments?.sort(
-    (a, b) => new Date(a?.appointment.date) - new Date(b?.appointment?.date)
+    (a, b) => new Date(a.appointment.date) - new Date(b.appointment?.date)
   );
 
   // Get the current date and time
@@ -77,7 +77,7 @@ const UserAppoint = () => {
   );
   return (
     <div className="w-full h-full">
-      <h1 className=" text-4xl font-bold ">Appointments</h1>
+      <h1 className=" text-3xl font-bold ">Appointments</h1>
       <Button className="mt-5 bg-green-500"  > <Link to={href}>Schedule Appointment</Link></Button>
 { !noappointment ? appointments ? <>
       <div className=" flex items-center ">
@@ -201,9 +201,10 @@ const UserAppoint = () => {
                                 </Label>
                                 <Input
                                   id="username"
+                                  disabled
                                   value={
                                     appointment.appointment?.prescription ||
-                                    " No   Prescription"
+                                    " No Prescription"
                                   }
                                   className="col-span-3 shad-input"
                                 />

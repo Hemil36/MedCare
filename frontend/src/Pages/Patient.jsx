@@ -61,7 +61,7 @@ const dispatch = useDispatch()
       }}>Logout</Button>
         </div>
 
-       <div className="w-full h-full px-[2rem] pt-[5rem]">
+       <div className="w-full h-full px-[2rem] pt-[2rem]">
 
 
 {

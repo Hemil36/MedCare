@@ -319,13 +319,14 @@ export const getAppointmentByPatient = async (req, res) =>
             return res.status(400).json({message: "Please enter patientID"});
         }
         try {
-            const appointment = await Appointment.find({patientID});
+            const appointment = await Appointment.find({patientID : patientID});
             if(appointment.length === 0){
                 return res.status(400).json({message: "No appointment found"});
             }
             const newData = await Promise.all(  appointment.map(async (data) => {
                 try{
-                    const doctorDetails = await doctor.findOne({ doctorID : data.doctorID });
+                    const doctorDetails = await doctor.findOne({ doctorId : data.doctorID });
+                    console.log(doctorDetails)
                     const patientDetails = await Patient.findOne({ patientID : data.patientID.toString() });
                     return {appointment: data, doctorDetails : doctorDetails.name , patientDetails : patientDetails.name};
                 }
@@ -333,6 +334,8 @@ export const getAppointmentByPatient = async (req, res) =>
                     console.log(e);
                 }
             }));
+
+            console.log(newData);
             res.status(200).json(newData);
         } catch (error) {
             res.json(error);

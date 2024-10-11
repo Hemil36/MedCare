@@ -60,8 +60,8 @@ function App() {
         <Route path="/forgotId" element={<ForgotId />} /> 
         <Route path="/" element={<Home />} />
       <Route  element={<Otpveri />} >
-        <Route path='/register' element={<Register />} />
         </Route>
+        <Route path='/register' element={<Register />} />
         <Route path='/register/doctor' element={<RegisterDoctor />} />
 
         <Route element={<Auth auth={auth}  />} >

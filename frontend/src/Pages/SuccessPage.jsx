@@ -43,11 +43,16 @@ const RequestSuccess =  () => {
 //   );
 
   return (
-    <div className=" flex h-screen max-h-screen px-[5%]">
-      <div className="success-img">
+    <div className=" flex flex-col h-screen max-h-screen px-[5%]">
+      <div className=" flex justify-between mt-5  items-center">
+
         <Link href="/">
           <h1 className=" text-3xl font-bold"> MedID</h1>
         </Link>
+        <Link to={'/user'} className="" >Home</Link>
+      </div>
+      <div className="success-img">
+
 
         <section className="flex flex-col items-center">
           <img
@@ -85,7 +90,6 @@ const RequestSuccess =  () => {
             New Appointment
           </Link> */}
         </Button>
-
         <p className="copyright">© 2024 CarePluse</p>
       </div>
     </div>

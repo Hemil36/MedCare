@@ -224,9 +224,7 @@ const PatientForm = ({ setOpen,  type, setType , setOldType , setNewType , oldTy
                   )}
                 </Button>
               </TabsContent>
-         <Link to="/forgotId" className="text-green-500">
-                  Forgot ID
-                  </Link>
+        
             </Tabs>
           </>
         )}
@@ -238,6 +236,12 @@ const PatientForm = ({ setOpen,  type, setType , setOldType , setNewType , oldTy
       ) : (
         <Button onClick={() => setType("new")}>Sign Up</Button>
       )}
+      {
+        type ==="old" &&(
+          <Link to="/forgotId" className="mt-2 text-sm font-semibold">
+          Forgot ID
+          </Link>        )
+      }
     </div>
   );
 };
