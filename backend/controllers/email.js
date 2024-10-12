@@ -100,7 +100,7 @@ const html =({email, date, time, doctorName, patientName,address})=>{
           address: 'medid.helpdesk@gmail.com'
         }, // sender address
         to: email, // recipient address
-        subject: 'Appointment Request Received',
+        subject: 'Appointment Request Confirmed',
         html: html({email, date, time, doctorName, patientName,address}),
       };
 

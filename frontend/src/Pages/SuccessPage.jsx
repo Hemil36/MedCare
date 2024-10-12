@@ -33,6 +33,7 @@ const RequestSuccess =  () => {
 
     }, []);
 
+
     const date = new Date(appointment?.date);
     
 //   const appointmentId = (searchParams?.appointmentId ) || "";
@@ -81,7 +82,7 @@ const RequestSuccess =  () => {
               width={24}
               alt="calendar"
             />
-             <p> {` ${date?.toDateString()}`}</p> 
+             <p> {` ${date?.toDateString()}` || appointment?.date}</p> 
           </div>
         </section>
 

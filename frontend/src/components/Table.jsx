@@ -20,13 +20,35 @@ import { Button } from "@/components/ui/button";
 export function DataTable({ columns, data }) {
   const [sorting, setSorting] = React.useState([]);
   const [filtering, setFiltering] = React.useState([]);
+
+
+  
+
   useEffect(() => {
+    const date = new Date();
+
     const data2 = data.filter((d) => d != null);
-    setFiltering(data2);
-  },[data]);
+    const sortedAppointments = data
+    .filter((d) => d != null) // Keep only future or current appointments
+  .sort((a, b) => {
+    // Sort by date first
+    const dateA = new Date(a.appointment.date);
+    const dateB = new Date(b.appointment.date);
+
+    if (dateA.getTime() === dateB.getTime()) {
+      // If dates are the same, sort by status priority
+      const statusPriority = { "scheduled": 1, "pending": 2, "completed": 3, "cancelled": 4 };
+      return statusPriority[a.appointment.status] - statusPriority[b.appointment.status];
+    } else {
+      return dateA - dateB; // Sort by date
+    }
+  });
+    setFiltering(sortedAppointments);
+  },[data ]);
   // data=filtering
 
-
+console.log(filtering, "filtering")
+console.log(data, "data")
   const table = useReactTable({
     data:filtering,
     columns,

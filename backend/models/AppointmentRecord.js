@@ -12,7 +12,7 @@ const appointmentSchema = new mongoose.Schema({
     symptoms: { type: String },
     prescription: [medicineSchema],
     status: { type: String, default: "pending" , required: true},
-    diagnosis: { type: String },
+    diagnosis: { type: String , default:" " , required: true},
   });
 
 

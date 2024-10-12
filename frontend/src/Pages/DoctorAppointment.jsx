@@ -35,6 +35,7 @@ import { generateOTP, handleSubmit, recordAppointment } from "@/lib/store/AsyncT
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "@/components/ui/use-toast";
 import { getDoctorID } from "@/lib/store/UserSlice";
+import { set } from "date-fns";
 
 const DoctorAppointment = () => {
   const axios = AxiosPrivate();
@@ -85,12 +86,28 @@ const DoctorAppointment = () => {
     getPatient()
   },[patientID])
 
+  const [errors, setErrors] = useState({
+    symptoms: "",
+    prescription: "",
+    notes: "",
+
+  });
+
 
   const submit = async (e) => {
     e.preventDefault();
     const { symptoms, notes , diagnosis } = e.target;
-    // console.log(symptoms.value, prescription.value, notes.value);
-    console.log(diagnosis.value)
+    let formErrors = {};
+    if (symptoms.value === "") {
+      formErrors.symptoms = "Symptoms are required";
+    }
+    if (diagnosis.value === "") {
+      formErrors.diagnosis = "Diagnosis is required";
+    }
+
+    setErrors(formErrors);
+
+    console.log(errors)
     try {
       await dispatch(
         recordAppointment({
@@ -183,7 +200,7 @@ const DoctorAppointment = () => {
     setNewMed({ ...newMed, [name]: value });
   };
   
-
+  let result;
   return (
     <div className="flex h-screen ">
 
@@ -242,7 +259,7 @@ const DoctorAppointment = () => {
         </div>
           <div>
            { verify ?<>
-            <div className="flex gap-4 space">
+            <div className="flex gap-4 space items-start">
            <div className=" flex flex-col items-center  max-h-[50dvh] w-1/2   ">
            <h1 className="text-xl font-semibold self-start py-2"> Records </h1>
 
@@ -280,8 +297,8 @@ const DoctorAppointment = () => {
       </ScrollArea>
 
     </div>
-    <div className=" flex flex-col items-center max-h-[50dvh] w-1/2   ">
-    <h1 className="text-xl font-semibold self-start">Appointments</h1>
+    <div className=" flex flex-col items-start max-h-[50dvh] w-1/2   ">
+    <h1 className="text-xl font-semibold self-start py-2">Appointments</h1>
     <ScrollArea className=" h-[19rem] w-full ">
                 <Table>
                   <TableHeader>
@@ -295,13 +312,13 @@ const DoctorAppointment = () => {
                       const date = new Date(appointment.appointment.date);
                       if(appointment.appointment.status=="completed")
                       return (
-                        <Dialog key={appointment.appointment._id}>
+                        <Dialog key={appointment.appointment._id} className="rounded-lg">
                           <DialogTrigger asChild>
                             <TableRow
                               key={appointment.appointment._id}
-                              className="hover:cursor-pointer hover:bg-dark-400 rounded-lg"
+                              className="hover:cursor-pointer hover:bg-dark-400 "
                             >
-                              <TableCell className="font-medium text-nowrap">
+                              <TableCell className="font-medium text-nowrap  ">
                                 {appointment.doctorDetails.name}
                               </TableCell>
                               <TableCell>{date.toDateString()}</TableCell>
@@ -360,11 +377,12 @@ const DoctorAppointment = () => {
                                 >
                                   Prescription
                                 </Label>
+                               
                                 <Input
                                 disabled
                                   id="username"
                                   value={
-                                    appointment.appointment?.prescription ||
+                                    appointment.appointment?.prescription.map(item => item.name).join(', ') ||
                                     " No   Prescription"
                                   }
                                   className="col-span-3 shad-input"
@@ -416,8 +434,9 @@ const DoctorAppointment = () => {
           <form onSubmit={submit}>
         <section className="flex flex-col md:flex-row gap-2">
 
-          <div className="w-full">
-            <h3 className=" font-semibold">Diagnosis</h3>
+          <div className="w-full ">
+            <p className=" font-semibold flex gap-2">Diagnosis <span>  { errors.diagnosis && <p className="text-red-400">Required</p>}
+          </span> </p>
             <div className=" flex items-center  bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
 
             <Input className=" flex-growth border-0 shad-input text-zinc-100 font-normal" id="diagnosis" />
@@ -425,7 +444,8 @@ const DoctorAppointment = () => {
         
           </div>
           <div className="w-full">
-            <h3 className=" font-semibold">Symptoms</h3>
+          <p className=" font-semibold flex gap-2">Symptoms <span>  { errors.symptoms && <p className="text-red-400">Required</p>}
+          </span> </p>        
             <div className=" flex items-center  bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
 
             <Input className=" flex-growth border-0 shad-input text-zinc-100 font-normal" id="symptoms" />

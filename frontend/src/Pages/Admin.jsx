@@ -84,6 +84,9 @@ const AdminPage = () => {
           <Link to={`/doctor/${doctorID}/profile/`} className="text-green-500">
             Profile
           </Link>
+          <Link to={`/`} className="text-green-500">
+            Logout
+          </Link>
           </div>
       </div>
       <div className="pt-4" />

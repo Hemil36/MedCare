@@ -284,7 +284,11 @@ export const approveAppointment = async (req, res) => {
         appointment.date = date;
         await appointment.save();
 
-        // confirmEmail({ email, date, time : date, doctorName, patientName,address })
+        const patientDetails = await Patient.findOne({ patientID : appointment.patientID.toString() });
+        const doctorDetails = await doctor.findOne({ doctorId : appointment.doctorID });
+        const newdate = new Date(date);
+
+        confirmEmail({ email : patientDetails.email, date: newdate.toDateString(), time : newdate.toLocaleTimeString().replace(/:\d+ /, " "), doctorName : doctorDetails.name, patientName : patientDetails.name,address : doctorDetails.clinicAddress })
         res.status(200).json(appointment);
     } catch (error) {
         res.json(error);
