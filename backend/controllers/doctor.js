@@ -5,6 +5,65 @@ import Patient from "../models/User.js";
 import { appointmentEmail, confirmEmail } from "./email.js";
 import jsPDF from 'jspdf';
 import CryptoJS from 'crypto-js';
+import {CronJob} from "cron"
+import { GoogleGenerativeAI } from '@google/generative-ai';
+  import * as fs  from 'fs'
+  import dotenv from 'dotenv'
+  import moment from "moment/moment.js";
+  dotenv.config()
+
+  const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+
+
+
+const model = genAI.getGenerativeModel({
+  model: "tunedModels/mednotify-proper-lj52zkhsshsf",
+});
+
+const generationConfig = {
+    temperature: 1,
+    topP: 0.95,
+    topK: 64,
+    maxOutputTokens: 8192,
+    responseMimeType: "text/plain",
+  };
+  
+
+async function run(params) {
+    const chatSession = model.startChat({
+        generationConfig,
+        history: [
+          {
+            role: "user",
+            parts: [
+              {text: "2024-10-14T02:30:00.000+00:00\n"},
+            ],
+          },
+          {
+            role: "model",
+            parts: [
+              {text: "Your next appointment is on 2024-10-14 at 02:30 AM. We’ll be waiting! "},
+            ],
+          },
+          {
+            role: "user",
+            parts: [
+              {text: "{'$date': '2025-04-09T13:76:34.000Z'}"},
+            ],
+          },
+          {
+            role: "model",
+            parts: [
+              {text: "Friendly reminder: Your appointment is on 2025-04-09 at 01:76 PM. "},
+            ],
+          },
+        ],
+      });
+
+
+  const result = await chatSession.sendMessage(params);
+  return result.response.text;
+}
 
 export const getdoctor = async (req, res) => {
     try {
@@ -114,13 +173,10 @@ export const recordAppointment = async (req, res) => {
 import nodemailer from 'nodemailer';
 import { generatePDFKitPrescriptionBuffer } from "./email.js";
 
-// Function to send email with PDF attachment
 const sendEmailWithPDF = async ({data}) => {
-  // Create a transporter object using SMTP transport
   const email = data.email;
  
 
-  // Generate the PDF as a buffer
   const pdfBuffer = await new Promise((resolve, reject) => {
     const bufferStream = generatePDFKitPrescriptionBuffer(data);
     const chunks = [];
@@ -271,6 +327,7 @@ export const getDocAppointment = async (req, res) => {
 
 export const approveAppointment = async (req, res) => {
     const { appointmentID ,date} = req.body;
+
     if(!appointmentID){
         return res.status(400).json({message: "Please enter appointmentID"});
     }
@@ -289,12 +346,53 @@ export const approveAppointment = async (req, res) => {
         const newdate = new Date(date);
 
         confirmEmail({ email : patientDetails.email, date: newdate.toDateString(), time : newdate.toLocaleTimeString().replace(/:\d+ /, " "), doctorName : doctorDetails.name, patientName : patientDetails.name,address : doctorDetails.clinicAddress })
+        scheduleNotification(appointment);
         res.status(200).json(appointment);
     } catch (error) {
         res.json(error);
         console.log(error);
     }
 }
+export function scheduleNotification(appointment) {
+    const { _id, date } = appointment;
+    const id=_id
+    const time = date.toLocaleTimeString();
+    const dateTime = `${date} ${time}`;
+  
+    if (moment(dateTime).isAfter(moment())) {
+      const appointmentDate = moment(dateTime).toDate();
+  
+      if (scheduledTasks.has(id)) {
+        scheduledTasks.get(id).stop();
+        scheduledTasks.delete(id);
+      }
+  
+      const job = new CronJob(
+        appointmentDate,
+        async () => {
+          console.log(`Sending notification for appointment ID ${id} on ${dateTime}`);
+          const personalizedContent = await run(date);
+          const subject = 'Reminder: Your Appointment';
+          const message = personalizedContent;
+  
+          await sendEmail(subject, message);
+  
+          job.stop();
+          scheduledTasks.delete(id);
+        },
+        null, 
+        true, 
+        'America/New_York' 
+      );
+  
+      scheduledTasks.set(id, job);
+      console.log(`Scheduled notification for appointment ID ${id} at ${dateTime}`);
+    } else {
+      console.log(`Cannot schedule past appointment for ID ${id} at ${dateTime}`);
+    }
+  }
+
+  
 
 export const cancelAppointment = async (req, res) => {
     const { appointmentID } = req.body;
