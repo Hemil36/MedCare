@@ -76,11 +76,11 @@ const UserAppoint = () => {
     upcomingAppointment?.appointment?.date
   );
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full pt-7 container remove-scrollbar">
       <h1 className=" text-3xl font-bold ">Appointments</h1>
       <Button className="mt-5 bg-green-500"  > <Link to={href}>Schedule Appointment</Link></Button>
 { !noappointment ? appointments ? <>
-      <div className=" flex items-center ">
+      <div className=" flex flex-col md:flex-row items-center  ">
         <div className="pt-6 grow">
           Last Appointment
           <div className="stat-card  bg-pending w-fit mt-4  ">
@@ -112,9 +112,7 @@ const UserAppoint = () => {
               </p>
               <p>
                 
-                {upcomingAppointment?.appointment?.prescription ? ` Prescription : ${upcomingAppointment?.appointment?.prescription}` : "  "}
               </p>
-              <p> {upcomingAppointment?.appointment?.notes ? `Notes : ${upcomingAppointment?.appointment?.notes}` : "  "}</p>
             </div>
           </div>
         </div>
@@ -192,7 +190,7 @@ const UserAppoint = () => {
                                   className="col-span-3 shad-input"
                                 />
                               </div>
-                              <div className="grid grid-cols-4 items-center gap-4">
+                              <div className="flex-1 flex items-center gap-4">
                                 <Label
                                   htmlFor="username"
                                   className="text-right"
@@ -206,7 +204,7 @@ const UserAppoint = () => {
                                     appointment.appointment?.prescription ||
                                     " No Prescription"
                                   }
-                                  className="col-span-3 shad-input"
+                                  className="col-span-3  shad-input"
                                 />
                               </div>
                               <div className="grid grid-cols-4 items-center gap-4">

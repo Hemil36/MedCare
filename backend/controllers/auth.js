@@ -140,7 +140,7 @@ export const loginDoctor = async (req, res) => {
         return res.status(400).json({ message : "User not found"});
     }
     // console.log(process.env.REFRESH_TOKEN_SECRET);
-    const accesstoken = jwt.sign({doctorId: patient.doctorId , name: patient.name}, process.env.ACCESS_TOKEN_SECRET , { expiresIn: '5s'});
+    const accesstoken = jwt.sign({doctorId: patient.doctorId , name: patient.name}, process.env.ACCESS_TOKEN_SECRET , { expiresIn: '60s'});
     const refreshtoken = jwt.sign({doctorId: patient.doctorId , name: patient.name}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '9hr'});
 
     res.cookie('jwt', refreshtoken, { httpOnly: true , secure: true , sameSite: 'none'});
@@ -310,7 +310,7 @@ export const register = async (req, res) => {
                 const accessToken = jwt.sign(
                     { patientID: decoded.patientID , name: decoded.name},
                     process.env.ACCESS_TOKEN_SECRET,
-                    { expiresIn: '5s' }
+                    { expiresIn: '1hr' }
                 );
                 res.json({ accessToken })
             }

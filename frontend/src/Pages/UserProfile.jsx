@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { startTransition, useCallback, useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -10,11 +10,7 @@ import {
   Phone,
   User,
 } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 import { Button } from "@/components/ui/button";
 import { Calendar as Shad } from "@/components/ui/calendar";
 import "react-day-picker/dist/style.css";
@@ -27,109 +23,106 @@ import {
   RadioGroup as Hipo,
 } from "@/components/ui/radio-group";
 
-import { format } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { getpatientID, getProfile, getUser, setProfile } from "@/lib/store/UserSlice";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { getpatientID, getProfile, getUser, setProfile, setUser } from "@/lib/store/UserSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PatientFormValidation } from "@/forms/validation/patientRegister";
 import { Textarea } from "@/components/ui/textarea";
 import { useDropzone } from "react-dropzone";
-import {  updatePatient } from "@/lib/store/AsyncThunks";
+import {  getuser, updatePatient } from "@/lib/store/AsyncThunks";
 import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { profileValidation } from "@/forms/validation/UpdateProfile";
 
-const UserProfile = () => {
+const UserProfile = React.memo(function UserProfile() {
   const dispatch = useDispatch();
+  const user = useSelector(getProfile,shallowEqual);
+  const patientID = useSelector(getpatientID,shallowEqual)
+  const [userDetails, setUserDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
   const error = {};
-  
- const  user = useSelector(getProfile)
-
-  
-  
-  const [file, setFile] = React.useState(null);
-  const [open, setOpen] = React.useState(false);
-  const[profile , setProfile] = React.useState(null)
-  const [value, setValue] = React.useState("");
+ console.log("rendered")
   const navigate = useNavigate();
-  const onDrop = useCallback((acceptedFiles) => {
-    acceptedFiles.forEach((file) => {
-      const reader = new FileReader();
 
-      reader.onabort = () => console.log("file reading was aborted");
-      reader.onerror = () => console.log("file reading has failed");
-      reader.onload = () => {
-        // Do whatever you want with the file contents
-        const binaryStr = reader.result;
-        console.log(binaryStr);
-      };
-      reader.readAsArrayBuffer(file);
-    });
-  }, []);
-  const onSubmit =async  (data) => {
-    console.log(data);
-    try{
-   await dispatch(updatePatient({patientID: user.patientID , data}))
-   toast({
-      title: "Profile Updated",
-      description: "Your profile has been updated successfully",
-      status: "success",
-      duration: 3000,
-      isClosable: true,})
-
-
-    dispatch(setProfile(data))
-      
-
-
-    }
-    catch(e){
+  const onSubmit = async (data) => {
+    try {
+      await dispatch(updatePatient({ patientID: user.patientID, data }));
       toast({
-        title: "An Error Occoured"
-      })
+        title: "Profile Updated",
+        description: "Your profile has been updated successfully",
+        status: "success",
+        duration: 3000,
+      });
+
+      dispatch(setProfile(data));
+    } catch (e) {
+      toast({
+        title: "An Error Occurred",
+        description: "Something went wrong while updating your profile.",
+        status: "error",
+        duration: 3000,
+      });
     }
+  };
 
 
-  }
+  const [date, setDate] = useState(user?.birthDate);
+  const t2 = useCallback(async () => {
+    const user2 = await dispatch(getuser({ patientID }));
+    console.log(user2);
+    dispatch(setProfile(user2.payload[0]));
+    startTransition(() => {
+      setUserDetails(user2.payload[0]);
+      setLoading(false);
+      reset({
+        name: user2.payload[0].name,
+        email: user2.payload[0].email,
+        phone: user2.payload[0].phone,
+        birthDate: user2.payload[0].birthDate,
+        gender: user2.payload[0].gender,
+        address: user2.payload[0].address,
+        occupation: user2.payload[0].occupation,
+        emergencyContactName: user2.payload[0].emergencyContactName,
+        emergencyPhone: user2.payload[0].emergencyPhone,
+    });
+  });
+}, [dispatch, patientID]);
 
-  
+useEffect(() => {
+    t2();
+}, [t2]);
+ 
 
-
-
-  const [date, setDate] = React.useState(user?.birthDate);
-
-  const {
-    control,
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const errors={}
+  const { control, handleSubmit , register,reset} = useForm({
     resolver: zodResolver(profileValidation),
     defaultValues: {
       name: user?.name,
       email: user?.email,
-      phone: user?.phone ,
-      birthDate: user?.birthDate,
-      gender : user?.gender,
-      address: user?.address,
-      occupation: user?.occupation,
-      emergencyContactName: user?.emergencyContactName,
-      emergencyPhone: user?.emergencyPhone,
-
+      phone: userDetails?.phone,
+      birthDate: userDetails?.birthDate,
+      gender: userDetails?.gender,
+      address: userDetails?.address,
+      occupation: userDetails?.occupation,
+      emergencyContactName: userDetails?.emergencyContactName,
+      emergencyPhone: userDetails?.emergencyPhone,
     },
   });
 
-  if (!user) {
+//
+
+  
+  if (loading) {
     return <div>Loading...</div>;
-  }
+}
+
   return (
-    
-    
-    <div className=" h-full w-full overflow-auto   remove-scrollbar">
+    <div className="h-full w-full pt-7 overflow-auto remove-scrollbar container">
       <h1 className="text-4xl font-semibold mb-3">Profile</h1>
-      <form onSubmit={handleSubmit(onSubmit)} >
-      <div className="overflow-auto pl-2">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="overflow-auto ">
+      <div className="overflow-auto =">
         <div className="flex flex-col gap-2">
           
           <div className=" flex-1 text-gray-400 my-2">
@@ -201,44 +194,7 @@ const UserProfile = () => {
           </div>
 
           <div className="flex flex-col md:flex-row gap-2">
-            <div className=" flex-1 text-gray-400 my-2">
-              <Label htmlFor="name">
-                <span className={cn("", { "text-red-700": error.name })}>
-                  {" "}
-                  Date of Birth{" "}
-                </span>
-              </Label>
-              <div className=" flex items-center bg-dark-400 rounded-md mt-1 p-[0.6rem] gap-2  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
-                <Calendar className="ml-2 " color="#ffffff" />
-
-                <Controller
-                  name="birthDate"
-                  control={control}
-                  defaultValue={user.birthDate}
-                  render={({ field }) => (
-                    <DatePicker
-                      selected={date}
-                      onChange={(date) => {
-                        const formattedDate = date
-                          ? date.toISOString().split("T")[0]
-                          : "";
-                        field.onChange(formattedDate);
-                        setDate(date);
-                      }}
-                      className="text-sm"
-                      placeholderText="Select Date"
-                      disabled
-                    />
-                  )}
-                />
-              </div>
-              {errors.birthDate && (
-                <span className="text-red-700">
-                  {" "}
-                  {errors.birthDate.message}{" "}
-                </span>
-              )}
-            </div>
+          
 
             <div className=" flex-1 text-gray-400 my-2">
               <Label htmlFor="phone">
@@ -295,29 +251,7 @@ const UserProfile = () => {
                 <span className="text-red-700"> {errors.address.message} </span>
               )}
             </div>
-            <div className=" flex-1 text-gray-400 my-2">
-              <Label htmlFor="Occupation">
-                <span className={cn("", { "text-red-700": error.Occupation })}>
-                  {" "}
-                  {!error.Occupation ? "Occupation" : error.Occupation}{" "}
-                </span>
-              </Label>
-              <div className=" flex items-center bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
-                <Input
-                  id="occupation"
-                  placeholder="Enter your occupation"
-                  className=" border-0 shad-input text-zinc-100 font-normal"
-                  autoComplete="off"
-                  {...register("occupation")}
-                />
-              </div>
-              {errors.occupation && (
-                <span className="text-red-700">
-                  {" "}
-                  {errors.occupation.message}{" "}
-                </span>
-              )}
-            </div>
+      
           </div>
 
           <div className=" flex gap-2 flex-col md:flex-row">
@@ -383,9 +317,12 @@ const UserProfile = () => {
         <Button className="bg-green-400 text-white w-[5rem] my-3" type="submit" >Update </Button>
         
       </div>
-        </form>
+      
+        </div>
+      </form>
     </div>
   );
-};
+});
 
+// The component is now memoized, and it will only re-render if its props change
 export default UserProfile;

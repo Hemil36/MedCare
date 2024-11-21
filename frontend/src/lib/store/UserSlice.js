@@ -10,7 +10,8 @@ const initialState = {
         phone: null,
         patientID: null,
         doctorID: null,
-        accessToken: null   
+        accessToken: null,
+        records:null   
     },
     loggedIn: false,
     loading : false,
@@ -87,6 +88,12 @@ const userSlice = createSlice({
         },
         setDoctorName(state, action){
             state.doctorname = action.payload
+        },
+        setRecords(state, action){
+            state.user.records = action.payload
+        },
+        clearRecords(state){
+            state.user.records = null
         }
 
         
@@ -98,7 +105,7 @@ const userSlice = createSlice({
 
 export const getLoading = (state) => state.user.loading
 export const getpatientID = (state) => state.user.user.patientID
-export const { setUser, clearUser ,setOtp, setDoctorId ,setSearch, setDoctorName,setHome , setLoading , clearLoading ,setdoctorLogin, setPatientID ,logout, setLogin , setAccessToken , setLoginSuccessfull , setProfile } = userSlice.actions
+export const { setUser,setRecords, clearUser ,setOtp, setDoctorId ,setSearch, setDoctorName,setHome , setLoading , clearLoading ,setdoctorLogin, setPatientID ,logout, setLogin , setAccessToken , setLoginSuccessfull , setProfile } = userSlice.actions
 export const getUser = state => state.user.user
 export const getError = state => state.error
 export const getAccessToken = state => state.user.user.accessToken  
@@ -110,6 +117,7 @@ export const getProfile = state => state.user.user
 export const getOtp = state => state.user.otp
 export const getDoctorID = state => state.user.user.doctorID
 export const getDoctorName = state => state.user.doctorname
+export const getRecords = state => state.user.user.records
 
 
 

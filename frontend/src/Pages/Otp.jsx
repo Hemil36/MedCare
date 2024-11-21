@@ -75,16 +75,15 @@ export const Otp = ({  setOpen , open , type , newType,oldType }) => {
       if(oldType == "patient"){
       const t2 = await dispatch(login({patientID , email}));
       console.log(t2)
-      navigate("/user");
+      navigate("/user?type=profile");
       console.log(t2)
       } else{
         const t2 = await dispatch(loginDoctor({patientID , email}));
-        navigate("/doctor");
+        navigate(`/doctor/${patientID}`);
         console.log(t2)
       }
     
       
-
       toast({
         title: "Success",
         message: "OTP Verified",

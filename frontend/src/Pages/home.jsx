@@ -26,8 +26,8 @@ const [newType, setNewType] = React.useState("patient");
 
 <h1 className=" text-left text-2xl font-bold absolute top-4 left-4">MedID</h1>
       <section className="remove-scrollbar container my-auto md:flex md:flex-row md:gap-20 ">
-         <img src={Heroimg} alt="hero" height={1000} width={1000} className=" hidden md:block md:w-1/2 xl:h-auto" />
-        <div className="sub-container max-w-[496px]">
+         <img src={Heroimg} alt="hero" height={1000} width={1000} className=" hidden md:block h-auto md:w-1/2 xl:h-auto overflow-y-hidden" />
+        <div className="sub-container max-w-[496px] ">
          
           <PatientForm setOpen={setOpen}  newType={newType}  type={type} setType={setType} setOldType={setOldType} setNewType={setNewType} oldType={oldType} />
 

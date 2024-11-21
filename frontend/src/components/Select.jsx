@@ -120,7 +120,7 @@ const SelectLabel = React.forwardRef((props, ref) => {
 });
 SelectLabel.displayName = SelectPrimitive.Label.displayName;
 
-const SelectItem = React.forwardRef((props, ref,search) => {
+const SelectItem = React.forwardRef((props, ref) => {
   const { className, children, ...rest } = props;
 
 

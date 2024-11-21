@@ -13,7 +13,7 @@
     height: 0px;
     border-radius: 0px;
   }
-
+ 
   .remove-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
@@ -32,7 +32,7 @@
 @layer utilities {
   /* ===== UTILITIES */
   .sidebar {
-    @apply remove-scrollbar w-full max-w-72 flex-col overflow-auto bg-black-800 px-7 py-10;
+    @apply remove-scrollbar w-full max-w-72 flex-col overflow-auto bg-black px-7 py-10;
   }
 
   .left-sidebar {

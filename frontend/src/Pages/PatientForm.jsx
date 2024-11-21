@@ -39,15 +39,15 @@ const PatientForm = ({ setOpen,  type, setType , setOldType , setNewType , oldTy
  
   return (
     <div>
-      <div className=" py-4">
-        <h1 className=" text-3xl">Welcome to MedID</h1>
+      <div className=" py-4 text-center md:text-left">
+        <h1 className="text-2xl md:text-3xl font-bold">Welcome to MedID</h1>
       </div>
       <form onSubmit={handleSubmit}>
         {type === "new" && (
           <>
             <Tabs
               defaultValue="patient"
-              className="w-[400px] mx-auto md:mx-0"
+              className="md:w-[400px] mx-auto md:mx-0"
               onValueChange={(e) => setNewType(e)}
             >
               <TabsList>
@@ -122,7 +122,7 @@ const PatientForm = ({ setOpen,  type, setType , setOldType , setNewType , oldTy
           <>
             <Tabs
               defaultValue="patient"
-              className="w-[400px] mx-auto md:mx-0"
+              className="md:w-[400px] mx-auto md:mx-0"
               onValueChange={(e) => setOldType(e)}
             >
               <TabsList>

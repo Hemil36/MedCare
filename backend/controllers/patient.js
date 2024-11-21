@@ -9,7 +9,7 @@ export const getPatient = async (req, res) => {
 
     try {
         const patient = await Patient.find({patientID});
-        res.status(200).json(patient);
+       return res.status(200).json(patient);
     } catch (error) {
        return res.status(404).json({ message: error.message });
     }

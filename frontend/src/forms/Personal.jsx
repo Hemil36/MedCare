@@ -28,7 +28,6 @@ import { RadioGroupItem as Hip , RadioGroup as Hipo } from "@/components/ui/radi
 import { format } from "date-fns";
 import { Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { getUser } from "@/lib/store/UserSlice";
 
 const Personal = ({register,control,errors}) => {
   const error = {};
