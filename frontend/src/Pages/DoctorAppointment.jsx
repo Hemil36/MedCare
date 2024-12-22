@@ -100,6 +100,7 @@ const DoctorAppointment = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const doctorId = useSelector(getDoctorID);
+  const doctorName = useSelector(state=> state.user.user.name )
 
   useEffect(() => {
     const getAppointmentDetails = async () => {
@@ -156,6 +157,7 @@ const DoctorAppointment = () => {
           patientName: patient.name,
           diagnosis: diagnosis.value,
           email: patient.email,
+          doctorName
         })
       ).unwrap();
       toast({

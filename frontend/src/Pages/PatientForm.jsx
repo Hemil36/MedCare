@@ -161,7 +161,6 @@ const PatientForm = ({ setOpen,  type, setType , setOldType , setNewType , oldTy
                       id="email"
                       placeholder="Enter your email"
                       className=" border-0 shad-input text-zinc-100 font-normal"
-                      autoComplete="off"
                     />
                   </div>
                 </div>

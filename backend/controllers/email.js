@@ -1,7 +1,6 @@
 import nodemailer from 'nodemailer';
 
 
-
 const transporter = nodemailer.createTransport({
   service: 'Gmail', // or another email service
   auth: {
@@ -14,156 +13,147 @@ export const appointmentEmail = ({ email, date, doctorName, patientName, address
   console.log("email sent")
   const date1 = new Date(date)
   const html = ({ email, date, time, doctorName, patientName, address }) => {
-    return `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Appointment Confirmation</title>
-        <style>
-            /* Default body and HTML background styling */
-            body, html {
-                margin: 0;
-                padding: 0;
-                height: 100%;
-                width: 100%;
-                background-color: #000000 !important; /* Forcing black background */
-            }
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appointment Confirmation</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background-color: #000000 !important;
+    }
 
-            /* Ensure email takes up full screen width and height */
-            table {
-                width: 100%;
-                height: 100%;
-                border-collapse: collapse;
-            }
+    table {
+      width: 100%;
+      height: 100%;
+      border-collapse: collapse;
+    }
 
-            /* Email container styles */
-            .email-container {
-                width: 100%;
-                max-width: 500px;
-                margin: 0 auto;
-                background-color: #252525;
-                border-radius: 16px;
-                overflow: hidden;
-                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-            }
+    .email-container {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: #252525;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
 
-            .header {
-                background-color: #252525;
-                padding: 24px;
-                position: relative;
-            }
+    .header {
+      background-color: #252525;
+      padding: 24px;
+      position: relative;
+    }
 
-            .logo-container {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-            }
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-            .logo {
-                color: #FFFFFF;
-                font-size: 28px;
-                font-weight: 700;
-                margin: 0;
-                letter-spacing: -0.5px;
-            }
+    .logo {
+      color: #FFFFFF;
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
 
-            .header-accent {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                height: 2px;
-                background: linear-gradient(90deg, #3ECF8E, #3ECFCF);
-            }
+    .header-accent {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #3ECF8E, #3ECFCF);
+    }
 
-            .content {
-                padding: 40px 32px;
-            }
+    .content {
+      padding: 40px 32px;
+    }
 
-            .heading {
-                color: #FFFFFF;
-                font-size: 28px;
-                font-weight: 700;
-                margin: 0 0 16px;
-                text-align: center;
-                letter-spacing: -0.5px;
-            }
+    .heading {
+      color: #FFFFFF;
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 16px;
+      text-align: center;
+      letter-spacing: -0.5px;
+    }
 
-            .paragraph {
-                color: #FFFFFF;
-                font-size: 16px;
-                line-height: 24px;
-                margin: 0 0 32px;
-                text-align: center;
-            }
+    .paragraph {
+      color: #FFFFFF;
+      font-size: 16px;
+      line-height: 24px;
+      margin: 0 0 32px;
+      text-align: center;
+    }
 
-            .details-container {
-                background-color: #1E1E1E;
-                border-radius: 12px;
-                margin: 0 auto 24px;
-                padding: 24px;
-                max-width: 240px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-                color: #FFFFFF;
-                text-align: left;
-            }
+    .details-container p {
+      color: #FFFFFF;
+      font-size: 16px;
+      margin: 0 0 8px;
+      text-align: center;
+    }
 
-            .highlight {
-                color: #3ECF8E;
-                font-weight: 600;
-            }
+    .highlight {
+      color: #3ECF8E;
+      font-weight: 600;
+    }
 
-            /* Footer styles */
-            .footer {
-                background-color: #252525;
-                padding: 16px 24px;
-                text-align: center;
-            }
+    .footer {
+      background-color: #252525;
+      padding: 16px 24px;
+      text-align: center;
+    }
 
-            .footer-text {
-                color: #FFFFFF;
-                font-size: 12px;
-                margin: 0;
-            }
-        </style>
-    </head>
-    <body style="background-color: #000000; margin: 0; padding: 0;">
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="background-color: #000000; width: 100%; height: 100%; padding: 0; margin: 0;">
-        <tr>
-          <td align="center" valign="top" style="padding: 40px;">
-            <div class="email-container">
-              <div class="header">
-                <div class="logo-container">
-                  <p class="logo">MedID</p>
-                </div>
-                <div class="header-accent"></div>
-              </div>
-              <div class="content">
-                <h1 class="heading">Appointment Confirmed</h1>
-                <p class="paragraph">
-                  Dear <span class="highlight">${patientName}</span>, your appointment is confirmed. Below are the details:
-                </p>
-                <div class="details-container">
-                  <p><strong>Doctor:</strong> ${doctorName}</p>
-                  <p><strong>Date:</strong> ${date}</p>
-                  <p><strong>Location:</strong> ${address}</p>
-                </div>
-                <p class="paragraph">
-                  If you have any questions, please reach out to us at <span class="highlight">${email}</span>.
-                </p>
-              </div>
-              <div class="footer">
-                <p class="footer-text">© 2024 MedID. All rights reserved.</p>
-              </div>
+    .footer-text {
+      color: #FFFFFF;
+      font-size: 12px;
+      margin: 0;
+    }
+  </style>
+</head>
+<body style="background-color: #000000; margin: 0; padding: 0;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="background-color: #000000; width: 100%; height: 100%; padding: 0; margin: 0;">
+    <tr>
+      <td align="center" valign="top" style="padding: 40px;">
+        <div class="email-container">
+          <div class="header">
+            <div class="logo-container">
+              <p class="logo">MedID</p>
             </div>
-          </td>
-        </tr>
-      </table>
-    </body>
-    </html>
-    `;
+            <div class="header-accent"></div>
+          </div>
+          <div class="content">
+            <h1 class="heading">Appointment Confirmed</h1>
+            <p class="paragraph">
+              Dear <span class="highlight">${patientName}</span>, your appointment is confirmed. Below are the details:
+            </p>
+            <div class="details-container">
+              <p><strong>Doctor:</strong> ${doctorName}</p>
+              <p><strong>Date:</strong> ${date}</p>
+              <p><strong>Location:</strong> ${address}</p>
+            </div>
+            <p class="paragraph">
+              If you have any questions, please reach out to us at <span class="highlight">${email}</span>.
+            </p>
+          </div>
+          <div class="footer">
+            <p class="footer-text">© 2024 MedID. All rights reserved.</p>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`
   };
 
 
@@ -382,7 +372,7 @@ export const confirmEmail = ({ email, date, time, doctorName, patientName, addre
 }
 
 
-export const recordEmail = async ({patientName,email}) => {
+export const recordEmail = async ({ patientName, email }) => {
 
   const medicalRecordsCreatedEmail = ({ patientName }) => {
     return `
@@ -509,26 +499,26 @@ export const recordEmail = async ({patientName,email}) => {
     </body>
     </html>
     `;
-};
+  };
 
-const mailOptions = {
-  from: {
-    name: 'MedID',
-    address: 'medid.helpdesk@gmail.com'
+  const mailOptions = {
+    from: {
+      name: 'MedID',
+      address: 'medid.helpdesk@gmail.com'
 
-  }, 
-  to: email, // recipient address
-  subject: 'Medical Records Created',
-  html: medicalRecordsCreatedEmail({ patientName }),
-};
+    },
+    to: email, // recipient address
+    subject: 'Medical Records Created',
+    html: medicalRecordsCreatedEmail({ patientName }),
+  };
 
-transporter.sendMail(mailOptions, (error, info) => {
-  if (error) {
-    return console.log(error);
-  }
-  res.json({ message: 'Record Email' });
-  console.log('Message sent: %s', info.messageId);
-})
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log(error);
+    }
+    res.json({ message: 'Record Email' });
+    console.log('Message sent: %s', info.messageId);
+  })
 
 }
 

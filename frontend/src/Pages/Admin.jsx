@@ -1,6 +1,5 @@
 import { StatCard } from "@/components/StatCard";
-// import { columns } from "@/components/table/columns";
-// import { DataTable } from "@/components/table/DataTable";
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import pending from "@/assets/pending.svg";
@@ -8,10 +7,12 @@ import cancelled from "../assets/cancelled.svg";
 import scheduled from "@/assets/appointments.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { getLoading as loading } from "@/lib/store/UserSlice";
-import { getAppointment } from "@/lib/store/AsyncThunks";
+
+import { getAppointment, logout } from "@/lib/store/AsyncThunks";
 import { DataTable } from "@/components/Table";
 import { columns } from "@/components/Column";
 import { Loader } from "lucide-react";
+
 
 const AdminPage = () => {
   const dispatch = useDispatch();
@@ -23,6 +24,7 @@ const AdminPage = () => {
   const [dataChange, setDataChange] = React.useState(false);
   const [loading, setLoading] = useState(null);
   const doctorID = useSelector((state) => state.user.user.doctorID);
+  const doctorName = useSelector((state) => state.user.user.name);
 
   useEffect(() => {
     const handleDataChangeEvent = () => {
@@ -78,13 +80,11 @@ const AdminPage = () => {
           MedID
         </h1>
         <div className=" flex gap-3">
-          <Link to={`/doctor/${doctorID}`} className="text-green-500">
-            Home
-          </Link>
-          <Link to={`/doctor/${doctorID}/profile/`} className="text-green-500">
+         
+          <Link to={`/doctor/${doctorID}/profile/`} className="font-semibold">
             Profile
           </Link>
-          <Link to={`/`} className="text-green-500">
+          <Link to={`/`} className="font-semibold" onClick={() => dispatch(logout())}>
             Logout
           </Link>
           </div>
@@ -93,7 +93,7 @@ const AdminPage = () => {
 
       <main className="admin-main">
         <section className="w-full space-y-4">
-          <h1 className="header">Welcome 👋</h1>
+          <h1 className="header">Welcome {doctorName}👋</h1>
           <p className="text-dark-700">
             Start the day with managing new appointments
           </p>

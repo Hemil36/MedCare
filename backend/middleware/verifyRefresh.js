@@ -2,8 +2,7 @@ import jwt from 'jsonwebtoken';
 export const verifyRefresh = async (req, res) => {
 
     const cookie = req.cookies.jwt;
-    // console.log(cookie)
-console.log("refresh")
+    console.log("refresh")
     if (!cookie) {
         return res.status(403).json({ message: "Token is required" });
     }

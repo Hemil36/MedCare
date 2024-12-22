@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, redirect, useNavigate } from 'react-router-dom'; // Corrected import
-import { useSelector } from 'react-redux';
-import { loggedIn as isLoggedIn } from './lib/store/UserSlice'; // Renamed import to avoid conflict
+import { useDispatch, useSelector } from 'react-redux';
+import { loggedIn as isLoggedIn, logout } from './lib/store/UserSlice'; // Renamed import to avoid conflict
 import axios from 'axios';
 
 const Auth = ({}) => {
     const[auth , setAuth] = useState(false)
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const Auth = async ()=>{
@@ -18,6 +19,8 @@ const Auth = ({}) => {
               if(res.status == 403){
                 setAuth(false)
                 navigate("/")
+                dispatch(logout())
+                
               }
               if(res.status === 200){
                 setAuth(true)
@@ -36,7 +39,6 @@ const Auth = ({}) => {
 
     const navigate = useNavigate(); // Correctly use useNavigate hook
 
-   // Add dependencies to useEffect
 
     return auth ? <Outlet /> : null;
 };

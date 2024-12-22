@@ -159,11 +159,9 @@ const submit =  (data) => {
       <div className=" flex justify-between pb-4 pt-2">
         <h1 className=" text-left text-2xl font-bold  ">MedID</h1>
         <div className="flex gap-4">
-        <Link to={`/doctor/${doctorID}`} className="text-green-500">
+        <Link to={`/doctor/${doctorID}`} className=" font-sans font-semibold"  >
+        
             Home
-          </Link>
-          <Link to={`/doctor/${doctorID}/profile/`} className="text-green-500">
-            Profile
           </Link>
         </div>
       </div>
@@ -301,50 +299,7 @@ const submit =  (data) => {
           </div>
         </div>
         </div>
-            <div className=" flex  flex-col md:flex-row  gap-2">
-              <div className=" flex-1 text-gray-400 my-2">
-                <Label htmlFor="email">
-                  <span className={cn("", { "text-red-700": error.email })}>
-                    {" "}
-                    {!error.email ? "Email Address" : error.email}{" "}
-                  </span>
-                </Label>
-                <div className=" flex items-center bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
-                  <Mail className="ml-2 " color="#ffffff" />
-                  <Input
-                    id="email"
-                    placeholder="Enter your email"
-                    className=" border-0 shad-input text-zinc-100 font-normal"
-                    autoComplete="off"
-                    {...register("email")}
-                  />
-                </div>
-                {errors.email && (
-                  <span className="text-red-700"> {errors.email.message} </span>
-                )}
-              </div>
-              <div className=" flex-1 text-gray-400 my-2">
-                <Label htmlFor="phone">
-                  <span className={cn("", { "text-red-700": error.phone })}>
-                    {" "}
-                    {!error.phone ? "Phone number" : error.phone}{" "}
-                  </span>
-                </Label>
-                <div className=" flex items-center bg-dark-400 rounded-md mt-1  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
-                  <Phone className="ml-2 " color="#ffffff" />
-                  <Input
-                    id="phone"
-                    placeholder="Enter your phone"
-                    className=" border-0 shad-input text-zinc-100 font-normal"
-                    autoComplete="off"
-                    {...register("phone")}
-                  />
-                </div>
-                {errors.phone && (
-                  <span className="text-red-700"> {errors.phone.message} </span>
-                )}
-              </div>
-            </div>
+            
 
             <div className="flex flex-col md:flex-row gap-2">
             <div className=" flex-1 text-gray-400 my-2">
@@ -447,7 +402,7 @@ const submit =  (data) => {
             {/* <FormField type="name" error={error} message="invalid emergencyPhone" placeholder="Enter name" /> */}
           </div>
           <Button
-            className="bg-green-400 text-white w-[5rem] my-3"
+            className="bg-green-500 text-white w-[5rem] my-3"
             type="submit"
           >
             Update{" "}

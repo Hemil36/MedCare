@@ -5,6 +5,7 @@ import { clearLoading, setLoginSuccessfull, setPatientID } from "./UserSlice";
 import axios from "axios";
 import FormData from "form-data";
 import { toast } from "@/components/ui/use-toast";
+import { logout as Log }  from "./UserSlice";
 const axiosPrivate = AxiosPrivate();
 
 export const handleSubmit = async (event , upload , patientID , recordName , setError,setLoad,setOpen,email) => {
@@ -82,8 +83,7 @@ export const register = createAsyncThunk('/patient/register', async ({data , typ
     
     try {
         const response = await axios.post('http://localhost:3000/api/register', {data,type});
-        
-        store.dispatch(setPatientID(response.data.patientID));
+        store.dispatch(setPatientID(response?.data?.patientID));
         return response.data; // Assuming you want to return the response data on success
       } catch (error) {
         console.log(error, "error");
@@ -263,9 +263,9 @@ export const verifyExistDoctor = createAsyncThunk('/doctor/verifyexistDoctor', a
   })
 
 
-  export const recordAppointment = createAsyncThunk('/doctor/recordAppointment', async ({appointmentID , symptoms , notes , prescription , patientName , diagnosis,email} , {rejectWithValue}) => {
+  export const recordAppointment = createAsyncThunk('/doctor/recordAppointment', async ({appointmentID , symptoms , notes , prescription , patientName , diagnosis,email,doctorName} , {rejectWithValue}) => {
         try {
-            const response = await axiosPrivate.post('http://localhost:3000/api/recordappointment', {appointmentID , symptoms , notes , prescription, patientName , diagnosis,email});
+            const response = await axiosPrivate.post('http://localhost:3000/api/recordappointment', {appointmentID , symptoms , notes , prescription, patientName , diagnosis,email,doctorName});
             console.log(response)
             if(response.status === 201)
             return response.data;
@@ -314,16 +314,17 @@ export const forgotID = createAsyncThunk('/patient/forgotID', async ({email} , {
   
   })
 
-export const loginDoctor = createAsyncThunk('/doctor/loginDoctor', async ({doctorId , email} , {rejectWithValue}) => {
+export const loginDoctor = createAsyncThunk('/doctor/loginDoctor', async ({doctorID , email} , {rejectWithValue}) => {
     
     try {
           
-        const response = await axios.post('http://localhost:3000/api/login/doctor', {doctorId , email},{
+        const response = await axios.post('http://localhost:3000/api/login/doctor', {doctorID , email},{
           withCredentials :true
         });
         console.log(response)
         if(response.status === 200)
         {
+            console.log(response.data)
 
         await store.dispatch(setLoginSuccessfull(response.data));
               return response.data;
@@ -353,7 +354,8 @@ export const loginDoctor = createAsyncThunk('/doctor/loginDoctor', async ({docto
     export const logout = createAsyncThunk('/patient/logout', async (_, {rejectWithValue}) => {
         try {
             const response = await axiosPrivate.post('http://localhost:3000/api/logout');
-            store.dispatch(logout())
+            store.dispatch(Log())
+
              // Assuming you want to return the response data on success
             } catch (error) {
             console.log(error, "error");

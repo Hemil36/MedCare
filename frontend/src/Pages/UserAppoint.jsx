@@ -190,23 +190,41 @@ const UserAppoint = () => {
                                   className="col-span-3 shad-input"
                                 />
                               </div>
-                              <div className="flex-1 flex items-center gap-4">
-                                <Label
-                                  htmlFor="username"
-                                  className="text-right"
-                                >
-                                  Prescription
-                                </Label>
-                                <Input
+                              <div className="grid grid-cols-4 items-center gap-4">
+            <strong className="text-center">Prescription:</strong>
+            
+            {appointment.appointment.prescription.length >0 ? <ScrollArea className="mt-2 col-span-5  bg-[#1a1d21] rounded-lg  max-h-40">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableCell>Medicine Name</TableCell>
+                    <TableCell>Dosage</TableCell>
+                    <TableCell>Frequency</TableCell>
+                    <TableCell>Duration</TableCell>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {appointment.appointment.prescription.map((item, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{item.name}</TableCell>
+                      <TableCell>{item.dosage}</TableCell>
+                      <TableCell>{item.frequency}</TableCell>
+                      <TableCell>{item.duration}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </ScrollArea> : <Input
                                   id="username"
-                                  disabled
                                   value={
-                                    appointment.appointment?.prescription ||
-                                    " No Prescription"
+                                    
+                                    " No  Notes"
                                   }
-                                  className="col-span-3  shad-input"
-                                />
-                              </div>
+                                  className="col-span-3 shad-input"
+                                  
+                                />}
+
+          </div>
                               <div className="grid grid-cols-4 items-center gap-4">
                                 <Label
                                   htmlFor="username"

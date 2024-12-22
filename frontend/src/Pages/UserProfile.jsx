@@ -118,11 +118,11 @@ useEffect(() => {
 }
 
   return (
-    <div className="h-full w-full pt-7 overflow-auto remove-scrollbar container">
+    <div className="h-full w-full pt-7 overflow-auto remove-scrollbar container ">
       <h1 className="text-4xl font-semibold mb-3">Profile</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="overflow-auto ">
-      <div className="overflow-auto =">
+      <div className="overflow-auto px-2">
         <div className="flex flex-col gap-2">
           
           <div className=" flex-1 text-gray-400 my-2">

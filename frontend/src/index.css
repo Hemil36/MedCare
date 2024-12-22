@@ -429,3 +429,36 @@
 .PhoneInputInput::placeholder {
   color: #1a1d21;
 }
+
+.react-datepicker__time-list-item--disabled {
+  color: #929393 !important;
+  background-color: #1a1d21 !important;
+
+  &:hover {
+    cursor: not-allowed;
+    background-color: transparent;
+  }
+}
+
+.react-datepicker__day--disabled {
+  cursor: default;
+  color: #929393 !important;
+
+
+  .overlay {
+    position: absolute;
+    bottom: 70%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 4px;
+    border-radius: 4px;
+    white-space: nowrap;
+    visibility: hidden;
+    opacity: 0;
+    transition:
+      visibility 0s,
+      opacity 0.3s ease-in-out;
+  }
+}

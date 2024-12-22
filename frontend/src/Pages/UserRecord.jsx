@@ -378,7 +378,7 @@ const UserRecord = () => {
         ) : (
           <>
             <div className=" h-full w-full relative">
-              <Loader className="animate-spin h-10 w-10 absolute top-1/3 right-1/2" />
+              <Loader className="animate-spin h-10 w-10 absolute left-1/2 top-1/3 " />
             </div>
           </>
         )}

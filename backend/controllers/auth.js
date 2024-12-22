@@ -293,7 +293,7 @@ export const login = async (req, res) => {
         const refreshtoken = jwt.sign({patientID: patient.patientID , name: patient.name}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '10hr'});
 
         res.cookie('jwt', refreshtoken, { httpOnly: true , secure: true , sameSite: 'none'});
-      return  res.status(200).json({ accesstoken , patientID : patient.patientID , name:patient.name});
+        return  res.status(200).json({ accesstoken , patientID : patient.patientID , name:patient.name});
 
 
     }
@@ -305,20 +305,22 @@ export const login = async (req, res) => {
 export const loginDoctor = async (req, res) => {
   try{
 
-    const {doctorId , email} = req.body;
-    // console.log(doctorId , email);
+    const {doctorID , email} = req.body;
+    console.log(doctorID , email);
     
-    const patient = await User.findOne({doctorId , email});
+    const doctor = await Doctor.findOne({doctorId:doctorID});
+    
 
-    if(!patient){
-        return res.status(400).json({ message : "User not found"});
+
+    if(!doctor){
+        return res.status(400).json({ message : "Doctor not found"});
     }
     // console.log(process.env.REFRESH_TOKEN_SECRET);
-    const accesstoken = jwt.sign({doctorId: patient.doctorId , name: patient.name}, process.env.ACCESS_TOKEN_SECRET , { expiresIn: '60s'});
-    const refreshtoken = jwt.sign({doctorId: patient.doctorId , name: patient.name}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '9hr'});
+    const accesstoken = jwt.sign({doctorID: doctor.doctorID , name: doctor.name}, process.env.ACCESS_TOKEN_SECRET , { expiresIn: '60s'});
+    const refreshtoken = jwt.sign({doctorID: doctor.doctorID , name: doctor.name}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '9hr'});
 
     res.cookie('jwt', refreshtoken, { httpOnly: true , secure: true , sameSite: 'none'});
-  return  res.status(200).json({ accesstoken , doctorId : patient.doctorId , name:patient.name});
+  return  res.status(200).json({ accesstoken , doctorID : doctor.doctorID , name:doctor.name});
 
 
 }

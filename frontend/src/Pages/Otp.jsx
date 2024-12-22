@@ -80,7 +80,7 @@ export const Otp = ({  setOpen , open , type , newType,oldType }) => {
       console.log(t2)
       } else{
         console.log(patientID,doctorID)
-        const t2 = await dispatch(loginDoctor({patientID , email}));
+        const t2 = await dispatch(loginDoctor({doctorID , email}));
         navigate(`/doctor/${doctorID}`);
         console.log(t2)
       }
@@ -116,7 +116,7 @@ export const Otp = ({  setOpen , open , type , newType,oldType }) => {
             />
           </AlertDialogTitle>
           <AlertDialogDescription className="text-white">
-             please enter the one time password.
+             Please enter the one time password.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div>
