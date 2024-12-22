@@ -23,6 +23,7 @@ import PrescriptionGenerator from './Prescription'
 import DocProfile from './Pages/DocProfile'
 import DocAuth from './lib/DocAuth'
 import ForgotId from './Pages/ForgotId'
+import OTPEmail from './Pages/Email'
 
 const Otpveri = ()=>{
   const otp = useSelector(getOtp)
@@ -57,6 +58,7 @@ function App() {
 
       <BrowserRouter>
       <Routes>
+        <Route path="/test" element={<OTPEmail />} />
         <Route path="/forgotId" element={<ForgotId />} /> 
         <Route path="/" element={<Home />} />
       <Route  element={<Otpveri />} >

@@ -15,7 +15,7 @@ import {storage1 } from "./appwrite.js";
 import { Readable } from "stream";
 import fs from 'fs';
 import sdk, { InputFile, Query} from 'node-appwrite';
-import { appointmentEmail } from "./controllers/email.js";
+import { appointmentEmail, recordEmail } from "./controllers/email.js";
 
 
 dotenv.config();
@@ -100,7 +100,7 @@ try{
   app.post('/api/upload', upload.single('file'), async (req, res) => {
     try {
         const fileBuffer = req.file.buffer;
-        var { patientID , name } = req.body;
+        var { patientID , name ,email} = req.body;
 
         const name1 = `${patientID}_${name}.pdf`;
        
@@ -110,8 +110,7 @@ try{
         const response = await storage1.createFile('Image',name1, t);
 
     
-    //  console.log(response)
-
+        await recordEmail({patientName , email})
         res.status(200).json({
             message: 'File uploaded successfully',
             fileId: response.$id,

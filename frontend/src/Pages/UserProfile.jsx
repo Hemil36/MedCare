@@ -314,7 +314,7 @@ useEffect(() => {
 
           {/* <FormField type="name" error={error} message="invalid emergencyPhone" placeholder="Enter name" /> */}
         </div>
-        <Button className="bg-green-400 text-white w-[5rem] my-3" type="submit" >Update </Button>
+        <Button className="bg-green-500 text-white w-[5rem] my-3" type="submit" >Update </Button>
         
       </div>
       

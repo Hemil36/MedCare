@@ -19,7 +19,7 @@ import React from "react";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getEmail, getpatientID, setLoading, setOtp } from "@/lib/store/UserSlice";
+import { getDoctorID, getEmail, getpatientID, setLoading, setOtp } from "@/lib/store/UserSlice";
 import { verifyOTP,login, loginDoctor } from "@/lib/store/AsyncThunks";
 import { toast } from "@/components/ui/use-toast";
 
@@ -30,6 +30,7 @@ export const Otp = ({  setOpen , open , type , newType,oldType }) => {
   const dispatch = useDispatch();
   const patientID = useSelector(getpatientID);
   const email = useSelector(getEmail);
+  const doctorID = useSelector(getDoctorID);
 
   const closeModal = () => {
     setOpen(false);
@@ -78,8 +79,9 @@ export const Otp = ({  setOpen , open , type , newType,oldType }) => {
       navigate("/user?type=profile");
       console.log(t2)
       } else{
+        console.log(patientID,doctorID)
         const t2 = await dispatch(loginDoctor({patientID , email}));
-        navigate(`/doctor/${patientID}`);
+        navigate(`/doctor/${doctorID}`);
         console.log(t2)
       }
     
@@ -105,7 +107,7 @@ export const Otp = ({  setOpen , open , type , newType,oldType }) => {
       <AlertDialogContent className="shad-alert-dialog jakarta">
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-start justify-between text-white">
-            Admin Access Verification
+            OTP Verification
             <X
               className="cursor-pointer"
               onClick={() => {
@@ -114,7 +116,7 @@ export const Otp = ({  setOpen , open , type , newType,oldType }) => {
             />
           </AlertDialogTitle>
           <AlertDialogDescription className="text-white">
-            To access the admin page, please enter the passkey.
+             please enter the one time password.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div>
@@ -144,7 +146,7 @@ export const Otp = ({  setOpen , open , type , newType,oldType }) => {
             onClick={(e) => validatePasskey(e)}
             className="shad-primary-btn w-full"
           >
-            Enter Admin Passkey
+            Enter OTP
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

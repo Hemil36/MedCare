@@ -5,6 +5,7 @@ import { verifyJWT } from '../middleware/verifyJWT.js';
 import { verifyRefresh } from '../middleware/verifyRefresh.js';
 import { appointmentEmail, confirmEmail, recordEmail } from '../controllers/email.js';
 import { getPatient, patientExist, updatePatient } from '../controllers/patient.js';
+import reminder from '../services/reminder.js';
 const router = express.Router();
 
 
@@ -34,6 +35,7 @@ router.post("/getdoctordetails",verifyJWT,doctorController.getDoctorDetails)
 router.post("/logout",authController.logout)
 router.post("/updatedoctordetails",verifyJWT,doctorController.updateDoctorDetails)
 router.post("/forgotid" , authController.forgotID)
+router.get("/remainder",reminder)
 
 
 export default router;

@@ -8,6 +8,7 @@ import UserProfile from "./UserProfile";
 import { useDispatch, useSelector } from "react-redux";
 import { getpatientID, setProfile, setUser } from "@/lib/store/UserSlice";
 import { getuser, logout } from "@/lib/store/AsyncThunks";
+import { cn } from "@/lib/utils";
 
 const Patient = () => {
     const navigate = useNavigate();
@@ -55,7 +56,7 @@ const Patient = () => {
     
           <div className="flex flex-col items-center justify-center flex-1 gap-4">
             <Button
-              className="text-white text-xl"
+              className={cn("text-white text-xl", myParam === "profile" && "text-green-400")}
               onClick={() => {
                 navigate(`/user?type=profile`);
                 setIsSidebarOpen(false);
@@ -64,7 +65,7 @@ const Patient = () => {
               Profile
             </Button>
             <Button
-              className="text-white text-xl"
+              className={cn("text-white text-xl", myParam === "appointments" && "text-green-400")}
               onClick={() => {
                 navigate(`/user?type=appointments`);
                 setIsSidebarOpen(false);
@@ -73,7 +74,7 @@ const Patient = () => {
               Appointments
             </Button>
             <Button
-              className="text-white text-xl"
+              className={cn("text-white text-xl", myParam === "reports" && "text-green-400")}
               onClick={() => {
                 navigate(`/user?type=reports`);
                 setIsSidebarOpen(false);

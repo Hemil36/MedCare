@@ -7,12 +7,13 @@ import FormData from "form-data";
 import { toast } from "@/components/ui/use-toast";
 const axiosPrivate = AxiosPrivate();
 
-export const handleSubmit = async (event , upload , patientID , recordName , setError,setLoad,setOpen) => {
+export const handleSubmit = async (event , upload , patientID , recordName , setError,setLoad,setOpen,email) => {
     event.preventDefault();
     const formData = new FormData();
     formData.append('file', upload);
     formData.append('patientID', patientID);
     formData.append('name',recordName);
+
 
 
     try {

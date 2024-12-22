@@ -3,11 +3,9 @@ import Appointment from "../models/AppointmentRecord.js";
 import doctor from "../models/Doctor.js";
 import Patient from "../models/User.js";
 import { appointmentEmail, confirmEmail } from "./email.js";
-import jsPDF from 'jspdf';
-import CryptoJS from 'crypto-js';
+
 import {CronJob} from "cron"
 import { GoogleGenerativeAI } from '@google/generative-ai';
-  import * as fs  from 'fs'
   import dotenv from 'dotenv'
   import moment from "moment/moment.js";
   dotenv.config()
@@ -345,7 +343,7 @@ export const approveAppointment = async (req, res) => {
         const doctorDetails = await doctor.findOne({ doctorId : appointment.doctorID });
         const newdate = new Date(date);
 
-        confirmEmail({ email : patientDetails.email, date: newdate.toDateString(), time : newdate.toLocaleTimeString().replace(/:\d+ /, " "), doctorName : doctorDetails.name, patientName : patientDetails.name,address : doctorDetails.clinicAddress })
+        await confirmEmail({ email : patientDetails.email, date: newdate.toDateString(), time : newdate.toLocaleTimeString().replace(/:\d+ /, " "), doctorName : doctorDetails.name, patientName : patientDetails.name,address : doctorDetails.clinicAddress })
         scheduleNotification(appointment);
         res.status(200).json(appointment);
     } catch (error) {
@@ -407,6 +405,7 @@ export const cancelAppointment = async (req, res) => {
         }
         appointment.status = "cancelled";
         await appointment.save();
+        await cancelAppointment({email : appointment.email,  patientName : appointment.patientName})
         res.status(200).json(appointment);
     } catch (error) {
         res.json(error);

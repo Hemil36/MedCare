@@ -75,6 +75,8 @@ const userSlice = createSlice({
         logout(state , action){
             state.user=null
             state.profile=null
+            state.loggedIn = false
+            state.profile = null
         },
         setdoctorLogin(state, action){
             state.user.doctorID = action.payload.doctorID

@@ -30,7 +30,7 @@ import { onUpload } from "@/forms/fileUploader";
 import { Input } from "@/components/ui/input";
 import AxiosPrivate from "@/hooks/AxiosPrivate";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { getpatientID, getRecords, setRecords } from "@/lib/store/UserSlice";
+import { getEmail, getpatientID, getRecords, setRecords } from "@/lib/store/UserSlice";
 import { handleSubmit } from "@/lib/store/AsyncThunks";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
@@ -84,6 +84,7 @@ const UserRecord = () => {
 
   const records = useSelector(getRecords,shallowEqual);
   const dispatch = useDispatch();
+  const email = useSelector(getEmail)
   
   const getRecords2 = useCallback(async () => {
     if(records!=null && load == false)
@@ -140,7 +141,8 @@ const UserRecord = () => {
                         recordName,
                         setError,
                         setLoad,
-                        setOpen
+                        setOpen,
+                        email
                       );
                       setOpen(false);
                       setUploadLoading(false);

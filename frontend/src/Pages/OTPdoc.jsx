@@ -43,6 +43,7 @@ export const OtpDoc = ({setOpen,setVerify}) => {
     dispatch(setOtp(true));
     setVerify(true);
     closeModal();
+    
     }
     catch(e){
       console.log(e);

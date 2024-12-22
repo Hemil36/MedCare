@@ -48,17 +48,191 @@ const transporter = nodemailer.createTransport({
   });
 
   function generateOtpEmailTemplate(otp) {
-    return `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-        <h2 style="color: #4CAF50;">Your OTP for Login</h2>
-        <p>Hello,</p>
-        <p>Use the following OTP to log in to your account:</p>
-        <p style="font-size: 24px; font-weight: bold;">${otp}</p>
-        <p>This OTP is valid for the next 10 minutes. Please do not share this OTP with anyone.</p>
-        <p>Thank you,</p>
-        <p>Your Company Name</p>
-      </div>
-    `;
+    return  `
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Email</title>
+  <style>
+    /* Default body and HTML background styling */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background-color: #000000 !important; /* Forcing black background */
+    }
+
+    /* Ensure email takes up full screen width and height */
+    table {
+      width: 100%;
+      height: 100%;
+      border-collapse: collapse;
+    }
+
+    /* Email container styles */
+    .email-container {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: #252525;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .header {
+      background-color: #252525;
+      padding: 24px;
+      position: relative;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      color: #FFFFFF;
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+
+    .header-accent {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #3ECF8E, #3ECFCF);
+    }
+
+    .content {
+      padding: 40px 32px;
+    }
+
+    .heading {
+      color: #FFFFFF;
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 16px;
+      text-align: center;
+      letter-spacing: -0.5px;
+    }
+
+    .paragraph {
+      color: #FFFFFF;
+      font-size: 16px;
+      line-height: 24px;
+      margin: 0 0 32px;
+      text-align: center;
+    }
+
+    .otp-container {
+      background: linear-gradient(135deg, #3ECF8E, #3ECFCF);
+      border-radius: 12px;
+      margin: 0 auto 24px;
+      padding: 24px;
+      text-align: center;
+      max-width: 240px;
+      box-shadow: 0 4px 12px rgba(62, 207, 142, 0.2);
+    }
+
+    .otp-text {
+      color: #FFFFFF;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: 8px;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .expiration-text {
+      color: #FFFFFF;
+      font-size: 14px;
+      text-align: center;
+      margin: 0 0 32px;
+    }
+
+    .highlight {
+      color: #3ECF8E;
+      font-weight: 600;
+    }
+
+    /* Footnote styles */
+    .footnote-container {
+      border-top: 1px solid #E0E0E0;
+      margin-top: 32px;
+      padding-top: 24px;
+    }
+
+    .footnote {
+      color: #FFFFFF;
+      font-size: 14px;
+      line-height: 20px;
+      text-align: center;
+      margin: 0;
+    }
+
+    /* Footer styles */
+    .footer {
+      background-color: #252525;
+      padding: 16px 24px;
+      text-align: center;
+    }
+
+    .footer-text {
+      color: #FFFFFF;
+      font-size: 12px;
+      margin: 0;
+    }
+  </style>
+</head>
+<body style="background-color: #000000; margin: 0; padding: 0;">
+  <!-- Table wrapper to ensure full email background -->
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="background-color: #000000; width: 100%; height: 100%; padding: 0; margin: 0;">
+    <tr>
+      <td align="center" valign="top" style="padding: 40px;">
+        <div class="email-container">
+          <div class="header">
+            <div class="logo-container">
+              <p class="logo">MedID</p>
+            </div>
+            <div class="header-accent"></div>
+          </div>
+          <div class="content">
+            <h1 class="heading">Your One-Time Password</h1>
+            <p class="paragraph">
+              Enter the following OTP to complete your action:
+            </p>
+            <div class="otp-container">
+              <p class="otp-text">${otp}</p>
+            </div>
+            <p class="expiration-text">
+              This OTP expires in <span class="highlight">10 minutes</span>
+            </p>
+            <div class="footnote-container">
+              <p class="footnote">
+                If you didn't request this code, please ignore this email or contact our support team if you have any concerns.
+              </p>
+            </div>
+          </div>
+          <div class="footer">
+            <p class="footer-text">© 2024 MedID. All rights reserved.</p>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+
+`;
   }
 
 export const OTPSender = async (req,res) => {

@@ -15,7 +15,7 @@ const HoverCard1 = ({value , doctor , key}) => {
                         <img src={doctor.photo} alt="" className="w-20 h-20 rounded-full" />
                         <h1 className="text-3xl font-bold  whitespace-nowrap">{doctor.name}</h1>
                         <div className=" text whitespace-nowrap flex flex-col gap-2 pt-4">
-                          <div>
+                          <div>z
                           <span>Speciality : </span>
                           <span>{doctor.speciality}</span>
 
