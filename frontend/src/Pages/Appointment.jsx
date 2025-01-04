@@ -60,18 +60,20 @@ const Appointment = ({ type }) => {
   const [date, setDate] = React.useState(new Date());
   const [open, setOpen] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
-  const [value, setValue] = React.useState("");
-  const [selectedStatus, setSelectedStatus] = React.useState(null);
+  const [speciality, setSpeciality] = React.useState("");
   const [doctor, setDoctor] = React.useState(null);
   const [select, setSelect] = React.useState("");
   const dispatch = useDispatch();
   const search = useSelector(getSearch);
 
-  const filteredDoctors = useMemo( () => {
+  const filteredDoctors = useMemo(() => {
+    if (speciality === "None") {
+      return doctor;
+    }
     return doctor?.filter((doc) =>
-      doc.name.toLowerCase().includes(search.toLowerCase())
+      doc.speciality.toLowerCase().includes(speciality.toLowerCase())
     );
-  }, [doctor, search]);
+  }, [doctor, speciality]);
 
   useEffect(() => {
     // Update the select state when filtered doctors change
@@ -149,65 +151,58 @@ const Appointment = ({ type }) => {
 
     setLoading(true);
   };
+  console.log(speciality)
   return (
-    <div className="flex h-screen ">
-      <section className=" container py-10 remove-scrollbar">
-        <h1 className=" text-left text-3xl font-bold w-full">MedID</h1>
+    <div className="flex h-screen">
+      <section className="container py-10 remove-scrollbar">
+        <h1 className="text-left text-3xl font-bold w-full">MedID</h1>
         <div className="sub-container max-w-[860px] flex-1 flex-col gap-9 pb-10">
-          <h1 className=" text-3xl font-bold">Request a new Appointment</h1>
+          <h1 className="text-3xl font-bold">Request a new Appointment</h1>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className=" flex flex-col gap-5">
-              <div className=" flex-1 text-gray-400 my-2">
+            <div className="flex flex-col gap-5">
+              {/* Doctor Selection */}
+              <div className="flex-1 text-gray-400 my-2">
+                <Label >
+                  Speciality
+                </Label>
+                <div className="">
+                  
+                  <Select
+                        onValueChange={(e) => {
+                          console.log(e);
+                          setSpeciality(e);
+                        }}
+                        className="data-[state=checked]:text-green-400"
+                      >
+                        <SelectTrigger className="shad-select-trigger my-0 py-0 fontlight border-0 focus:bg-slate-600">
+                          {speciality ? speciality : "Select Speciality"}
+                        </SelectTrigger>
+                        <SelectContent className="shad-select-content fontlight border-0">
+                        
+                          <SelectItem value="None" className="fontlight shad-select-item ">
+                            None
+                          </SelectItem>
+                          <SelectItem value="Cardiology" className="fontlight shad-select-item ">
+                            Cardiology
+                          </SelectItem>
+                          <SelectItem value="Dermatology" className="fontlight shad-select-item ">
+                            Dermatology
+                          </SelectItem>
+
+                        </SelectContent>
+                        
+                      </Select>
+
+                </div>
                 <Label htmlFor="Doctor">
                   <span>Doctor</span>
                 </Label>
-                {/* <Controller
-                  name="doctor"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <Select
-                      onValueChange={(e) => {
-                        console.log(e);
-                        field.onChange(e);
-                      }}
-                      value={field.value}
-                    >
-                      <SelectTrigger className="shad-select-trigger">
-                        {field.value
-                          ? doctor.find((doc) => doc.doctorId == field.value)
-                              .name
-                          : "Select Doctor"}
-                      </SelectTrigger>
-                      <SelectContent className="shad-select-content  ">
-                        {doctor &&
-                          doctor
-                            .filter((doc) =>
-                              doc.name
-                                .toLowerCase()
-                                .includes(search.toLowerCase())
-                            )
-                            .map((doc) => (
-                              <HoverCard
-                                key={doc.doctorId}
-                                value={doc.doctorId}
-                                doctor={doc}
-                                className="hover-card"
-                              />
-                            ))}
-                          
-                      </SelectContent>
-                    </Select>
-                  )}
-                /> */}
-
                 <Controller
                   name="doctor"
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
                     <div className="relative">
-                      {/* Select Trigger */}
                       <Select
                         onValueChange={(e) => {
                           console.log(e);
@@ -216,70 +211,50 @@ const Appointment = ({ type }) => {
                         value={field.value}
                         className="data-[state=checked]:text-green-400"
                       >
-                      <SelectTrigger className="shad-select-trigger my-0 py-0 fontlight border-0 focus:bg-slate-600    ">
+                        <SelectTrigger className="shad-select-trigger my-0 py-0 fontlight border-0 focus:bg-slate-600">
                           {field.value
-                            ? select.find((doc) => doc.doctorId == field.value)
-                                ?.name
+                            ? select.find((doc) => doc.doctorId == field.value)?.name
                             : "Select Doctor"}
                         </SelectTrigger>
-                        <SelectContent className="shad-select-content fontlight border-0  ">
+                        <SelectContent className="shad-select-content fontlight border-0">
                           {doctor &&
                             select.map((doc) => (
-                              
-                              <div key={doc.doctorId} className="relative fontlight border-y group  ">
-                                {/* Accordion for each doctor */}
-                                <Accordion type="single" collapsible className="">
-                                  <AccordionItem value={doc.doctorId} className="fontlight ">
+                              <div
+                                key={doc.doctorId}
+                                className="relative fontlight border-y group border-green-200"
+                              >
+                                <Accordion type="single" collapsible>
+                                  <AccordionItem value={doc.doctorId} className="fontlight border-green-200">
                                     <AccordionTrigger className="fontlight">
-                                      <SelectItem value={doc.doctorId} className="fontlight shad-select-item  ">
+                                      <SelectItem value={doc.doctorId} className="fontlight shad-select-item ">
                                         {doc.name}
                                       </SelectItem>
                                     </AccordionTrigger>
                                     <AccordionContent>
-                                      {/* Styled content for doctor details */}
-                                      <div className="p-4  text-white fontlight rounded-md shadow-lg group-">
+                                      <div className="p-4 text-white fontlight rounded-md shadow-lg ">
                                         <div className="flex items-center gap-4">
-                                          {/* Doctor photo */}
                                           <img
                                             src={doc.photo}
                                             alt={`${doc.name}`}
                                             className="w-16 h-16 rounded-full"
                                           />
-                                          {/* Doctor name and specialty */}
                                           <div>
-                                            <h3 className="text-xl fontlight">
-                                              {doc.name}
-                                            </h3>
-                                            <p className="text-md text-gray-300">
-                                              {doc.speciality}
-                                            </p>
+                                            <h3 className="text-xl fontlight">{doc.name}</h3>
+                                            <p className="text-md text-gray-300">{doc.speciality}</p>
                                           </div>
                                         </div>
-                                        {/* Additional details */}
                                         <div className="mt-4 text-sm space-y-2">
                                           <p>
-                                            <span className="font">
-                                              Experience:
-                                            </span>{" "}
-                                            {doc.experience} years
+                                            <span className="font">Experience:</span> {doc.experience} years
                                           </p>
                                           <p>
-                                            <span className="font">
-                                              Qualification:
-                                            </span>{" "}
-                                            {doc.qualification}
+                                            <span className="font">Qualification:</span> {doc.qualification}
                                           </p>
                                           <p>
-                                            <span className="font">
-                                              Clinic Address:
-                                            </span>{" "}
-                                            {doc.clinicAddress}
+                                            <span className="font">Clinic Address:</span> {doc.clinicAddress}
                                           </p>
                                           <p>
-                                            <span className="font">
-                                              Clinic Phone Number:
-                                            </span>{" "}
-                                            {doc.phone}
+                                            <span className="font">Clinic Phone Number:</span> {doc.phone}
                                           </p>
                                         </div>
                                       </div>
@@ -290,8 +265,6 @@ const Appointment = ({ type }) => {
                             ))}
                         </SelectContent>
                       </Select>
-
-                      {/* Error Message */}
                       {errors.doctor && (
                         <span className="text-red-500 text-sm">
                           {errors.doctor.message}
@@ -300,42 +273,32 @@ const Appointment = ({ type }) => {
                     </div>
                   )}
                 />
-
-                {errors.doctor && (
-                  <span className="text-red-500 text-sm">
-                    {errors.doctor.message}
-                  </span>
-                )}
               </div>
-              <div className=" flex-1 text-gray-400 my-2">
+              {/* Appointment Date Selection */}
+              <div className="flex-1 text-gray-400 my-2">
                 <Label htmlFor="Doctor">
                   <span>Select Appointment Date</span>
                 </Label>
-                <div className=" flex items-center bg-dark-400 rounded-md mt-1 p-[0.6rem] gap-2  focus-within:ring focus-within:ring-offset-green-300  focus-within:ring-offset-1">
-                  <Calendar className="ml-2 " color="#ffffff" />
-
+                <div className="flex items-center bg-dark-400 rounded-md mt-1 p-[0.6rem] gap-2 shad-select-trigger my-0 py-0 fontlight border-0 focus:bg-slate-600 ">
+                  <Calendar className="ml-2" color="#ffffff" />
                   <Controller
                     name="schedule"
                     control={control}
                     defaultValue=""
                     render={({ field }) => (
                       <DatePicker
-                        selected={startDate}
+                        selected={date}
                         onChange={(date) => {
                           const formattedDate = date
                             ? date.toISOString().split("T")[0]
                             : "";
                           field.onChange(formattedDate);
                           setDate(date);
-                          showTimeSelect
-                          setStartDate(date);
                         }}
-                        showTimeSelect
-                        showTimeSelectOnly
-                        filterTime={filterPassedTime}
+                        minDate={new Date()}
                         className="text-sm"
                         placeholderText="Select Date"
-                        dateFormat="MM/dd/yyyy "
+                        dateFormat="MM/dd/yyyy"
                       />
                     )}
                   />
@@ -346,17 +309,17 @@ const Appointment = ({ type }) => {
                   </span>
                 )}
               </div>
+              {/* Submit Button */}
               <Button
                 className={cn("text-white rounded-md p-2 m-2 w-full", {
-                  "bg-green-500 ": type === "create",
+                  "bg-green-500": type === "create",
                   "bg-red-400": type === "cancel",
                 })}
                 type="submit"
               >
                 {loading ? (
                   <>
-                    <Loader className="animate-spin" />
-                    Loading...
+                    <Loader className="animate-spin" /> Loading...
                   </>
                 ) : type === "create" ? (
                   "Schedule Appointment"
@@ -369,6 +332,7 @@ const Appointment = ({ type }) => {
         </div>
       </section>
     </div>
+
   );
 };
 

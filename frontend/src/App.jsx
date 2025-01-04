@@ -58,7 +58,6 @@ function App() {
 
       <BrowserRouter>
       <Routes>
-        <Route path="/test" element={<OTPEmail />} />
         <Route path="/forgotId" element={<ForgotId />} /> 
         <Route path="/" element={<Home />} />
       <Route  element={<Otpveri />} >

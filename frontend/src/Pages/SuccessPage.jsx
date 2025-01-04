@@ -73,7 +73,7 @@ const RequestSuccess =  () => {
           <p>Requested appointment details: </p>
           <div className="flex items-center gap-3">
             
-            <p className="whitespace-nowrap"> Dr. {docname}</p>
+            <p className="whitespace-nowrap">  {docname}</p>
           </div>
           <div className="flex gap-2">
             <img
@@ -82,7 +82,7 @@ const RequestSuccess =  () => {
               width={24}
               alt="calendar"
             />
-             <p> {` ${date?.toDateString()}` || appointment?.date}</p> 
+             <p> {` ${date.toDateString()}` || appointment?.date}</p> 
           </div>
         </section>
 

@@ -148,7 +148,7 @@ const DoctorAppointment = () => {
 
     console.log(errors);
     try {
-      await dispatch(
+       dispatch(
         recordAppointment({
           appointmentID: myParam,
           symptoms: symptoms.value,

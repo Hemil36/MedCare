@@ -80,7 +80,7 @@ const UserAppoint = () => {
       <h1 className=" text-3xl font-bold ">Appointments</h1>
       <Button className="mt-5 bg-green-500"  > <Link to={href}>Schedule Appointment</Link></Button>
 { !noappointment ? appointments ? <>
-      <div className=" flex flex-col md:flex-row items-center  ">
+       <div className=" flex flex-col md:flex-row items-center  ">
         <div className="pt-6 grow">
           Last Appointment
           <div className="stat-card  bg-pending w-fit mt-4  ">
@@ -88,12 +88,8 @@ const UserAppoint = () => {
               {lastAppointment?.doctorDetails || "No Appointments"}
             </h2>
             <div className=" flex flex-col gap-2 text-[1rem] ">
-              <p>Reason : {lastAppointment?.appointment?.reason || "  "}</p>
+              <p>Reason : {lastAppointment?.appointment?.reason || "Not Specified"}</p>
               <p className=""> Date : {lastAppointmentDate.toDateString()}</p>
-              <p>
-                Prescription :{" "}
-                {lastAppointment?.appointment?.prescription || "  "}
-              </p>
               <p>Notes : {lastAppointment?.appointment?.notes || "  "}</p>
             </div>
           </div>
@@ -218,7 +214,7 @@ const UserAppoint = () => {
                                   id="username"
                                   value={
                                     
-                                    " No  Notes"
+                                    " No  Prescription"
                                   }
                                   className="col-span-3 shad-input"
                                   
@@ -266,7 +262,6 @@ const UserAppoint = () => {
 
 </> :<p className="pt-5">No Appointments found</p> }
 
-      {/* <DataTable columns={columns}  /> */}
     </div>
   );
 };
