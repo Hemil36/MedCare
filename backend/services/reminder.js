@@ -27,14 +27,12 @@ const reminder = async (req, res) => {
     // For each appointment, send a personalized email
     for (let appointment of appointments) {
         const patient = await Patient.findOne({patientID: appointment.patientID});
-        console.log(patient)
         try {
         const personalizedMessage = await getPersonalizedMessage( {
           date: appointment.date,
             name: patient.name,
         });
 
-        console.log(patient.email)
   
         await sendEmail(patient.email, 'Appointment Reminder', personalizedMessage);
       } catch (error) {

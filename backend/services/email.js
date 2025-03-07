@@ -1,26 +1,17 @@
 import nodemailer from 'nodemailer';
+import dotenv from "dotenv";
 
-// Configure the email transporter
+dotenv.config(); // Load environment variables
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: "medid.helpdesk@gmail.com", // your email
-    pass: "yrrr vsfj dxiv gkdr", // your email password
+    user: "medid.helpdesk@gmail.com", 
+    pass: process.env.GMAIL_PASSWORD, 
   }
 });
 
-const sendEmail = (to, subject, text) => {
-  const mailOptions = {
-    from: {
-        name: 'MedID',
-        address: 'medid.helpdesk@gmail.com'
-      }, // sender address
-      to: to, // recipient address
-    subject,
-    text
-  };
 
-  return transporter.sendMail(mailOptions);
-};
 
-export default sendEmail;
+
+export default transporter;
