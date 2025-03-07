@@ -4,11 +4,11 @@ import medicineSchema from "./Medicine.js";
 const Schema = mongoose.Schema;
 
 const appointmentSchema = new mongoose.Schema({
-    patientID: { type: String ,required: true },
-    date: { type: Date, required: true },
+    patientID: { type: Schema.Types.ObjectId, ref: "patient", required: true }, 
+   doctorID: { type: Schema.Types.ObjectId, ref: "doctor", required: true },      
+   date: { type: Date, required: true },
     time: { type: String },
     notes: { type: String },
-    doctorID : { type: String, required: true },
     symptoms: { type: String },
     prescription: [medicineSchema],
     status: { type: String, default: "pending" , required: true},

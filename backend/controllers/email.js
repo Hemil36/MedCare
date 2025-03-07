@@ -1,13 +1,7 @@
-import nodemailer from 'nodemailer';
-
-
-const transporter = nodemailer.createTransport({
-  service: 'Gmail', // or another email service
-  auth: {
-    user: "medid.helpdesk@gmail.com", // your email
-    pass: "yrrr vsfj dxiv gkdr", // your email password
-  },
-});
+import PDFDocument from 'pdfkit';
+import CryptoJS from 'crypto-js';
+import { PassThrough } from 'stream';
+import transporter from '../services/email.js';
 
 export const appointmentEmail = ({ email, date, doctorName, patientName, address }) => {
   console.log("email sent")
@@ -18,7 +12,7 @@ export const appointmentEmail = ({ email, date, doctorName, patientName, address
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Appointment Confirmation</title>
+  <title>Appointment Request Received/title>
   <style>
     body, html {
       margin: 0;
@@ -631,9 +625,9 @@ export const createAccountEmail = ({ patientID, patientName, email }) => {
   })
 }
 
-export const createAccountDoctorEmail = ({ doctorId, doctorName, email }) => {
+export const createAccountDoctorEmail = ({ doctorID, doctorName, email }) => {
 
-  const html = ({ doctorName, doctorId }) => {
+  const html = ({ doctorName, doctorID }) => {
     return (
       `<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0;">
         <div style="width: 100%; max-width: 600px; margin: 20px auto; background-color: #fff; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
@@ -644,7 +638,7 @@ export const createAccountDoctorEmail = ({ doctorId, doctorName, email }) => {
                 <p>We are pleased to inform you that your account has been successfully created. Please find the details of your account below:</p>
                 <div style="margin: 20px 0; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd;">
                     <p><strong>Account Details:</strong></p>
-                   <p><strong>Account ID:</strong> ${doctorId}</p>
+                   <p><strong>Account ID:</strong> ${doctorID}</p>
                 </div>
                 <p>You can now log in to your account using your medID.</p>
                 <p>Thank you for choosing Medid. We look forward to serving you.</p>
@@ -666,7 +660,7 @@ export const createAccountDoctorEmail = ({ doctorId, doctorName, email }) => {
     }, // sender address
     to: email, // recipient address
     subject: 'MedID Account Created',
-    html: html({ doctorId, doctorName }),
+    html: html({ doctorID, doctorName }),
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
@@ -895,9 +889,7 @@ export const cancelAppointment = async ({ email, patientName }) => {
 }
 
 
-import PDFDocument from 'pdfkit';
-import CryptoJS from 'crypto-js';
-import { PassThrough } from 'stream';
+
 
 // Function to generate PDF as a buffer using PDFKit
 export const generatePDFKitPrescriptionBuffer = (data) => {

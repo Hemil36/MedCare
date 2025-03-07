@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 const { Schema } = mongoose;
-import ImageSchema from "./ImageSchema.js"
 
 const PatientSchema = new Schema({
   name: String,
@@ -47,6 +46,6 @@ const PatientSchema = new Schema({
   },
 });
 
-const Patient = mongoose.model('Patient', PatientSchema) || mongoose.models.Patient;
+const Patient = mongoose.model('patient', PatientSchema) || mongoose.models.Patient;
 
 export default Patient;

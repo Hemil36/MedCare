@@ -1,18 +1,49 @@
 import jwt from "jsonwebtoken";
 
-export const verifyJWT = async (req,res,next) => {
-    const token = req.headers["authorization" || "Authorization"]
-    if(!token) return res.status(403).json({message : "Token is required"})
-        const token1 = token.split(" ")[1];
-    console.log(token1)
+export const verifyJWT = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ 
+        success: false, 
+        message: "Authentication failed: Missing or malformed token." 
+      });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+      if (err) {
+        if (err.name === "TokenExpiredError") {
+          return res.status(401).json({ 
+            success: false, 
+            message: "Session expired. Please log in again." 
+          });
+        } else {
+          return res.status(403).json({ 
+            success: false, 
+            message: "Invalid token. Please log in again." 
+          });
+        }
+      }
 
 
-    jwt.verify(token1 ,process.env.ACCESS_TOKEN_SECRET,(err,user) => {
-        if(err) return res.status(403).json({message : "Token is invalid"})
-        req.user = user.username;
-        req.roles = user.roles;
-        next();
-    })
+      req.user = {
+        id: decoded.patientID || decoded.doctorID,
+        role: decoded.patientID ? "patient" : "doctor",
+        name: decoded.name,
+      };
 
 
-}
+      next();
+    });
+
+  } catch (error) {
+    console.error("JWT Verification Error:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Internal Server Error. Please try again later." 
+    });
+  }
+};
