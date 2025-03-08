@@ -26,8 +26,36 @@ const AdminPage = () => {
   const doctorName = useSelector((state) => state.user.user.name);
 
   useEffect(() => {
-    const handleDataChangeEvent = () => {
-      setDataChange((prev) => !prev); // Toggle the state to trigger useEffect
+    const handleDataChangeEvent = async () => {
+      try {
+        let response = await dispatch(getAppointment()).unwrap();
+        response = response.data;
+        if (response.length > 0) {
+          const pending = response.filter(
+            (appointment) =>
+              appointment?.status === "pending" &&
+              new Date(appointment?.date).getDate() == new Date().getDate()
+          );
+          const scheduled = response.filter(
+            (appointment) =>
+              appointment?.status === "scheduled" &&
+              new Date(appointment?.date).getDate() == new Date().getDate()
+          );
+          const cancelled = response.filter(
+            (appointment) =>
+              appointment?.status === "cancelled" &&
+              new Date(appointment?.date).getDate() == new Date().getDate()
+          );
+          setPendingCount(pending.length);
+          setScheduledCount(scheduled.length);
+          setCancelledCount(cancelled.length);
+        }
+        setAppointments(response);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setLoading(false);
+      }
     };
 
     window.addEventListener("appointmentDataChanged", handleDataChangeEvent);
@@ -44,16 +72,22 @@ const AdminPage = () => {
     const getAppointments = async () => {
       try {
         let response = await dispatch(getAppointment()).unwrap();
-      response=response.data
+        response = response.data;
         if (response.length > 0) {
           const pending = response.filter(
-            (appointment) => appointment?.status === "pending" && new Date(appointment?.date).getDate() == new Date() .getDate()
+            (appointment) =>
+              appointment?.status === "pending" &&
+              new Date(appointment?.date).getDate() == new Date().getDate()
           );
           const scheduled = response.filter(
-            (appointment) => appointment?.status === "scheduled" && new Date(appointment?.date).getDate() == new Date() .getDate()
+            (appointment) =>
+              appointment?.status === "scheduled" &&
+              new Date(appointment?.date).getDate() == new Date().getDate()
           );
           const cancelled = response.filter(
-            (appointment) => appointment?.status === "cancelled" && new Date(appointment?.date).getDate() == new Date() .getDate()
+            (appointment) =>
+              appointment?.status === "cancelled" &&
+              new Date(appointment?.date).getDate() == new Date().getDate()
           );
           setPendingCount(pending.length);
           setScheduledCount(scheduled.length);
@@ -74,7 +108,13 @@ const AdminPage = () => {
   return (
     <div className="mx-auto flex max-w-7xl flex-col ">
       <div className=" py-6 flex justify-between items-center">
-        <h1 className="text-left text-2xl font-bold   ">MedID</h1>
+        <div className="flex gap-1">
+          <h1 className=" text-left text-2xl font-bold ">MedCare</h1>
+        <div className="relative">
+          <div className="h-2 w-2  rounded-full bottom-1 absolute   bg-green-400" />
+        </div>
+        </div>
+
         <div className=" flex gap-3">
           <Link to={`/doctor/${doctorID}/profile/`} className="font-semibold">
             Profile

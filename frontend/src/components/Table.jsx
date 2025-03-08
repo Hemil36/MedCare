@@ -27,7 +27,30 @@ export function DataTable({ columns, data }) {
   const [data4, setData4] = React.useState([]);
   const dispatch = useDispatch();
   const doctorID = useSelector(getDoctorID)
+  const [dataChange, setDataChange] = React.useState(false);
   
+
+
+
+  useEffect(() => {
+    const handleDataChangeEvent = () => {
+      setDataChange((prev) => !prev); // Toggle the state to trigger useEffect
+    };
+
+    window.addEventListener("appointmentDataChanged", handleDataChangeEvent);
+
+    return () => {
+      window.removeEventListener(
+        "appointmentDataChanged",
+        handleDataChangeEvent
+      );
+    };
+  }, []);
+
+
+
+
+
   useEffect(() => {
     
     
@@ -70,7 +93,7 @@ let data = payload.data;
 
     t();
 
-  }, []);
+  }, [dataChange]);
 
   console.log(filtering, "filtering");
   // console.log(data, "data");

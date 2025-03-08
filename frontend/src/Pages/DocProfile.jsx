@@ -157,8 +157,12 @@ const submit =  (data) => {
   return (
     <div className=" h-full w-full px-[5%] pt-[1%] overflow-auto   remove-scrollbar">
       <div className=" flex justify-between pb-4 pt-2">
-        <h1 className=" text-left text-2xl font-bold  ">MedID</h1>
-        <div className="flex gap-4">
+      <div className="flex gap-1">
+          <h1 className=" text-left text-2xl font-bold ">MedCare</h1>
+        <div className="relative">
+          <div className="h-2 w-2  rounded-full bottom-1 absolute   bg-green-400" />
+        </div>
+        </div>        <div className="flex gap-4">
         <Link to={`/doctor/${doctorID}`} className=" font-sans font-semibold"  >
         
             Home

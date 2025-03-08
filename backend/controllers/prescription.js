@@ -137,11 +137,14 @@ export async function sendEmail({
     medicationPrescription,
     remarks,
   });
+
+  const date1 = new Date(prescriptionDate);
+
   generatePDF({
     patientName,
     doctorName,
     patientEmail,
-    prescriptionDate,
+    prescriptionDate : date1.toLocaleDateString(),
     diagnosis,
     medicationPrescription,
     remarks,

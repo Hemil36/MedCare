@@ -161,6 +161,8 @@ const DoctorAppointment = () => {
           doctorName
         })
       ).unwrap();
+      const event = new Event("appointmentDataChanged");
+      window.dispatchEvent(event);
       toast({
         title: "Success",
       });
