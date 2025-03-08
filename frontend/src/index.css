@@ -8,6 +8,7 @@
 
 
 
+
 /* ========================================== TAILWIND STYLES */
 @layer base {
   /* Remove scrollbar */
@@ -15,6 +16,26 @@
     width: 0px;
     height: 0px;
     border-radius: 0px;
+  }
+
+  .luck {
+    font-family: "Luckiest Guy", cursive;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+
+  .masked-image {
+    -webkit-mask-image: url("./assets/MEdCare.png"); /* Replace with your mask image URL */
+    mask-image: url('./assets/MEdCare.png');
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    width: 200px; /* Set your desired width */
+    height: auto; /* Maintain aspect ratio */
   }
  
   .remove-scrollbar::-webkit-scrollbar-track {

@@ -30,7 +30,7 @@ const PatientForm = ({ setOpen,  type, setType , setOldType , setNewType , oldTy
   useEffect(() => {
     toast({
       title: "Welcome",
-      description: "Welcome to MedID",
+      description: "Welcome to MedCare",
     });
   }, []);
 
@@ -40,7 +40,7 @@ const PatientForm = ({ setOpen,  type, setType , setOldType , setNewType , oldTy
   return (
     <div>
       <div className=" py-4 text-center md:text-left">
-        <h1 className="text-2xl md:text-3xl font-bold">Welcome to MedID</h1>
+        <h1 className="text-2xl md:text-3xl font-bold">Welcome to MedCare</h1>
       </div>
       <form onSubmit={handleSubmit}>
         {type === "new" && (

@@ -1,10 +1,11 @@
-import PDFDocument from 'pdfkit';
-import CryptoJS from 'crypto-js';
-import { PassThrough } from 'stream';
-import transporter from '../services/email.js';
+import PDFDocument from "pdfkit";
+import CryptoJS from "crypto-js";
+import { PassThrough } from "stream";
+import transporter from "../services/email.js";
 
 export const appointmentEmail = ({ email, date, doctorName, patientName, address }) => {
   console.log("email sent")
+  console.log(email, date, doctorName, patientName, address)
   const date1 = new Date(date)
   const html = ({ email, date, time, doctorName, patientName, address }) => {
     return `<!DOCTYPE html>
@@ -12,7 +13,7 @@ export const appointmentEmail = ({ email, date, doctorName, patientName, address
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Appointment Request Received/title>
+  <title>Appointment Confirmation</title>
   <style>
     body, html {
       margin: 0;
@@ -120,7 +121,7 @@ export const appointmentEmail = ({ email, date, doctorName, patientName, address
         <div class="email-container">
           <div class="header">
             <div class="logo-container">
-              <p class="logo">MedID</p>
+              <p class="logo">MedCare</p>
             </div>
             <div class="header-accent"></div>
           </div>
@@ -131,7 +132,7 @@ export const appointmentEmail = ({ email, date, doctorName, patientName, address
             </p>
             <div class="details-container">
               <p><strong>Doctor:</strong> ${doctorName}</p>
-              <p><strong>Date:</strong> ${date}</p>
+              <p><strong>Date:</strong> ${date1.getDate()}  ${date1.getTime()}</p>
               <p><strong>Location:</strong> ${address}</p>
             </div>
             <p class="paragraph">
@@ -139,7 +140,7 @@ export const appointmentEmail = ({ email, date, doctorName, patientName, address
             </p>
           </div>
           <div class="footer">
-            <p class="footer-text">© 2024 MedID. All rights reserved.</p>
+            <p class="footer-text">© 2024 MedCare. All rights reserved.</p>
           </div>
         </div>
       </td>
@@ -153,8 +154,8 @@ export const appointmentEmail = ({ email, date, doctorName, patientName, address
 
   const mailOptions = {
     from: {
-      name: 'MedID',
-      address: 'medid.helpdesk@gmail.com'
+      name: 'MedCare',
+      address: 'medCare.helpdesk@gmail.com'
     }, // sender address
     to: email, // recipient address
     subject: 'Appointment Request Received',
@@ -167,11 +168,16 @@ export const appointmentEmail = ({ email, date, doctorName, patientName, address
     }
   })
 
-
 }
-
-export const confirmEmail = ({ email, date, time, doctorName, patientName, address }) => {
-
+export const confirmEmail = ({
+  email,
+  date,
+  time,
+  doctorName,
+  patientName,
+  address,
+}) => {
+const date1 = new Date(date)
   const html = ({ email, date, time, doctorName, patientName, address }) => {
     return `
     <!DOCTYPE html>
@@ -324,10 +330,10 @@ export const confirmEmail = ({ email, date, time, doctorName, patientName, addre
             </div>
             <div class="content">
                 <h2 class="heading">Dear ${patientName},</h2>
-                <p class="paragraph">We are delighted to confirm your appointment with MedID. Here are the appointment details:</p>
+                <p class="paragraph">We are delighted to confirm your appointment with MedCare. Here are the appointment details:</p>
                 <div class="otp-container">
-                    <p class="otp-text">${date}</p>
-                    <p class="otp-text">${time}</p>
+                    <p class="otp-text">Date : ${date1.toLocaleDateString()}</p>
+                    <p class="otp-text">Time : ${date1.toLocaleTimeString()}</p>
                 </div>
                 <p class="paragraph"><strong>Doctor:</strong> ${doctorName}</p>
                 <p class="paragraph"><strong>Location:</strong> ${address}</p>
@@ -336,7 +342,7 @@ export const confirmEmail = ({ email, date, time, doctorName, patientName, addre
             </div>
             <div class="footer">
                 <p class="footer-text">Best Regards,</p>
-                <p class="footer-text">MedID Team</p>
+                <p class="footer-text">MedCare Team</p>
             </div>
         </div>
     </body>
@@ -346,11 +352,11 @@ export const confirmEmail = ({ email, date, time, doctorName, patientName, addre
 
   const mailOptions = {
     from: {
-      name: 'MedID',
-      address: 'medid.helpdesk@gmail.com'
+      name: "medCare",
+      address: "medCare.helpdesk@gmail.com",
     }, // sender address
     to: email, // recipient address
-    subject: 'Appointment Request Confirmed',
+    subject: "Appointment Request Confirmed",
     html: html({ email, date, time, doctorName, patientName, address }),
   };
 
@@ -358,16 +364,12 @@ export const confirmEmail = ({ email, date, time, doctorName, patientName, addre
     if (error) {
       return console.log(error);
     }
-    res.json({ message: 'OTP sent successfully' });
-    console.log('Message sent: %s', info.messageId);
-  })
-
-
-}
-
+    res.json({ message: "OTP sent successfully" });
+    console.log("Message sent: %s", info.messageId);
+  });
+};
 
 export const recordEmail = async ({ patientName, email }) => {
-
   const medicalRecordsCreatedEmail = ({ patientName }) => {
     return `
     <!DOCTYPE html>
@@ -476,7 +478,15 @@ export const recordEmail = async ({ patientName, email }) => {
     <body>
         <div class="email-container">
             <div class="header">
-                <h1 class="logo">MedID</h1>
+                <div>
+          <h1 className=" text-left text-2xl font-bold ">
+            MedCare
+          </h1>
+        </div>
+        <div className="relative">
+
+        <div className="h-2 w-2  rounded-full bottom-1 absolute   bg-green-400" />
+        </div>
                 <div class="header-accent"></div>
             </div>
             <div class="content">
@@ -484,10 +494,10 @@ export const recordEmail = async ({ patientName, email }) => {
                 <p class="paragraph">Dear ${patientName},</p>
                 <p class="paragraph">We are pleased to inform you that your medical records have been successfully created.</p>
                 <p class="paragraph">If you have any questions or need further assistance, please feel free to contact our support team at <span class="highlight">[Support Email]</span> or call us at <span class="highlight">[Support Phone Number]</span>.</p>
-                <p class="paragraph">We appreciate your trust in MedID and look forward to continuing to serve your healthcare needs.</p>
+                <p class="paragraph">We appreciate your trust in MedCare and look forward to continuing to serve your healthcare needs.</p>
             </div>
             <div class="footer">
-                <p class="footer-text">MedID</p>
+                <p class="footer-text">MedCare</p>
             </div>
         </div>
     </body>
@@ -497,12 +507,11 @@ export const recordEmail = async ({ patientName, email }) => {
 
   const mailOptions = {
     from: {
-      name: 'MedID',
-      address: 'medid.helpdesk@gmail.com'
-
+      name: "medCare",
+      address: "medCare.helpdesk@gmail.com",
     },
     to: email, // recipient address
-    subject: 'Medical Records Created',
+    subject: "Medical Records Created",
     html: medicalRecordsCreatedEmail({ patientName }),
   };
 
@@ -510,14 +519,12 @@ export const recordEmail = async ({ patientName, email }) => {
     if (error) {
       return console.log(error);
     }
-    res.json({ message: 'Record Email' });
-    console.log('Message sent: %s', info.messageId);
-  })
-
-}
+    res.json({ message: "Record Email" });
+    console.log("Message sent: %s", info.messageId);
+  });
+};
 
 export const createAccountEmail = ({ patientID, patientName, email }) => {
-
   const html = ({ patientName, patientID }) => {
     return `
     <!DOCTYPE html>
@@ -596,25 +603,25 @@ export const createAccountEmail = ({ patientID, patientName, email }) => {
                 <div class="details-container">
                     <p><strong>Account ID:</strong> ${patientID}</p>
                 </div>
-                <p>You can now log in to your account using your medID.</p>
-                <p>Thank you for choosing MedID. We look forward to serving you.</p>
+                <p>You can now log in to your account using your MedCare.</p>
+                <p>Thank you for choosing MedCare. We look forward to serving you.</p>
             </div>
             <div class="footer">
-                <p>MedID</p>
+                <p>MedCare</p>
             </div>
         </div>
     </body>
     </html>
     `;
-  }
+  };
 
   const mailOptions = {
     from: {
-      name: 'MedID',
-      address: 'medid.helpdesk@gmail.com'
+      name: "MedCare",
+      address: "mecare.helpdesk@gmail.com",
     }, // sender address
     to: email, // recipient address
-    subject: 'MedID Account Created',
+    subject: "MedCare Account Created",
     html: html({ patientName, patientID }),
   };
 
@@ -622,14 +629,12 @@ export const createAccountEmail = ({ patientID, patientName, email }) => {
     if (error) {
       return console.log(error);
     }
-  })
-}
+  });
+};
 
 export const createAccountDoctorEmail = ({ doctorID, doctorName, email }) => {
-
   const html = ({ doctorName, doctorID }) => {
-    return (
-      `<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0;">
+    return `<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0;">
         <div style="width: 100%; max-width: 600px; margin: 20px auto; background-color: #fff; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
            
             <div style="margin-top: 20px;">
@@ -640,26 +645,24 @@ export const createAccountDoctorEmail = ({ doctorID, doctorName, email }) => {
                     <p><strong>Account Details:</strong></p>
                    <p><strong>Account ID:</strong> ${doctorID}</p>
                 </div>
-                <p>You can now log in to your account using your medID.</p>
-                <p>Thank you for choosing Medid. We look forward to serving you.</p>
+                <p>You can now log in to your account using your medCare.</p>
+                <p>Thank you for choosing MedCare. We look forward to serving you.</p>
             </div>
             <div style="text-align: center; margin-top: 20px; font-size: 14px; color: #777;">
                
-                <p>Medid</p>
+                <p>MedCare</p>
             </div>
         </div>
-    </body>`
-    )
-  }
-
+    </body>`;
+  };
 
   const mailOptions = {
     from: {
-      name: 'MedID',
-      address: 'medid.helpdesk@gmail.com'
+      name: "MedCare",
+      address: "medCare.helpdesk@gmail.com",
     }, // sender address
     to: email, // recipient address
-    subject: 'MedID Account Created',
+    subject: "MedCare Account Created",
     html: html({ doctorID, doctorName }),
   };
 
@@ -667,16 +670,13 @@ export const createAccountDoctorEmail = ({ doctorID, doctorName, email }) => {
     if (error) {
       return console.log(error);
     }
-    console.log('Message sent: %s', info.messageId);
-  })
-
-}
+    console.log("Message sent: %s", info.messageId);
+  });
+};
 
 export const forgotemail = ({ id, name, email }) => {
-
   const html = ({ id, name }) => {
-    return (
-      `<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0;">
+    return `<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0;">
         <div style="width: 100%; max-width: 600px; margin: 20px auto; background-color: #fff; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
            
             <div style="margin-top: 20px;">
@@ -688,25 +688,23 @@ export const forgotemail = ({ id, name, email }) => {
                    <p><strong>Account ID:</strong> ${id}</p>
                 </div>
                 <p>You can now log in to your account using your medID.</p>
-                <p>Thank you for choosing Medid. We look forward to serving you.</p>
+                <p>Thank you for choosing MedCare. We look forward to serving you.</p>
             </div>
             <div style="text-align: center; margin-top: 20px; font-size: 14px; color: #777;">
                
-                <p>MedID</p>
+                <p>MedCare</p>
             </div>
         </div>
-    </body>`
-    )
-  }
-
+    </body>`;
+  };
 
   const mailOptions = {
     from: {
-      name: 'MedID',
-      address: 'medid.helpdesk@gmail.com'
+      name: "MedCare",
+      address: "meCare.helpdesk@gmail.com",
     }, // sender address
     to: email, // recipient address
-    subject: 'MedID Recovered',
+    subject: "MedID Recovered",
     html: html({ id, name }),
   };
 
@@ -714,10 +712,9 @@ export const forgotemail = ({ id, name, email }) => {
     if (error) {
       return console.log(error);
     }
-    console.log('Message sent: %s', info.messageId);
-  })
-
-}
+    console.log("Message sent: %s", info.messageId);
+  });
+};
 
 export const cancelAppointment = async ({ email, patientName }) => {
   const html = ({ email, patientName }) => {
@@ -843,7 +840,15 @@ export const cancelAppointment = async ({ email, patientName }) => {
             <div class="email-container">
               <div class="header">
                 <div class="logo-container">
-                  <p class="logo">MedID</p>
+                  <div>
+          <h1 className=" text-left text-2xl font-bold ">
+            MedCare
+          </h1>
+        </div>
+        <div className="relative">
+
+        <div className="h-2 w-2  rounded-full bottom-1 absolute   bg-green-400" />
+        </div>
                 </div>
                 <div class="header-accent"></div>
               </div>
@@ -858,7 +863,7 @@ export const cancelAppointment = async ({ email, patientName }) => {
                 </p>
               </div>
               <div class="footer">
-                <p class="footer-text">© 2024 MedID. All rights reserved.</p>
+                <p class="footer-text">© 2024 MedCare. All rights reserved.</p>
               </div>
             </div>
           </td>
@@ -871,11 +876,11 @@ export const cancelAppointment = async ({ email, patientName }) => {
 
   const mailOptions = {
     from: {
-      name: 'MedID',
-      address: 'medid.helpdesk@gmail.com'
+      name: "MedCare",
+      address: "medCare.helpdesk@gmail.com",
     }, // sender address
     to: email, // recipient address
-    subject: 'Appointment Request Cancelled',
+    subject: "Appointment Request Cancelled",
     html: html({ email, patientName }),
   };
 
@@ -883,13 +888,9 @@ export const cancelAppointment = async ({ email, patientName }) => {
     if (error) {
       return console.log(error);
     }
-    console.log('Message sent: %s', info.messageId);
-  })
-
-}
-
-
-
+    console.log("Message sent: %s", info.messageId);
+  });
+};
 
 // Function to generate PDF as a buffer using PDFKit
 export const generatePDFKitPrescriptionBuffer = (data) => {
@@ -905,39 +906,38 @@ export const generatePDFKitPrescriptionBuffer = (data) => {
   // Header Section
   doc
     .fontSize(20)
-    .font('Helvetica-Bold')
-    .text('MedCare', { align: 'left' })
+    .font("Helvetica-Bold")
+    .text("MedCare", { align: "left" })
     .moveDown(0.5)
     .fontSize(12)
-    .font('Helvetica-Bold')
+    .font("Helvetica-Bold")
     .text(`Patient: ${patientName}`, { continued: true })
-    .text(`Prescription Date: ${date}`, { align: 'right' })
+    .text(`Prescription Date: ${date}`, { align: "right" })
     .text(`Email: ${email}`, { continued: true })
     // .text(`Consultation Time: 11:32AM`, { align: 'right'  })
     .moveDown(1)
-    .fontSize(10)
-
+    .fontSize(10);
 
   doc.moveDown(1);
 
   // Diagnosis Section
   doc
     .fontSize(14)
-    .fillColor('#2b5797')
+    .fillColor("#2b5797")
     .text(`DIAGNOSIS: ${diagnosis.toUpperCase()}`, { underline: true })
     .moveDown(1);
 
   // Table Header
-  let tableTop = doc.y;  // Store initial Y position of the table
+  let tableTop = doc.y; // Store initial Y position of the table
 
   doc
     .fontSize(10)
-    .fillColor('#0a58ca') // Blue color for header
-    .text('#', 50, tableTop)         // First column at X=50
-    .text('Medication', 100, tableTop) // Second column at X=100
-    .text('Dose', 250, tableTop)     // Third column at X=250
-    .text('Frequency', 330, tableTop) // Fourth column at X=330
-    .text('Duration', 420, tableTop);  // Fifth column at X=420
+    .fillColor("#0a58ca") // Blue color for header
+    .text("#", 50, tableTop) // First column at X=50
+    .text("Medication", 100, tableTop) // Second column at X=100
+    .text("Dose", 250, tableTop) // Third column at X=250
+    .text("Frequency", 330, tableTop) // Fourth column at X=330
+    .text("Duration", 420, tableTop); // Fifth column at X=420
 
   doc.moveDown(0.5); // Move down after the header
 
@@ -947,12 +947,12 @@ export const generatePDFKitPrescriptionBuffer = (data) => {
 
     doc
       .fontSize(10)
-      .fillColor('#333') // Dark gray for table data
-      .text(`${index + 1}`, 50, rowY)       // First column (index)
-      .text(med.name, 100, rowY)            // Second column (medication)
-      .text(med.dose, 250, rowY)            // Third column (dose)
-      .text(med.frequency, 330, rowY)       // Fourth column (frequency)
-      .text(med.duration, 420, rowY);       // Fifth column (duration)
+      .fillColor("#333") // Dark gray for table data
+      .text(`${index + 1}`, 50, rowY) // First column (index)
+      .text(med.name, 100, rowY) // Second column (medication)
+      .text(med.dose, 250, rowY) // Third column (dose)
+      .text(med.frequency, 330, rowY) // Fourth column (frequency)
+      .text(med.duration, 420, rowY); // Fifth column (duration)
 
     doc.moveDown(0.5); // Move down after each row
   });
@@ -960,7 +960,6 @@ export const generatePDFKitPrescriptionBuffer = (data) => {
   doc.moveDown(1);
 
   // Remarks Section
-
 
   // Remarks Section
   // notes.forEach((med, index) => {
@@ -972,7 +971,6 @@ export const generatePDFKitPrescriptionBuffer = (data) => {
   // });
 
   // Follow-up Information
-
 
   // Footer Section
   // doc
@@ -986,8 +984,7 @@ export const generatePDFKitPrescriptionBuffer = (data) => {
   // Remarks Section
   doc.moveDown(1);
   let text4 = ` Remarks: ${notes}`;
-  const pageWidth5 = doc.page.width;  // Get the page width
-
+  const pageWidth5 = doc.page.width; // Get the page width
 
   let text4Width = doc.widthOfString(text4);
   doc.text(text4, (pageWidth5 - text4Width) / 2); // Lighter gray for remarks
@@ -995,12 +992,12 @@ export const generatePDFKitPrescriptionBuffer = (data) => {
   doc.moveDown(1);
 
   // Footer Section
-  const pageWidth = doc.page.width;  // Get the page width
+  const pageWidth = doc.page.width; // Get the page width
 
   // Center "This is a digitally generated prescription."
-  let text1 = 'This is a digitally generated prescription.';
+  let text1 = "This is a digitally generated prescription.";
   let text1Width = doc.widthOfString(text1);
-  doc.text(text1, (pageWidth - text1Width) / 2);  // Center by calculating x position
+  doc.text(text1, (pageWidth - text1Width) / 2); // Center by calculating x position
 
   // Center "Digital Signature: some-hash-value"
   let text2 = `Digital Signature: ${hash}`;
@@ -1011,7 +1008,6 @@ export const generatePDFKitPrescriptionBuffer = (data) => {
   // Finalize PDF
   doc.end();
 
-
   return bufferStream;
 };
 
@@ -1019,5 +1015,3 @@ export const generatePDFKitPrescriptionBuffer = (data) => {
 const generateHash = (data) => {
   return CryptoJS.SHA256(JSON.stringify(data)).toString(CryptoJS.enc.Hex);
 };
-
-

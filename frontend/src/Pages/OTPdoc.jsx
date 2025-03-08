@@ -62,7 +62,7 @@ export const OtpDoc = ({setOpen,setVerify}) => {
       <AlertDialogContent className="shad-alert-dialog jakarta">
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-start justify-between text-white">
-            Admin Access Verification
+            Patient Records Access Verification
             <X
               className="cursor-pointer"
               onClick={() => {
@@ -72,7 +72,7 @@ export const OtpDoc = ({setOpen,setVerify}) => {
             />
           </AlertDialogTitle>
           <AlertDialogDescription className="text-white">
-            To access the admin page, please enter the passkey.
+            To access the Records, please enter the OTP.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div>
@@ -102,7 +102,7 @@ export const OtpDoc = ({setOpen,setVerify}) => {
             onClick={(e) => validatePasskey(e)}
             className="shad-primary-btn w-full"
           >
-            Enter Admin Passkey
+            Enter OTP
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

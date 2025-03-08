@@ -29,7 +29,8 @@ const Patient = () => {
           className="absolute top-[50%] left-[50%] text-gray-500 font-extrabold opacity-50 -z-[1] transform -translate-x-1/2 -translate-y-1/2
                      text-2xl sm:text-3xl md:text-5xl lg:text-6xl min-h-fit text-center"
         >
-          MedID
+          MedCare
+          
         </p>
     
         {/* Burger Icon */}
@@ -50,9 +51,13 @@ const Patient = () => {
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           } md:translate-x-0 transition-transform duration-300 fixed md:relative z-30 border-green-400`}
         >
-          <h1 className="text-2xl font-bold text-center py-10 text-white sticky top-0 bg-dark-400 py-4">
-            MedID
-          </h1>
+          <div className="text-2xl relative gap-1 flex font-bold text-center py-4 justify-center text-white  top-0 bg-dark-400 ">
+           <p> MedCare</p>
+           <div className="relative">
+
+            <div className="h-2 w-2  rounded-full bottom-1 absolute   bg-green-400" />
+           </div>
+          </div>
     
           <div className="flex flex-col items-center justify-center flex-1 gap-4">
             <Button

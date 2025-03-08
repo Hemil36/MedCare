@@ -44,7 +44,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "@/components/ui/use-toast";
 import { getDoctorID } from "@/lib/store/UserSlice";
-import { set } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const DoctorAppointment = () => {
@@ -58,6 +57,7 @@ const DoctorAppointment = () => {
   const [verify, setVerify] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [medications, setMedications] = useState([]);
+  const [noCompleted , setNoCompleted] = useState(false)
   const [newMed, setNewMed] = useState({
     name: "",
     dose: "",
@@ -95,43 +95,44 @@ const DoctorAppointment = () => {
 
   const urlParams = new useParams();
   const myParam = urlParams.appointmentID;
-  const patientID = currentAppointment?.appointment?.patientID;
   // console.log(patient)
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const doctorId = useSelector(getDoctorID);
+  const doctorID = useSelector(getDoctorID);
   const doctorName = useSelector(state=> state.user.user.name )
 
   useEffect(() => {
     const getAppointmentDetails = async () => {
       try {
-        const response = await axios.post(
-          "http://localhost:3000/api/getAppointmentdetails",
-          {
-            appointmentID: myParam,
+        const response = await axios.get(
+          `http://localhost:3000/api/getappointmentdetails?appointmentID=${myParam}` ,{
+            withCredentials : true,
           }
+            
+          
         );
-        setCurrentAppointment(response.data);
+        setPatient(response.data.appointment.patientID);
+        console.log(response.data);
+        setCurrentAppointment(response.data.appointment);
       } catch (error) {
         console.log(error);
       }
     };
     getAppointmentDetails();
   }, []);
-
   useEffect(() => {
     const getPatient = async () => {
       try {
-        const response = await axios.post("http://localhost:3000/api/getuser", {
-          patientID,
-        });
+        const response = await axios.get(`http://localhost:3000/api/getuser?patientID=${patient?.patientID}`);
+        console.log(response)
         setPatient(response.data[0]);
       } catch (error) {
         console.log(error);
       }
     };
+    if(patient?.patientID)
     getPatient();
-  }, [patientID]);
+  }, []);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -163,7 +164,7 @@ const DoctorAppointment = () => {
       toast({
         title: "Success",
       });
-      navigate(`/doctor/${doctorId}`);
+      navigate(`/doctor/${doctorID}`);
     } catch (error) {
       console.log(error);
     }
@@ -176,12 +177,10 @@ const DoctorAppointment = () => {
     if (verify) {
       const getRecords = async () => {
         try {
-          const response = await axios.post(
-            "http://localhost:3000/api/getRecords",
-            {
-              patientID,
-            }
+          const response = await axios.get(
+            "http://localhost:3000/api/getrecords?patientID=" +patient.patientID,
           );
+          console.log(response)
           setRecords(response.data.filteredFiles);
         } catch (error) {
           console.log(error);
@@ -192,13 +191,15 @@ const DoctorAppointment = () => {
 
       const getAppointments = async () => {
         try {
-          const response = await axios.post(
-            "http://localhost:3000/api/getappointmentbydoctor",
-            {
-              patientID,
-            }
+          const response = await axios.get(
+            "http://localhost:3000/api/getpatientappointment?patientID=" + patient.patientID,
           );
           setAppointments(response.data);
+          if(response.data.length!=0){
+            const t = response.data.filter((item)=> item.status == "completed")
+            if(t.length==0)
+              setNoCompleted(true);
+          }
         } catch (error) {
           console.log(error);
         }
@@ -207,10 +208,9 @@ const DoctorAppointment = () => {
       getAppointments();
     }
   }, [verify]);
-  const doctorID = useSelector((state) => state.user.user.doctorID);
 
   // Handler to update an existing medication in the table
-
+console.log(patient?.email)
   return (
     <div className="min-h-screen  text-white dark container remove-scrollbar ">
       {open && <OtpDoc setVerify={setVerify} setOpen={setOpen} />}
@@ -358,22 +358,22 @@ const DoctorAppointment = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {appointments &&
-                        appointments.map((appointment) => {
-                          const date = new Date(appointment.appointment.date);
-                          if (appointment.appointment.status == "completed")
+                      { 
+                        appointments?.map((appointment) => {
+                          const date = new Date(appointment.date);
+                          if (appointment.status == "completed")
                             return (
                               <Dialog
-                                key={appointment.appointment._id}
+                                key={appointment._id}
                                 className="rounded-lg"
                               >
                                 <DialogTrigger asChild>
                                   <TableRow
-                                    key={appointment.appointment._id}
+                                    key={appointment._id}
                                     className="hover:cursor-pointer hover:bg-dark-400 "
                                   >
                                     <TableCell className="font-medium text-nowrap  ">
-                                      {appointment.doctorDetails.name}
+                                      {appointment.doctorID.name}
                                     </TableCell>
                                     <TableCell>{date.toDateString()}</TableCell>
                                   </TableRow>
@@ -395,7 +395,7 @@ const DoctorAppointment = () => {
                                       <Input
                                         disabled
                                         id="name"
-                                        value={appointment?.doctorDetails.name}
+                                        value={appointment?.doctorID.name}
                                         className="shad-input col-span-3"
                                       />
                                     </div>
@@ -423,7 +423,7 @@ const DoctorAppointment = () => {
                                       <Input
                                         disabled
                                         id="username"
-                                        value={appointment.appointment.status}
+                                        value={appointment.status}
                                         className="col-span-3 shad-input"
                                       />
                                     </div>
@@ -439,7 +439,7 @@ const DoctorAppointment = () => {
                                         disabled
                                         id="username"
                                         value={
-                                          appointment.appointment?.prescription
+                                          appointment.prescription
                                             .map((item) => item.name)
                                             .join(", ") || " No   Prescription"
                                         }
@@ -457,7 +457,7 @@ const DoctorAppointment = () => {
                                         disabled
                                         id="username"
                                         value={
-                                          appointment.appointment?.notes ||
+                                          appointment?.notes ||
                                           " No  Notes"
                                         }
                                         className="col-span-3 shad-input"
@@ -468,6 +468,13 @@ const DoctorAppointment = () => {
                               </Dialog>
                             );
                         })}
+
+                      {noCompleted && (
+                        <p>
+                          No completed appointments found for this patient
+                        </p>
+                      )}
+                        
                     </TableBody>
                   </Table>
                 </ScrollArea>

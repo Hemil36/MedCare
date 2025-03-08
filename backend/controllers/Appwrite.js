@@ -1,7 +1,9 @@
+import { InputFile } from "node-appwrite";
 import { storage1 } from "../lib/appwrite.js";
+import { recordEmail } from "./email.js";
 
 export const getRecords = async (req, res) => {
-  const { patientID } = req.body;
+  const { patientID } = req.query;
   try {
     if (!patientID) {
       throw "Patient ID is required";
@@ -30,12 +32,23 @@ export const getRecords = async (req, res) => {
 export const uploadFile =  async (req, res) => {
   try {
     const fileBuffer = req.file.buffer;
-    var { patientID, name, email } = req.body;
+    var { patientID, name, email ,patientName} = req.body;
+    console.log(patientID,name,email,fileBuffer)
 
     const name1 = `${patientID}_${name}.pdf`;
 
 
+    const files = await storage1.listFiles('Image', []);
+    const filteredFiles = files.files.filter(file =>
+      file.name == name1
+    );
+
+    if(filteredFiles.length>0)
+      return res.status(400).json({message : "File Name already exist"})
+
+
     const t = InputFile.fromBuffer(fileBuffer, name1);
+    console.log(name1)
 
     const response = await storage1.createFile('Image', name1, t);
 
@@ -46,6 +59,7 @@ export const uploadFile =  async (req, res) => {
       fileId: response.$id,
     });
   } catch (error) {
+    console.log(error)
     res.status(400).json({
       message: 'Error uploading file',
       error: error.message,
@@ -55,7 +69,7 @@ export const uploadFile =  async (req, res) => {
 
 
 export const deleteFile =  async (req, res) => {
-    const { fileId } = req.body;
+    const { fileId } = req.query;
   
     try {
       await storage1.deleteFile('Image', fileId);

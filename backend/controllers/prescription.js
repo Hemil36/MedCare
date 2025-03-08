@@ -153,8 +153,8 @@ export async function sendEmail({
 
       const mailOptions = {
         from: {
-          name: "MedID",
-          address: "medid.helpdesk@gmail.com",
+          name: "MedCare",
+          address: "medCare.helpdesk@gmail.com",
         }, // sender address
         to: patientEmail, // recipient address
         subject: "Your Prescription",

@@ -81,6 +81,7 @@ export const Otp = ({  setOpen , open , type , newType,oldType }) => {
       } else{
         console.log(patientID,doctorID)
         const t2 = await dispatch(loginDoctor({doctorID , email}));
+        
         navigate(`/doctor/${doctorID}`);
         console.log(t2)
       }

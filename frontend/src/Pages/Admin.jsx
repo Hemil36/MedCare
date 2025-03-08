@@ -13,7 +13,6 @@ import { DataTable } from "@/components/Table";
 import { columns } from "@/components/Column";
 import { Loader } from "lucide-react";
 
-
 const AdminPage = () => {
   const dispatch = useDispatch();
   const [appointments, setAppointments] = React.useState([]);
@@ -42,20 +41,19 @@ const AdminPage = () => {
   }, []);
 
   useEffect(() => {
-    setLoading(true);
-
     const getAppointments = async () => {
       try {
-        const response = await dispatch(getAppointment()).unwrap();
+        let response = await dispatch(getAppointment()).unwrap();
+      response=response.data
         if (response.length > 0) {
           const pending = response.filter(
-            (appointment) => appointment?.appointment.status === "pending"
+            (appointment) => appointment?.status === "pending" && new Date(appointment?.date).getDate() == new Date() .getDate()
           );
           const scheduled = response.filter(
-            (appointment) => appointment?.appointment.status === "scheduled"
+            (appointment) => appointment?.status === "scheduled" && new Date(appointment?.date).getDate() == new Date() .getDate()
           );
           const cancelled = response.filter(
-            (appointment) => appointment?.appointment.status === "cancelled"
+            (appointment) => appointment?.status === "cancelled" && new Date(appointment?.date).getDate() == new Date() .getDate()
           );
           setPendingCount(pending.length);
           setScheduledCount(scheduled.length);
@@ -70,24 +68,25 @@ const AdminPage = () => {
     };
 
     getAppointments();
-  }, [dataChange]);
-  const link =`/doctor/${doctorID}/profile/`
+  }, [dispatch]);
+  const link = `/doctor/${doctorID}/profile/`;
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col ">
       <div className=" py-6 flex justify-between items-center">
-        <h1 className="text-left text-2xl font-bold   ">
-          MedID
-        </h1>
+        <h1 className="text-left text-2xl font-bold   ">MedID</h1>
         <div className=" flex gap-3">
-         
           <Link to={`/doctor/${doctorID}/profile/`} className="font-semibold">
             Profile
           </Link>
-          <Link to={`/`} className="font-semibold" onClick={() => dispatch(logout())}>
+          <Link
+            to={`/`}
+            className="font-semibold"
+            onClick={() => dispatch(logout())}
+          >
             Logout
           </Link>
-          </div>
+        </div>
       </div>
       <div className="pt-4" />
 

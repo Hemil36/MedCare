@@ -10,7 +10,6 @@ const url = window.location.pathname;
 
 const parts = url.split('/'); // This splits the URL into parts
 const doctorID = parts[2];
-console.log(doctorID);
 
 export const columns = [
   {
@@ -24,7 +23,7 @@ export const columns = [
     header: "Patient",
     cell: ({ row }) => {
       const appointment = row.original;
-      return <p className="text-14-medium ">{appointment.patientDetails.name}</p>;
+      return <p className="text-14-medium ">{appointment.patientID.name}</p>;
     },
   },
   {
@@ -34,7 +33,7 @@ export const columns = [
       const appointment = row.original;
       return (
         <div className="min-w-[115px]">
-          <StatusBadge status={appointment?.appointment.status} />
+          <StatusBadge status={appointment?.status} />
         </div>
       );
     },
@@ -44,10 +43,10 @@ export const columns = [
     header: "Appointment",
     cell: ({ row }) => {
       const appointment = row.original;
-      const date = new Date(appointment.appointment.date);
+      const date = new Date(appointment.date);
       return (
         <p className="text-14-regular min-w-[100px]">
-          { appointment.appointment.status !== "pending" &&
+          { appointment.status !== "pending" &&
           date.toLocaleDateString()+ " | "+
           " " + date.toLocaleTimeString().replace(/:\d+ /, " ")
           }
@@ -59,11 +58,11 @@ export const columns = [
     accessorKey: "MedicalReasons",
     header: "Reason For Appointment",
     cell: ({ row }) => {
-      const doctor = row.original.appointment;
+      const doctorID = row.original.doctorID;
 
       return (
           
-          <p className="whitespace-nowrap text-center"> { doctor.notes ? doctor.notes : "Not Mentioned"}</p>
+          <p className="whitespace-nowrap text-center"> { doctorID.notes ? doctorID.notes : "Not Mentioned"}</p>
       );
     },
   },
@@ -79,16 +78,16 @@ export const columns = [
             <AppointmentDialog
             patientId={appointment?.patientID}
             patientID={appointment?.patientID}
-            appointment={appointment.appointment}
+            appointment={appointment}
             type="cancel"
             title="Cancel Appointment"
             description="Are you sure you want to cancel your appointment?"
           />
 
        {
-         appointment?.appointment?.status === "scheduled" ?
+         appointment?.status === "scheduled" ?
          <button >
-           <Link to={`/doctor/${doctorID}/appointment/${appointment.appointment._id}`} className=" capitalize text-[#ffd147]">
+           <Link to={`/doctor/${doctorID}/appointment/${appointment._id}`} className=" capitalize text-[#ffd147]">
           Record Appointment
          </Link>
          </button> 
@@ -97,7 +96,7 @@ export const columns = [
          <AppointmentDialog
             patientId={appointment?.patientID}
             patientID={appointment?.patientID}
-            appointment={appointment.appointment}
+            appointment={appointment}
             update={update}
             type="schedule"
             title="Schedule Appointment"

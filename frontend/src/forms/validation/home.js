@@ -68,7 +68,7 @@ const loading = useSelector(getLoading)
       }
     } catch (err) {
       console.log(err);
-      toast({ title: 'Error', description: err.message });
+      toast({ title: 'Error' });
     } finally {
       dispatch(setLoading(false));
     }
@@ -127,8 +127,14 @@ const loading = useSelector(getLoading)
     setOpen(true);
     }
     catch(err){
+      
+      const errorMessage = err.response.data.message || err.message || 'An error occurred during patient verification';
+      toast({
+        variant: "destructive",
+        title: "Authentication Error",
+        description: errorMessage
+      });
       console.log(err)
-      toast({title : err})
     }
   };
 
@@ -138,9 +144,14 @@ const loading = useSelector(getLoading)
     
     console.log(t)
     }
+    
     catch(err){
-      console.log(err)
-      toast({title : err})
+      const errorMessage = err.message || 'An error occurred during doctor verification';
+    toast({
+      variant: "destructive",
+      title: "Authentication Error",
+      description: errorMessage
+    });
       return
     }
 

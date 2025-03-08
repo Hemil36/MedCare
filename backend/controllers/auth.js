@@ -205,7 +205,7 @@ function generateOtpEmailTemplate(otp) {
         <div class="email-container">
           <div class="header">
             <div class="logo-container">
-              <p class="logo">MedID</p>
+              <p class="logo">MedCare</p>
             </div>
             <div class="header-accent"></div>
           </div>
@@ -227,7 +227,7 @@ function generateOtpEmailTemplate(otp) {
             </div>
           </div>
           <div class="footer">
-            <p class="footer-text">© 2024 MedID. All rights reserved.</p>
+            <p class="footer-text">© 2024 MedCare. All rights reserved.</p>
           </div>
         </div>
       </td>
@@ -247,8 +247,8 @@ export const OTPSender = async (req, res) => {
 
   const mailOptions = {
     from: {
-      name: "MedID",
-      address: "medid.helpdesk@gmail.com",
+      name: "MedCare",
+      address: "medCare.helpdesk@gmail.com",
     }, // sender address
     to: email, // recipient address
     subject: "Your OTP for Login",
@@ -327,8 +327,8 @@ export const login = async (req, res) => {
     // Set HTTP-only secure cookie
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Only secure in production
-      sameSite: "None",
+      secure: true, // Only secure in production
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -377,7 +377,6 @@ export const loginDoctor = async (req, res) => {
       });
     }
 
-    // ✅ Fix: Ensure `doctorID` is included in the payload
     const payload = {
       doctorID: doctor.doctorID, // Use correct field name from database
       name: doctor.name,
@@ -396,14 +395,11 @@ export const loginDoctor = async (req, res) => {
     );
 
 
-    // Store refresh token in the database
-    doctor.refreshToken = refreshToken;
-    await doctor.save();
+    
 
-    // Set HTTP-only secure cookie
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });

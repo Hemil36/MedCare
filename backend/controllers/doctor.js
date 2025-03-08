@@ -115,12 +115,12 @@ export const updateDoctorDetails = async (req, res) => {
 };
 
 export const getDoctorDetails = async (req, res) => {
-  const { doctorID } = req.body;
+  const  doctorID  = req.user.id;
   if (!doctorID) {
     return res.status(400).json({ message: "Please enter doctorID" });
   }
   try {
-    const doctorDetails = await doctor.findOne({ doctorID }).select("name email phone clinicPhoneNumber clinicAddress photo speciality doctorID");
+    const doctorDetails = await doctor.findOne({ doctorID }).select("name email phone gender clinicPhoneNumber clinicAddress photo speciality doctorID");
     if (!doctorDetails) {
       return res.status(400).json({ message: "Doctor not found" });
     }
@@ -134,6 +134,10 @@ export const getDoctorDetails = async (req, res) => {
 export const approveAppointment = async (req, res) => {
   const { appointmentID, date } = req.body;
 
+  if(!date){
+    return res.status(400).json({ message: "Please select Time" });
+  }
+
   if (!appointmentID) {
     return res.status(400).json({ message: "Please enter appointmentID" });
   }
@@ -146,9 +150,9 @@ export const approveAppointment = async (req, res) => {
     appointment.date = date;
     await appointment.save();
 
-    confirmEmail({
+    await confirmEmail({
       email: appointment.patientID.email,
-      date: new Date(date).toDateString(),
+      date: date,
       doctorName: appointment.doctorID.name,
       patientName: appointment.patientID.name,
       address: appointment.doctorID.clinicAddress,

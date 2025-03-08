@@ -21,7 +21,7 @@ export const verifyJWT = async (req, res, next) => {
             message: "Session expired. Please log in again." 
           });
         } else {
-          return res.status(403).json({ 
+          return res.status(401).json({ 
             success: false, 
             message: "Invalid token. Please log in again." 
           });

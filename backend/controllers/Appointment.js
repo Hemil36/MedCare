@@ -80,8 +80,9 @@ export const recordAppointment = async (req, res) => {
       await appointment.save();
 
 
-
-      await appointmentEmail({
+      console.log(patient.email, patient.name, doctor.name, appointmentDate.toDateString(), doctor.clinicAddress
+      )
+      appointmentEmail({
         email: patient.email,
         patientName: patient.name,
         doctorName: doctor.name,
@@ -92,7 +93,7 @@ export const recordAppointment = async (req, res) => {
       return res.status(201).json({ 
         success: true, 
         message: "Appointment scheduled successfully", 
-        appointment 
+        appointmentID : appointment._id 
       });
   
     } catch (error) {
@@ -106,7 +107,7 @@ export const recordAppointment = async (req, res) => {
 
 
   export const getAppointmentDetails = async (req, res) => {
-    const { appointmentID } = req.body;
+    const { appointmentID } = req.query;
     if (!appointmentID) {
       return res.status(400).json({ message: "Please enter appointmentID" });
     }
@@ -114,7 +115,7 @@ export const recordAppointment = async (req, res) => {
       const objectid = new mongoose.Types.ObjectId(appointmentID);
       const appointment = await Appointment.findById(appointmentID)
   .populate("doctorID", "name email speciality clinicAddress")
-  .populate("patientID", "name email phone");
+  .populate("patientID", "name email phone patientID");
 
       if (!appointment) {
         return res.status(400).json({ message: "Appointment not found" });
@@ -137,7 +138,9 @@ export const recordAppointment = async (req, res) => {
         });
       }
   
-      const doctorID = req.user.id; // Extract from JWT payload
+      const doctorID = req.user.id; 
+      console.log(doctorID);
+      
   
       if (!doctorID) {
         return res.status(400).json({ 
@@ -149,9 +152,21 @@ export const recordAppointment = async (req, res) => {
       const doctor = await Doctor.findOne({ doctorID }).select("_id");
   
       // Fetch only appointments assigned to the logged-in doctor
-      const appointments = await Appointment.find({ doctorID : doctor })
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const tomorrow = new Date();
+      tomorrow.setHours(23, 59, 59, 999);
+      
+      const appointments = await Appointment.find({
+        doctorID: doctor,
+        date: {
+          $gte: today, // Greater than or equal to today 00:00:00
+          $lte: tomorrow // Less than or equal to today 23:59:59
+        }
+      })
         .populate("doctorID", "name email speciality")
-        .populate("patientID", "name email phone");
+        .populate("patientID", "name email phone patientID");
   
       if (!appointments.length) {
         return res.status(200).json({ 
@@ -159,7 +174,7 @@ export const recordAppointment = async (req, res) => {
           message: "No appointments found for this doctor." 
         });
       }
-  
+  console.log(appointments)
       res.status(200).json({ 
         success: true, 
         message: "Appointments retrieved successfully.",
@@ -190,8 +205,7 @@ export const recordAppointment = async (req, res) => {
   
       // Fetch appointments and populate doctor details
       const appointments = await Appointment.find({ patient: patient._id })
-        .populate({ path: "doctor", select: "doctorID name email speciality" }) // Populate doctor details
-        .select("-__v"); // Exclude internal fields
+        .populate( "doctorID", "doctorID name email speciality" ) // Populate doctor details
   
       if (!appointments.length) {
         return res.status(404).json({ message: "No appointments found for this patient." });
@@ -207,10 +221,11 @@ export const recordAppointment = async (req, res) => {
   
   
   export const cancelAppointment = async (req, res) => {
-    const  appointmentID  = req.body.appointmentID;
+    const  {appointmentID } = req.query;
     if (!appointmentID) {
       return res.status(400).json({ message: "Please enter appointmentID" });
     }
+    console.log(appointmentID)
     try {
       const appointment = await Appointment.findById({ _id: appointmentID  }).populate("patientID", "name email");
       if (!appointment) {
@@ -232,7 +247,7 @@ export const recordAppointment = async (req, res) => {
 
   export const getAppointmentByPatient = async (req, res) => {
     try {
-      const { patientID } = req.body;
+      const { patientID } = req.query;
       if (!patientID) {
         return res.status(400).json({ message: "Please enter patientID" });
       }
@@ -244,12 +259,12 @@ export const recordAppointment = async (req, res) => {
   
       
       const appointments = await Appointment.find({ patientID: patient })
-      .populate(  "doctor",  "name doctorID email speciality" ) 
+      .populate(  "doctorID",  "name doctorID email speciality" ) 
       
       if (appointments.length === 0) {
         return res.status(200).json({ message: "No appointments found." });
       }
-      res.status(200).json(newData.filter(item => item !== null));
+      res.status(200).json(appointments.filter(item => item !== null));
   
     } catch (error) {
       console.error("Get Appointment By Patient Error:", error);

@@ -4,9 +4,10 @@ import { axiosurl } from '../lib/axios/axios';
 import { store } from '../lib/store/store';
 import { setAccessToken } from '../lib/store/UserSlice';
 
-const AxiosPrivate = () => {
+const AxiosPrivate =  () => {
   const refresh = RefreshToken();
-  const accessToken = store.getState().user.user.accessToken;
+  const accessToken =  store.getState().user.user.accessToken;
+  const name = store.getState().user.user.name;
 
   axiosurl.interceptors.request.use(
     (config) => {
@@ -22,7 +23,7 @@ const AxiosPrivate = () => {
     (response) => response,
     async (error) => {
       const prevRequest = error?.config;
-      if (error?.response?.status === 403 && !prevRequest?.sent) {
+      if (error?.response?.status === 401 && !prevRequest?.sent) {
         prevRequest.sent = true;
         const newAccessToken = await refresh();
         prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
@@ -35,5 +36,6 @@ const AxiosPrivate = () => {
 
   return axiosurl;
 };
+
 
 export default AxiosPrivate;

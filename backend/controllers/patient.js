@@ -2,17 +2,20 @@ import doctor from "../models/Doctor.js";
 import Patient from "../models/User.js";
 
 export const getPatient = async (req, res) => {
-
-    const { patientID } = req.body;
+   const {patientID} = req.query;
+   console.log(patientID)
+    if(!patientID)
+    return res.status(400).json("Patient ID is required");
     try {
-        const patient = await Patient.findOne({patientID}).select('email phone address occupation emergencyContactName emergencyPhone gender birthDate ');
+        const patient = await Patient.findOne({patientID}).select('email phone address occupation emergencyContactName emergencyPhone gender  name ');
+        console.log(patient);
         if(!patient)
-        return res.status(404).json
+        return res.status(400).json
         ({ message: "Patient not found" });
         
        return res.status(200).json(patient);
     } catch (error) {
-       return res.status(404).json({ message: error.message });
+       return res.status(400).json({ message: error.message });
     }
 }
 

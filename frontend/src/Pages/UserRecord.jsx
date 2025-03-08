@@ -1,4 +1,3 @@
-
 import React, {
   useCallback,
   useEffect,
@@ -30,7 +29,13 @@ import { onUpload } from "@/forms/fileUploader";
 import { Input } from "@/components/ui/input";
 import AxiosPrivate from "@/hooks/AxiosPrivate";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { getEmail, getpatientID, getRecords, setRecords } from "@/lib/store/UserSlice";
+import {
+  getEmail,
+  getName,
+  getpatientID,
+  getRecords,
+  setRecords,
+} from "@/lib/store/UserSlice";
 import { handleSubmit } from "@/lib/store/AsyncThunks";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
@@ -48,10 +53,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-
-
-
-
 const UserRecord = () => {
   // console.log(document.cookie)
   console.log("UserRecord");
@@ -64,6 +65,7 @@ const UserRecord = () => {
   const [upload, setUpload] = React.useState(false);
   const [load, setLoad] = React.useState(false);
   const [uploadLoading, setUploadLoading] = React.useState(false);
+  const [records, setRecords] = useState();
 
   const axios = AxiosPrivate();
   const onDrop = useCallback((acceptedFiles) => {
@@ -82,27 +84,26 @@ const UserRecord = () => {
   }, []);
   const patientID = useSelector(getpatientID);
 
-  const records = useSelector(getRecords,shallowEqual);
   const dispatch = useDispatch();
-  const email = useSelector(getEmail)
+  const email = useSelector(getEmail);
+  const patientName = useSelector(getName); 
+
   
-  const getRecords2 = useCallback(async () => {
-    if(records!=null && load == false)
-      return ;
-
-    const { data } = await axios.post("/api/getRecords", {
-      patientID: patientID,
-    });
-    dispatch(setRecords(data.filteredFiles));
-  }, [patientID]);
-
 
   useEffect(() => {
-    getRecords2();
-  }, [load]); 
+    if (!patientID) return;
+  
+    const fetchRecords = async () => {
+      const { data } = await axios.get(`/api/getrecords?patientID=${patientID}`);
+      setRecords(data.filteredFiles);
+    };
+  
+    fetchRecords();
+  }, [load, patientID]);
+  
 
   const delete1 = async (fileid) => {
-    const t = await axios.post(`/api/delete`, { fileId: fileid });
+    const t = await axios.delete(`/api/delete?fileId=${fileid}`);
     if (t.status === 200) {
       setLoad((state) => !state);
       toast({
@@ -112,13 +113,14 @@ const UserRecord = () => {
       const newRecords = records.filter((record) => record.$id !== fileid);
       dispatch(setRecords(newRecords));
     }
-    console.log(t);
   };
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
   return (
     <div className="w-full h-full overflow-hidden pt-7 mx-auto px-4 ">
-      <h1 className=" text-3xl font-bold overflow-hidden remove-scrollbar container   ">Reports</h1>
+      <h1 className=" text-3xl font-bold overflow-hidden remove-scrollbar container   ">
+        Reports
+      </h1>
       <ScrollArea className="h-full w-auto">
         {records ? (
           <>
@@ -142,12 +144,15 @@ const UserRecord = () => {
                         setError,
                         setLoad,
                         setOpen,
-                        email
+                        email,
+                        patientName
                       );
-                      setOpen(false);
+                      const { data } = await axios.get(`/api/getrecords?patientID=${patientID}`);
+                      setRecords(data.filteredFiles);
+                                            setOpen(false);
                       setUploadLoading(false);
-                      setLoad(false);
                       setFile(null);
+
                     }}
                   >
                     <DialogHeader className="mb-4 space-y-3">
@@ -268,12 +273,7 @@ const UserRecord = () => {
                           className="text-lg font-semibold leading-tight truncate group-hover:text-primary transition-colors"
                           title={record.name}
                         >
-                          
-                          {
-                           
-
-                          record.name.slice(15, record.name.length-4) 
-                          }
+                          {record.name.slice(15, record.name.length - 4)}
                         </CardTitle>
                         <p className="text-sm text-muted-foreground">
                           {date.toLocaleDateString(undefined, {
@@ -377,9 +377,7 @@ const UserRecord = () => {
           </>
         ) : (
           <>
-            <div className=" h-full w-full relative">
-              <Loader className="animate-spin h-10 w-10 absolute left-1/2 top-1/3 " />
-            </div>
+              <Loader className="animate-spin h-10 w-10 absolute left-1/2 top-1/2" />
           </>
         )}
       </ScrollArea>

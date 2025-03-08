@@ -66,35 +66,6 @@ const UserProfile = React.memo(function UserProfile() {
     }
   };
 
-
-  const [date, setDate] = useState(user?.birthDate);
-  const t2 = useCallback(async () => {
-    const user2 = await dispatch(getuser({ patientID }));
-    console.log(user2);
-    dispatch(setProfile(user2.payload[0]));
-    startTransition(() => {
-      setUserDetails(user2.payload[0]);
-      setLoading(false);
-      reset({
-        name: user2.payload[0].name,
-        email: user2.payload[0].email,
-        phone: user2.payload[0].phone,
-        birthDate: user2.payload[0].birthDate,
-        gender: user2.payload[0].gender,
-        address: user2.payload[0].address,
-        occupation: user2.payload[0].occupation,
-        emergencyContactName: user2.payload[0].emergencyContactName,
-        emergencyPhone: user2.payload[0].emergencyPhone,
-    });
-  });
-}, [dispatch, patientID]);
-
-useEffect(() => {
-    t2();
-}, [t2]);
- 
-
-  const errors={}
   const { control, handleSubmit , register,reset} = useForm({
     resolver: zodResolver(profileValidation),
     defaultValues: {
@@ -109,6 +80,33 @@ useEffect(() => {
       emergencyPhone: userDetails?.emergencyPhone,
     },
   });
+
+
+  const [date, setDate] = useState(user?.birthDate);
+  const t2 = useCallback(async () => {
+    const user2 = await dispatch(getuser({ patientID }));
+    dispatch(setProfile(user2.payload));
+      setUserDetails(user2.payload[0]);
+      setLoading(false);
+      reset({
+        name: user2.payload.name,
+        email: user2.payload.email,
+        phone: user2.payload.phone,
+        birthDate: user2.payload.birthDate,
+        gender: user2.payload.gender,
+        address: user2.payload.address,
+        occupation: user2.payload.occupation,
+        emergencyContactName: user2.payload.emergencyContactName,
+        emergencyPhone: user2.payload.emergencyPhone,
+  });
+}, [dispatch, patientID,reset]);
+
+useEffect(() => {
+    t2();
+}, [t2]);
+ 
+
+  const errors={}
 
 //
 

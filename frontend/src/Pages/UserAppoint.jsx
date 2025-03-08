@@ -29,10 +29,12 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
 
 const UserAppoint = () => {
   const [appointments, setAppointments] = React.useState(null);
   const [noappointment , setNoAppointment] = React.useState(false)
+  const {toast} = useToast()
   
   const dispatch = useDispatch();
   const patientID = useSelector(getpatientID);
@@ -48,6 +50,7 @@ const UserAppoint = () => {
       console.log(response);
     }catch(err){
       setNoAppointment(true)
+      toast("Login Again")
       console.log(err)
     }
     };
@@ -56,7 +59,8 @@ const UserAppoint = () => {
   }, []);
 
   const sortedAppointments = appointments?.sort(
-    (a, b) => new Date(a.appointment.date) - new Date(b.appointment?.date)
+
+    (a, b) => {new Date(a?.date) - new Date(b?.date)}
   );
 
   // Get the current date and time
@@ -64,33 +68,36 @@ const UserAppoint = () => {
 
   // Find last appointment (the latest one before now)
   const lastAppointment = sortedAppointments
-    ?.filter((appt) => new Date(appt?.appointment?.date) < now)
+    ?.filter((appt) => new Date(appt?.date) < now)
     .pop();
-  const lastAppointmentDate = new Date(lastAppointment?.appointment?.date);
+  const lastAppointmentDate = new Date(lastAppointment?.date);
   // Find upcoming appointment (the earliest one after now)
-  console.log(lastAppointment);
   const upcomingAppointment = sortedAppointments?.find(
-    (appt) => new Date(appt?.appointment?.date) > now
+    (appt) => new Date(appt?.date) > now
   );
   const upcomingAppointmentDate = new Date(
-    upcomingAppointment?.appointment?.date
+    upcomingAppointment?.date
   );
   return (
     <div className="w-full h-full pt-7 container remove-scrollbar">
       <h1 className=" text-3xl font-bold ">Appointments</h1>
       <Button className="mt-5 bg-green-500"  > <Link to={href}>Schedule Appointment</Link></Button>
-{ !noappointment ? appointments ? <>
-       <div className=" flex flex-col md:flex-row items-center  ">
+{ lastAppointment ? appointments ? <>
+      <div className=" flex flex-col md:flex-row items-center  ">
         <div className="pt-6 grow">
           Last Appointment
           <div className="stat-card  bg-pending w-fit mt-4  ">
             <h2 className="text-2xl font-semibold text-white">
-              {lastAppointment?.doctorDetails || "No Appointments"}
+              Dr. {lastAppointment?.doctorID.name|| "No Appointments"}
             </h2>
             <div className=" flex flex-col gap-2 text-[1rem] ">
-              <p>Reason : {lastAppointment?.appointment?.reason || "Not Specified"}</p>
+              <p>Reason : {lastAppointment?.reason || "  "}</p>
               <p className=""> Date : {lastAppointmentDate.toDateString()}</p>
-              <p>Notes : {lastAppointment?.appointment?.notes || "  "}</p>
+              <p>
+                Prescription :{" "}
+                {lastAppointment?.appointment?.prescription || "  "}
+              </p>
+              <p>Notes : {lastAppointment?.notes || "  "}</p>
             </div>
           </div>
         </div>
@@ -98,10 +105,10 @@ const UserAppoint = () => {
           Upcoming Appointment
           <div className="stat-card  bg-pending w-fit mt-4  ">
             <h2 className="text-2xl font-semibold text-white">
-              {upcomingAppointment?.doctorDetails || "No Appointments"}
+              Dr. {upcomingAppointment?.doctorID.name || "No Appointments"}
             </h2>
             <div className=" flex flex-col gap-2 text-[1rem] ">
-              <p>{upcomingAppointment?.appointment?.reason ? `Reason : ${upcomingAppointment?.appointment?.reason}`   : " " || "  "}</p>
+              <p>{upcomingAppointment?.reason ? `Reason : ${upcomingAppointment?.reason}`   : " " || "  "}</p>
               <p className="">
                 {" "}
                 Date : {upcomingAppointmentDate.toDateString()}
@@ -128,8 +135,7 @@ const UserAppoint = () => {
                   <TableBody>
                     {appointments?.map((appointment) => {
                       console.log(appointment)
-                      console.log(appointments)
-                      const date = new Date(appointment?.appointment?.date);
+                      const date = new Date(appointment?.date);
                       return (
                         <Dialog key={appointment._id}>
                           <DialogTrigger asChild>
@@ -138,7 +144,7 @@ const UserAppoint = () => {
                               className="hover:cursor-pointer"
                             >
                               <TableCell className="font-medium text-nowrap">
-                                {appointment?.doctorDetails}
+                                {appointment?.doctorID.name}
                               </TableCell>
                               <TableCell>{date.toDateString()}</TableCell>
                             </TableRow>
@@ -156,8 +162,8 @@ const UserAppoint = () => {
                                 </Label>
                                 <Input
                                   id="name"
-                                  value={appointment?.doctorDetails}
-                                  className="shad-input col-span-3"
+                                  value={appointment?.doctorID.name}
+                                  className="col-span-3 shad-input"
                                 />
                               </div>
                               <div className="grid grid-cols-4 items-center gap-4">
@@ -182,14 +188,14 @@ const UserAppoint = () => {
                                 </Label>
                                 <Input
                                   id="username"
-                                  value={appointment.appointment.status}
+                                  value={appointment.status}
                                   className="col-span-3 shad-input"
                                 />
                               </div>
                               <div className="grid grid-cols-4 items-center gap-4">
             <strong className="text-center">Prescription:</strong>
             
-            {appointment.appointment.prescription.length >0 ? <ScrollArea className="mt-2 col-span-5  bg-[#1a1d21] rounded-lg  max-h-40">
+            {appointment.prescription.length >0 ? <ScrollArea className="mt-2 col-span-5  bg-[#1a1d21] rounded-lg  max-h-40">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -200,7 +206,7 @@ const UserAppoint = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {appointment.appointment.prescription.map((item, index) => (
+                  {appointment.prescription.map((item, index) => (
                     <TableRow key={index}>
                       <TableCell>{item.name}</TableCell>
                       <TableCell>{item.dosage}</TableCell>
@@ -214,7 +220,7 @@ const UserAppoint = () => {
                                   id="username"
                                   value={
                                     
-                                    " No  Prescription"
+                                    " No  Notes"
                                   }
                                   className="col-span-3 shad-input"
                                   
@@ -231,7 +237,7 @@ const UserAppoint = () => {
                                 <Input
                                   id="username"
                                   value={
-                                    appointment.appointment?.notes ||
+                                    appointment.notes ||
                                     " No  Notes"
                                   }
                                   className="col-span-3 shad-input"
@@ -262,6 +268,7 @@ const UserAppoint = () => {
 
 </> :<p className="pt-5">No Appointments found</p> }
 
+      {/* <DataTable columns={columns}  /> */}
     </div>
   );
 };

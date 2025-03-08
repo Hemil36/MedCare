@@ -76,7 +76,6 @@ const Appointment = ({ type }) => {
   }, [doctor, speciality]);
 
   useEffect(() => {
-    // Update the select state when filtered doctors change
     setSelect(filteredDoctors);
   }, [filteredDoctors]);
   useEffect(() => {
@@ -102,9 +101,7 @@ const Appointment = ({ type }) => {
   const filterPassedTime = (time) => {
     const currentDate = new Date();
     const selectedDate = new Date(time);
-    console.log("hihi")
   
-    // Allow times only up to 9 PM
     const maxTime = setHours(setMinutes(new Date(), 0), 21);
   
     return selectedDate >= currentDate && selectedDate <= maxTime;
@@ -117,7 +114,7 @@ const Appointment = ({ type }) => {
     try {
       console.log(data);
       const doc = doctor?.find((doc) => {
-        return doc.doctorId === data.doctor;
+        return doc.doctorID === data.doctor;
       });
       console.log(doc);
 
@@ -133,10 +130,13 @@ const Appointment = ({ type }) => {
         })
       ).unwrap();
 
+      console.log(appointmentID)
+
+
       dispatch(setDoctorName(doc.name));
 
       navigate(
-        `/patient/${patientID}/appointment/success?appointmentID=${appointmentID}`
+        `/patient/${patientID}/appointment/success?appointmentID=${appointmentID.appointmentID}&&date=${date}`
       );
     } catch (e) {
       console.log(e);
@@ -155,7 +155,14 @@ const Appointment = ({ type }) => {
   return (
     <div className="flex h-screen">
       <section className="container py-10 remove-scrollbar">
-        <h1 className="text-left text-3xl font-bold w-full">MedID</h1>
+        <div className="flex gap-1 justify-start">
+
+        <h1 className="text-left text-3xl font-bold">MedCare</h1>
+        <div className="relative">
+
+        <div className="h-2 w-2  rounded-full bottom-1 absolute   bg-green-400" />
+        </div>
+        </div>
         <div className="sub-container max-w-[860px] flex-1 flex-col gap-9 pb-10">
           <h1 className="text-3xl font-bold">Request a new Appointment</h1>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -213,20 +220,20 @@ const Appointment = ({ type }) => {
                       >
                         <SelectTrigger className="shad-select-trigger my-0 py-0 fontlight border-0 focus:bg-slate-600">
                           {field.value
-                            ? select.find((doc) => doc.doctorId == field.value)?.name
+                            ? select.find((doc) => doc.doctorID == field.value)?.name
                             : "Select Doctor"}
                         </SelectTrigger>
                         <SelectContent className="shad-select-content fontlight border-0">
                           {doctor &&
                             select.map((doc) => (
                               <div
-                                key={doc.doctorId}
+                                key={doc.doctorID}
                                 className="relative fontlight border-y group border-green-200"
                               >
                                 <Accordion type="single" collapsible>
-                                  <AccordionItem value={doc.doctorId} className="fontlight border-green-200">
+                                  <AccordionItem value={doc.doctorID} className="fontlight border-green-200">
                                     <AccordionTrigger className="fontlight">
-                                      <SelectItem value={doc.doctorId} className="fontlight shad-select-item ">
+                                      <SelectItem value={doc.doctorID} className="fontlight shad-select-item ">
                                         {doc.name}
                                       </SelectItem>
                                     </AccordionTrigger>

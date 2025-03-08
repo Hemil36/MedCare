@@ -17,40 +17,67 @@ import {
 
 import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { useDispatch, useSelector } from "react-redux";
+import { getAppointment, getAppointmentDetails } from "@/lib/store/AsyncThunks";
+import { getDoctorID } from "@/lib/store/UserSlice";
 export function DataTable({ columns, data }) {
   const [sorting, setSorting] = React.useState([]);
   const [filtering, setFiltering] = React.useState([]);
 
-
+  const [data4, setData4] = React.useState([]);
+  const dispatch = useDispatch();
+  const doctorID = useSelector(getDoctorID)
   
-
   useEffect(() => {
-    const date = new Date();
+    
+    
+    const t = async () => {
 
-    const data2 = data.filter((d) => d != null);
-    const sortedAppointments = data
-    .filter((d) => d != null) // Keep only future or current appointments
-  .sort((a, b) => {
-    // Sort by date first
-    const dateA = new Date(a.appointment.date);
-    const dateB = new Date(b.appointment.date);
+      try{
+  const {payload}=  await dispatch(getAppointment({ doctorID }));
+let data = payload.data;
+      const data2 = data?.filter((d) => d != null);
+      const sortedAppointments = data
+        .filter((d) => d != null) // Keep only future or current appointments
+        .sort((a, b) => {
+          // Sort by date first
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
 
-    if (dateA.getTime() === dateB.getTime()) {
-      // If dates are the same, sort by status priority
-      const statusPriority = { "scheduled": 1, "pending": 2, "completed": 3, "cancelled": 4 };
-      return statusPriority[a.appointment.status] - statusPriority[b.appointment.status];
-    } else {
-      return dateA - dateB; // Sort by date
-    }
-  });
-    setFiltering(sortedAppointments);
-  },[data ]);
-  // data=filtering
+          if (dateA.getTime() === dateB.getTime()) {
+            // If dates are the same, sort by status priority
+            const statusPriority = {
+              scheduled: 1,
+              pending: 2,
+              completed: 3,
+              cancelled: 4,
+            };
+            return (
+              statusPriority[a.status] -
+              statusPriority[b.status]
+            );
+          } else {
+            return dateA - dateB; // Sort by date
+          }
+        });
+        setFiltering(sortedAppointments);
+      }
+      catch(e){
+        console.log(e);
+      }
+    };
 
-console.log(filtering, "filtering")
-console.log(data, "data")
+
+    t();
+
+  }, []);
+
+  console.log(filtering, "filtering");
+  // console.log(data, "data");
+
+
   const table = useReactTable({
-    data:filtering,
+    data: filtering,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -60,7 +87,7 @@ console.log(data, "data")
   });
 
   return (
-    <div className="rounded-md border data-table">
+    <div className="rounded-md border data-table remove-scrollbar">
       <Table className="shad-table">
         <TableHeader className="shad-table-row-header">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -84,8 +111,8 @@ console.log(data, "data")
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => {
               if (
-                row.original.appointment.status === "completed" ||
-                row.original.appointment.status === "cancelled"
+                row.original.status === "completed" ||
+                row.original.status === "cancelled"
               )
                 return;
 
@@ -100,9 +127,7 @@ console.log(data, "data")
                         cell.column.columnDef.cell,
                         cell.getContext()
                       )}
-                      
                     </TableCell>
-                    
                   ))}
                 </TableRow>
               );
@@ -111,11 +136,9 @@ console.log(data, "data")
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
                 No results.
-                
               </TableCell>
             </TableRow>
-          )
-          }
+          )}
         </TableBody>
       </Table>
       <div className="table-actions">
