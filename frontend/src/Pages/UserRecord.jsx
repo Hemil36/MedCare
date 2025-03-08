@@ -260,9 +260,10 @@ const UserRecord = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {records.map((record) => {
                   const date = new Date(record.$createdAt);
-                  const previewHref = `https://cloud.appwrite.io/v1/storage/buckets/Image/files/${record.$id}/view?project=66a12c91000a4cded686`;
-                  const downloadHref = `https://cloud.appwrite.io/v1/storage/buckets/Image/files/${record.$id}/download?project=66a12c91000a4cded686`;
-
+                  // const previewHref = `https://cloud.appwrite.io/v1/storage/buckets/Image/files/${record.$id}/view?project=66a12c91000a4cded686`;
+                  // const downloadHref = `https://cloud.appwrite.io/v1/storage/buckets/Image/files/${record.$id}/download?project=66a12c91000a4cded686`;
+                  const previewHref = record.url
+                  const downloadHref = record.downloadLink
                   return (
                     <Card
                       key={record.$id}

@@ -17,6 +17,7 @@ export const handleSubmit = async (event , upload , patientID , recordName , set
     formData.append('name',recordName);
     formData.append('email',email)
     formData.append('patientName',name)
+    formData.append('type',upload.type.split('/')[1])
 
 
 
