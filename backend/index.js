@@ -23,7 +23,7 @@ await mongoose
 
 const corsOptions = {
   origin: (origin, callback) => {
-    if (origin === "http://localhost:5173" || !origin) {
+    if (origin === "https://medcare-five.vercel.app" || !origin) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
