@@ -27,7 +27,8 @@
   "bundle": {
     "active": true,
     "icon": [
-      "icons/med2.png"
+      "icons/med2.png",
+      "icons/icon.ico"
     ]
   }
 }
