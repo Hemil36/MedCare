@@ -1,10 +1,14 @@
 import nodemailer from "nodemailer";
 import PDFDocument from "pdfkit";
 import { Writable } from "stream";
+import { Readable } from "stream";
 
 import CryptoJS from "crypto-js";
 import transporter from "../services/email.js";
-function generatePDF({
+import { storage1 } from "../lib/appwrite.js";
+import { InputFile } from "node-appwrite";
+import { createLink2 } from "./Appwrite.js";
+async function generatePDF({
   patientName,
   doctorName,
   patientEmail,
@@ -13,7 +17,13 @@ function generatePDF({
   medicationPrescription,
   remarks,
   hash,
+  appointmentID
 }) {
+
+    const downloadLink =  await createLink2({fileId:appointmentID+".pdf"});
+  
+
+
   return new Promise((resolve, reject) => {
     var doc = new PDFDocument({ margin: 50, color: "#131619" });
     const buffers = [];
@@ -100,15 +110,38 @@ function generatePDF({
 
     // Footer
     doc
-      .moveDown(2)
-      .fontSize(10)
-      .text("This is a digitally generated prescription.", {
-        align: "center",
-        oblique: true,
-      })
-      .moveDown()
-      .text("Digital Signature: " + hash, { align: "center" });
+    .moveDown(2)
+    .fontSize(10)
+    .text("This is a digitally generated prescription.", {
+      align: "center",
+      oblique: true,
+    })
+    .moveDown()
+    .text("Digital Signature: " + hash, { align: "center" });
 
+ 
+    doc.moveDown(2);
+
+    // Embed QR Code in PDF
+    const qrSize = 120;
+    const qrX = 50;
+    const qrY = doc.y;
+    
+    doc.image(downloadLink.qrCode, qrX, qrY, {
+      width: qrSize,
+      height: qrSize,
+    });
+    
+    // Add text below the QR Code
+    doc
+      .moveDown(10) // Move down below QR code
+      .fontSize(12)
+      .fillColor("white")
+      .text("Scan this QR Code to download your prescription.", qrX, qrY + qrSize + 10, {
+        width: qrSize,
+        align: "center",
+      });
+    
     // Finalize the PDF and return the blob
     doc.end();
     writableStream.on("finish", () => {
@@ -128,8 +161,8 @@ export async function sendEmail({
   diagnosis,
   medicationPrescription,
   remarks,
+  appointmentID,
 }) {
-
   const hash = generateHash({
     patientEmail,
     prescriptionDate,
@@ -144,44 +177,59 @@ export async function sendEmail({
     patientName,
     doctorName,
     patientEmail,
-    prescriptionDate : date1.toLocaleDateString(),
+    prescriptionDate: date1.toLocaleDateString(),
     diagnosis,
     medicationPrescription,
     remarks,
     hash,
-  })
-    .then((pdfBuffer) => {
-     
+    appointmentID
+  }).then(async (pdfBuffer) => {
 
 
-      const mailOptions = {
-        from: {
-          name: "MedCare",
-          address: "medCare.helpdesk@gmail.com",
-        }, // sender address
-        to: patientEmail, // recipient address
-        subject: "Your Prescription",
-        text: "Please find attached your prescription.",
-        attachments: [
-          {
-            filename: "Prescription.pdf",
-            content: pdfBuffer,
-            encoding: "base64",
-          },
-        ],
-      };
+    const mailOptions = {
+      from: {
+        name: "MedCare",
+        address: "medCare.helpdesk@gmail.com",
+      }, // sender address
+      to: patientEmail, // recipient address
+      subject: "Your Prescription",
+      text: "Please find attached your prescription.",
+      attachments: [
+        {
+          filename: "Prescription.pdf",
+          content: pdfBuffer,
+          encoding: "base64",
+        },
+      ],
+    };
 
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.error("Error occurred while sending email:", error);
-        } else {
-          console.log("Email sent successfully:", info.response);
-        }
-      });
-    })
-    .catch((error) => {
-      console.error("Error generating PDF:", error);
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error occurred while sending email:", error);
+      } else {
+        console.log("Email sent successfully:", info.response);
+      }
     });
+
+    const name1 = `${appointmentID}.pdf`;
+    const readableStream = new Readable();
+    readableStream.push(pdfBuffer);
+    readableStream.push(null); // End the stream
+
+    try {
+      console.log("Uploading PDF to Appwrite...");
+
+      const response = await storage1.createFile(
+        "Prescription",
+        name1,
+        InputFile.fromStream(readableStream, name1)
+      );
+
+      console.log("File uploaded successfully:", response);
+    } catch (err) {
+      console.log("Failed to upload file:", err);
+    }
+  });
 }
 
 const generateHash = (data) => {

@@ -52,7 +52,7 @@ const Register = () => {
         isClosable: true,
       });
 
-      navigate("/user");
+      navigate("/");
     } catch (e) {
       console.log(e);
       toast({

@@ -18,7 +18,7 @@ export const recordAppointment = async (req, res) => {
     appointment.symptoms = symptoms;
     appointment.notes = notes;
     appointment.prescription = prescription;
-    appointment.diagnosis = diagnosis;
+    appointment.diagnosis = diagnosis || "N/A";
     await appointment.save();
 
     await sendEmail({
@@ -28,11 +28,15 @@ export const recordAppointment = async (req, res) => {
       doctorName,
       remarks: notes,
       medicationPrescription: prescription,
-      prescriptionDate: new Date()
+      prescriptionDate: new Date(),
+      appointmentID : appointmentID
     });
 
     res.status(201).json({ message: "Appointment recorded successfully", appointment });
   } catch (error) {
+    console.error("Record Appointment Error:", error);
+    if(error.message)
+    return res.status(500).json({ message: error.message });
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -42,7 +46,6 @@ export const recordAppointment = async (req, res) => {
     try {
       const { doctorID, patientID, date } = req.body;
   
-      // Validate required fields
       if (!doctorID || !patientID || !date) {
         return res.status(400).json({ 
           success: false, 
@@ -60,7 +63,6 @@ export const recordAppointment = async (req, res) => {
         });
       }
   
-      // Ensure the date is valid
       const appointmentDate = new Date(date);
       if (isNaN(appointmentDate.getTime())) {
         return res.status(400).json({ 
@@ -80,8 +82,8 @@ export const recordAppointment = async (req, res) => {
       await appointment.save();
 
 
-      console.log(patient.email, patient.name, doctor.name, appointmentDate.toDateString(), doctor.clinicAddress
-      )
+      // console.log(patient.email, patient.name, doctor.name, appointmentDate.toDateString(), doctor.clinicAddress
+      // )
       appointmentEmail({
         email: patient.email,
         patientName: patient.name,
@@ -139,7 +141,6 @@ export const recordAppointment = async (req, res) => {
       }
   
       const doctorID = req.user.id; 
-      console.log(doctorID);
       
   
       if (!doctorID) {
@@ -174,7 +175,7 @@ export const recordAppointment = async (req, res) => {
           message: "No appointments found for this doctor." 
         });
       }
-  console.log(appointments)
+  // console.log(appointments)
       res.status(200).json({ 
         success: true, 
         message: "Appointments retrieved successfully.",
@@ -225,7 +226,7 @@ export const recordAppointment = async (req, res) => {
     if (!appointmentID) {
       return res.status(400).json({ message: "Please enter appointmentID" });
     }
-    console.log(appointmentID)
+    // console.log(appointmentID)
     try {
       const appointment = await Appointment.findById({ _id: appointmentID  }).populate("patientID", "name email");
       if (!appointment) {

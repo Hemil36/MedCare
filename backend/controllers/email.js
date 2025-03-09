@@ -136,11 +136,11 @@ export const appointmentEmail = ({ email, date, doctorName, patientName, address
               <p><strong>Location:</strong> ${address}</p>
             </div>
             <p class="paragraph">
-              If you have any questions, please reach out to us at <span class="highlight">${email}</span>.
+              If you have any questions, please reach out to us at <span class="highlight">medid.helpdesk@gmail.com</span>.
             </p>
           </div>
           <div class="footer">
-            <p class="footer-text">© 2024 MedCare. All rights reserved.</p>
+            <p class="footer-text">© 2025 MedCare. All rights reserved.</p>
           </div>
         </div>
       </td>
@@ -155,7 +155,7 @@ export const appointmentEmail = ({ email, date, doctorName, patientName, address
   const mailOptions = {
     from: {
       name: 'MedCare',
-      address: 'medCare.helpdesk@gmail.com'
+      address: 'MedCare.helpdesk@gmail.com'
     }, // sender address
     to: email, // recipient address
     subject: 'Appointment Request Received',
@@ -338,7 +338,7 @@ const date1 = new Date(date)
                 <p class="paragraph"><strong>Doctor:</strong> ${doctorName}</p>
                 <p class="paragraph"><strong>Location:</strong> ${address}</p>
                 <p class="paragraph">Please arrive 10 minutes early and contact support for changes.</p>
-                <p class="paragraph highlight">For inquiries: ${email}</p>
+                <p class="paragraph highlight">For inquiries: medid.helpdesk@gmail.com</p>
             </div>
             <div class="footer">
                 <p class="footer-text">Best Regards,</p>
@@ -352,7 +352,7 @@ const date1 = new Date(date)
 
   const mailOptions = {
     from: {
-      name: "medCare",
+      name: "MedCare",
       address: "medCare.helpdesk@gmail.com",
     }, // sender address
     to: email, // recipient address
@@ -368,6 +368,8 @@ const date1 = new Date(date)
     console.log("Message sent: %s", info.messageId);
   });
 };
+
+
 
 export const recordEmail = async ({ patientName, email }) => {
   const medicalRecordsCreatedEmail = ({ patientName }) => {
@@ -490,10 +492,10 @@ export const recordEmail = async ({ patientName, email }) => {
                 <div class="header-accent"></div>
             </div>
             <div class="content">
-                <h2 class="heading">Medical Records Created</h2>
+                <h2 class="heading">Medical Record Created</h2>
                 <p class="paragraph">Dear ${patientName},</p>
-                <p class="paragraph">We are pleased to inform you that your medical records have been successfully created.</p>
-                <p class="paragraph">If you have any questions or need further assistance, please feel free to contact our support team at <span class="highlight">[Support Email]</span> or call us at <span class="highlight">[Support Phone Number]</span>.</p>
+                <p class="paragraph">We are pleased to inform you that your medical record have been successfully created on MedCare Locker.</p>
+                <p class="paragraph">If you have any questions or need further assistance, please feel free to contact our support team at <span class="highlight">medid.helpdesk@gmail.com</span> </p>
                 <p class="paragraph">We appreciate your trust in MedCare and look forward to continuing to serve your healthcare needs.</p>
             </div>
             <div class="footer">
@@ -507,7 +509,7 @@ export const recordEmail = async ({ patientName, email }) => {
 
   const mailOptions = {
     from: {
-      name: "medCare",
+      name: "MedCare",
       address: "medCare.helpdesk@gmail.com",
     },
     to: email, // recipient address
@@ -524,93 +526,192 @@ export const recordEmail = async ({ patientName, email }) => {
   });
 };
 
+
+
+
 export const createAccountEmail = ({ patientID, patientName, email }) => {
   const html = ({ patientName, patientID }) => {
+   
     return `
     <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Account Created Successfully</title>
+        <title>Medical Records Created</title>
         <style>
             body, html {
-                font-family: Arial, sans-serif;
-                line-height: 1.6;
-                color: #333;
-                background-color: #f4f4f4;
-                margin: 0;
-                padding: 0;
-            }
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background-color: #000000 !important; /* Forcing black background */
+    }
 
-            .email-container {
-                width: 100%;
-                max-width: 600px;
-                margin: 20px auto;
-                background-color: #fff;
-                padding: 20px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                border-radius: 8px;
-            }
+    /* Ensure email takes up full screen width and height */
+    table {
+      width: 100%;
+      height: 100%;
+      border-collapse: collapse;
+    }
 
-            .header {
-                text-align: center;
-                padding-bottom: 20px;
-            }
+    /* Email container styles */
+    .email-container {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: #252525;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
 
-            .header h1 {
-                font-size: 24px;
-                color: #333;
-                margin: 0;
-            }
+    .header {
+      background-color: #252525;
+      padding: 24px;
+      position: relative;
+    }
 
-            .content {
-                padding: 20px 0;
-            }
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-            .content p {
-                margin: 10px 0;
-            }
+    .logo {
+      color: #FFFFFF;
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
 
-            .details-container {
-                margin: 20px 0;
-                padding: 15px;
-                background-color: #f9f9f9;
-                border: 1px solid #ddd;
-                border-radius: 8px;
-            }
+    .header-accent {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #3ECF8E, #3ECFCF);
+    }
 
-            .details-container p {
-                margin: 10px 0;
-            }
+    .content {
+      padding: 40px 32px;
+    }
 
-            .footer {
-                text-align: center;
-                margin-top: 20px;
-                font-size: 14px;
-                color: #777;
-            }
+    .heading {
+      color: #FFFFFF;
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 16px;
+      text-align: center;
+      letter-spacing: -0.5px;
+    }
+
+    .paragraph {
+      color: #FFFFFF;
+      font-size: 16px;
+      line-height: 24px;
+      margin: 0 0 32px;
+      text-align: center;
+    }
+
+    .otp-container {
+      background: linear-gradient(135deg, #3ECF8E, #3ECFCF);
+      border-radius: 12px;
+      margin: 0 auto 24px;
+      padding: 24px;
+      text-align: center;
+      max-width: 240px;
+      box-shadow: 0 4px 12px rgba(62, 207, 142, 0.2);
+    }
+
+    .otp-text {
+      color: #FFFFFF;
+      font-size: 36px;
+      font-weight: 700;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .expiration-text {
+      color: #FFFFFF;
+      font-size: 14px;
+      text-align: center;
+      margin: 0 0 32px;
+    }
+
+    .highlight {
+      color: #3ECF8E;
+      font-weight: 600;
+    }
+
+    /* Footnote styles */
+    .footnote-container {
+      border-top: 1px solid #E0E0E0;
+      margin-top: 32px;
+      padding-top: 24px;
+    }
+
+    .footnote {
+      color: #FFFFFF;
+      font-size: 14px;
+      line-height: 20px;
+      text-align: center;
+      margin: 0;
+    }
+
+    /* Footer styles */
+    .footer {
+      background-color: #252525;
+      padding: 16px 24px;
+      text-align: center;
+    }
+
+    .footer-text {
+      color: #FFFFFF;
+      font-size: 12px;
+      margin: 0;
+    }
+
         </style>
     </head>
-    <body>
+    <body style="background-color: #000000; margin: 0; padding: 0;">
+  <!-- Table wrapper to ensure full email background -->
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="background-color: #000000; width: 100%; height: 100%; padding: 0; margin: 0;">
+    <tr>
+      <td align="center" valign="top" style="padding: 40px;">
         <div class="email-container">
-            <div class="header">
-                <h1>Account Created Successfully</h1>
-                <p>Dear ${patientName},</p>
-                <p>We are pleased to inform you that your account has been successfully created. Below are the details:</p>
+          <div class="header">
+            <div class="logo-container">
+              <p class="logo">MedCare</p>
             </div>
-            <div class="content">
-                <div class="details-container">
-                    <p><strong>Account ID:</strong> ${patientID}</p>
+            <div class="header-accent"></div>
+          </div>
+          <div class="content">
+                <h2 class="heading">Account Created Successfully</h2>
+                <p class="paragraph">Dear ${patientName},</p>
+                <p class="paragraph">We are pleased to inform you that your account has been successfully created. Below are the details:</p>
+                <div class="otp-container">
+                    <p class="otp-text"><strong>MedID:</strong> ${patientID}</p>
                 </div>
-                <p>You can now log in to your account using your MedCare.</p>
-                <p>Thank you for choosing MedCare. We look forward to serving you.</p>
+                <p class="paragraph">You can now log in to your account using your MedID.</p>
+                <p class="paragraph">We appreciate your trust in MedCare and look forward to continuing to serve your healthcare needs.</p>
+            <div class="footnote-container">
+              <p class="footnote">
+                If you didn't request this code, please ignore this email or contact our support team if you have any concerns.
+              </p>
             </div>
-            <div class="footer">
-                <p>MedCare</p>
-            </div>
+          </div>
+          <div class="footer">
+            <p class="footer-text">© 2025 MedCare. All rights reserved.</p>
+          </div>
         </div>
-    </body>
+      </td>
+    </tr>
+  </table>
+</body>
+   
     </html>
     `;
   };
@@ -629,31 +730,195 @@ export const createAccountEmail = ({ patientID, patientName, email }) => {
     if (error) {
       return console.log(error);
     }
+    console.log("Message sent: ", info);
   });
 };
 
 export const createAccountDoctorEmail = ({ doctorID, doctorName, email }) => {
   const html = ({ doctorName, doctorID }) => {
-    return `<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0;">
-        <div style="width: 100%; max-width: 600px; margin: 20px auto; background-color: #fff; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-           
-            <div style="margin-top: 20px;">
-                <h1 style="font-size: 24px; color: #333;">Account Created Successfully</h1>
-                <p>Dear ${doctorName},</p>
-                <p>We are pleased to inform you that your account has been successfully created. Please find the details of your account below:</p>
-                <div style="margin: 20px 0; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd;">
-                    <p><strong>Account Details:</strong></p>
-                   <p><strong>Account ID:</strong> ${doctorID}</p>
+   
+    return `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Medical Records Created</title>
+        <style>
+            body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background-color: #000000 !important; /* Forcing black background */
+    }
+
+    /* Ensure email takes up full screen width and height */
+    table {
+      width: 100%;
+      height: 100%;
+      border-collapse: collapse;
+    }
+
+    /* Email container styles */
+    .email-container {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: #252525;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .header {
+      background-color: #252525;
+      padding: 24px;
+      position: relative;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      color: #FFFFFF;
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+
+    .header-accent {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #3ECF8E, #3ECFCF);
+    }
+
+    .content {
+      padding: 40px 32px;
+    }
+
+    .heading {
+      color: #FFFFFF;
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 16px;
+      text-align: center;
+      letter-spacing: -0.5px;
+    }
+
+    .paragraph {
+      color: #FFFFFF;
+      font-size: 16px;
+      line-height: 24px;
+      margin: 0 0 32px;
+      text-align: center;
+    }
+
+    .otp-container {
+      background: linear-gradient(135deg, #3ECF8E, #3ECFCF);
+      border-radius: 12px;
+      margin: 0 auto 24px;
+      padding: 24px;
+      text-align: center;
+      max-width: 240px;
+      box-shadow: 0 4px 12px rgba(62, 207, 142, 0.2);
+    }
+
+    .otp-text {
+      color: #FFFFFF;
+      font-size: 36px;
+      font-weight: 700;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .expiration-text {
+      color: #FFFFFF;
+      font-size: 14px;
+      text-align: center;
+      margin: 0 0 32px;
+    }
+
+    .highlight {
+      color: #3ECF8E;
+      font-weight: 600;
+    }
+
+    /* Footnote styles */
+    .footnote-container {
+      border-top: 1px solid #E0E0E0;
+      margin-top: 32px;
+      padding-top: 24px;
+    }
+
+    .footnote {
+      color: #FFFFFF;
+      font-size: 14px;
+      line-height: 20px;
+      text-align: center;
+      margin: 0;
+    }
+
+    /* Footer styles */
+    .footer {
+      background-color: #252525;
+      padding: 16px 24px;
+      text-align: center;
+    }
+
+    .footer-text {
+      color: #FFFFFF;
+      font-size: 12px;
+      margin: 0;
+    }
+
+        </style>
+    </head>
+    <body style="background-color: #000000; margin: 0; padding: 0;">
+  <!-- Table wrapper to ensure full email background -->
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="background-color: #000000; width: 100%; height: 100%; padding: 0; margin: 0;">
+    <tr>
+      <td align="center" valign="top" style="padding: 40px;">
+        <div class="email-container">
+          <div class="header">
+            <div class="logo-container">
+              <p class="logo">MedCare</p>
+            </div>
+            <div class="header-accent"></div>
+          </div>
+          <div class="content">
+                <h2 class="heading">Account Created Successfully</h2>
+                <p class="paragraph">Dear ${doctorName},</p>
+                <p class="paragraph">We are pleased to inform you that your account has been successfully created. Below are the details:</p>
+                <div class="otp-container">
+                    <p class="otp-text"><strong>DocID:</strong> ${doctorID}</p>
                 </div>
-                <p>You can now log in to your account using your medCare.</p>
-                <p>Thank you for choosing MedCare. We look forward to serving you.</p>
+                <p class="paragraph">You can now log in to your account using your MedID.</p>
+                <p class="paragraph">We appreciate your trust in MedCare and look forward to continuing to serve your healthcare needs.</p>
+            <div class="footnote-container">
+              <p class="footnote">
+                If you didn't request this code, please ignore this email or contact our support team if you have any concerns.
+              </p>
             </div>
-            <div style="text-align: center; margin-top: 20px; font-size: 14px; color: #777;">
-               
-                <p>MedCare</p>
-            </div>
+          </div>
+          <div class="footer">
+            <p class="footer-text">© 2025 MedCare. All rights reserved.</p>
+          </div>
         </div>
-    </body>`;
+      </td>
+    </tr>
+  </table>
+</body>
+   
+    </html>
+    `;
   };
 
   const mailOptions = {
@@ -859,11 +1124,11 @@ export const cancelAppointment = async ({ email, patientName }) => {
                 </p>
                
                 <p class="paragraph">
-                  We apologize for any inconvenience caused. If you would like to reschedule your appointment, please contact us at <span class="highlight">${email}</span>.
+                  We apologize for any inconvenience caused. If you would like to reschedule your appointment, please contact us at <span class="highlight">medid.helpdesk@gmail.com</span>.
                 </p>
               </div>
               <div class="footer">
-                <p class="footer-text">© 2024 MedCare. All rights reserved.</p>
+                <p class="footer-text">© 2025 MedCare. All rights reserved.</p>
               </div>
             </div>
           </td>

@@ -8,7 +8,7 @@ export const getPatient = async (req, res) => {
     return res.status(400).json("Patient ID is required");
     try {
         const patient = await Patient.findOne({patientID}).select('email phone address occupation emergencyContactName emergencyPhone gender  name ');
-        console.log(patient);
+        // console.log(patient);
         if(!patient)
         return res.status(400).json
         ({ message: "Patient not found" });
@@ -23,7 +23,7 @@ export const updatePatient = async (req, res) => {
     const { patientID , data } = req.body;  
     if(!patientID)
     return res.status(400).json("Patient ID is required");
-console.log(data , patientID);
+// console.log(data , patientID);
     if(!data)
     return res.status(400).json("Data is required");
 
@@ -37,7 +37,7 @@ console.log(data , patientID);
         if (data?.occupation) patient.occupation = data.occupation;
         if (data?.emergencyContactName) patient.emergencyContactName = data.emergencyContactName;
         if (data?.emergencyPhone) patient.emergencyPhone = data.emergencyPhone;       
-        console.log(patient)
+        // console.log(patient)
         await patient.save();
 
         const removeKeys = ["adhaarNumber", "identificationDocument", "identificationType"];
@@ -54,13 +54,13 @@ console.log(data , patientID);
 }
 
 export const patientExist = async (req, res) => {
-    const { email } = req.body;
+    const { email } = req.query;
     try {
         if(!email)
         return res.status(400).json("Email is required");
         const patient = await Patient.findOne({email});
 
-       if(patient.length !=0 )
+       if(patient)
         return res.status(400).json("User already exists");
 
        return res.status(200).json("User does not exist");

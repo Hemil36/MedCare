@@ -227,7 +227,7 @@ function generateOtpEmailTemplate(otp) {
             </div>
           </div>
           <div class="footer">
-            <p class="footer-text">© 2024 MedCare. All rights reserved.</p>
+            <p class="footer-text">© 2025 MedCare. All rights reserved.</p>
           </div>
         </div>
       </td>

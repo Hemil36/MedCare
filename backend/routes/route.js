@@ -46,6 +46,8 @@ router.get("/getrecords", verifyJWT,   fileController.getRecords);
 router.post("/upload", verifyJWT, upload.single("file"), fileController.uploadFile);
 router.delete("/delete", verifyJWT, fileController.deleteFile);
 router.get("/view-file/:fileId", fileController.viewFile);
+router.get("/view-pres/:fileId", fileController.viewPres);
+
 router.get("/download-file/:fileId", fileController.downloadLink);
 router.get("/create-link/:fileId", fileController.createDownloadLink);
 

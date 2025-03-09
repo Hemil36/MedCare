@@ -122,7 +122,7 @@ export const register = createAsyncThunk('/patient/register', async ({data , typ
 
   export const patientExist = createAsyncThunk('/patient/patientExist', async ({email} , {rejectWithValue}) => {
     try {
-        const response = await axios.get('http://localhost:3000/api/patientexist', {email});
+        const response = await axios.get(`http://localhost:3000/api/patientexist?email=${email}`);
         
         if(response.status === 200)
             return false;
@@ -150,7 +150,7 @@ export const register = createAsyncThunk('/patient/register', async ({data , typ
   export const getDoctorDetails = createAsyncThunk('/doctor/getDoctorDetails', async ({doctorID} , {rejectWithValue}) => {
 
         try {
-            const response = await axiosPrivate.get('http://localhost:3000/api/getdoctordetails', {doctorID});
+            const response = await axiosPrivate.get('http://localhost:3000/api/getdoctordetails?doctorID='+doctorID, );
             console.log(response)
 
             return response.data; // Assuming you want to return the response data on success

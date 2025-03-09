@@ -43,7 +43,7 @@ export const uploadFile =  async (req, res) => {
     const fileBuffer = req.file.buffer;
     var { patientID, name, email ,patientName,type} = req.body;
     
-    console.log(patientID,name,email,fileBuffer)
+    // console.log(patientID,name,email,fileBuffer)
 
     const name1 = `${patientID}_${name}.${type}`;
 
@@ -58,7 +58,7 @@ export const uploadFile =  async (req, res) => {
 
 
     const t = InputFile.fromBuffer(fileBuffer, name1);
-    console.log(name1)
+    // console.log(name1)
 
     const response = await storage1.createFile('Image', name1, t);
 
@@ -133,12 +133,29 @@ export const deleteFile =  async (req, res) => {
 
 export const createLink =  async ({fileId}) => {
 
-  // Generate JWT token with expiration
-  const token = jwt.sign({ fileId }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "1min" });
+  const token = jwt.sign({ fileId }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "5min" });
 
   const secureLink = `${process.env.BASE_URL}/api/view-file/${fileId}?token=${token}`;
 
-  // Generate QR Code
+  const qrCode = await new Promise((resolve, reject) => {
+    QRCode.toDataURL(secureLink, (err, url) => {
+      if (err) {
+        reject("Failed to generate QR Code");
+      }
+      resolve(url);
+    });
+  });
+
+  return { secureLink, qrCode };
+
+};
+
+export const createLink2 =  async ({fileId}) => {
+
+  const token = jwt.sign({ fileId }, process.env.REFRESH_TOKEN_SECRET);
+
+  const secureLink = `${process.env.BASE_URL}/api/view-pres/${fileId}?token=${token}`;
+
   const qrCode = await new Promise((resolve, reject) => {
     QRCode.toDataURL(secureLink, (err, url) => {
       if (err) {
@@ -184,7 +201,7 @@ export const viewFile =  async (req, res) => {
     try {
       const response = await storage1.getFileView("Image",fileId);
       const file = await storage1.getFile("Image", fileId);
-      console.log(file)
+      // console.log(file)
       const imageBuffer = Buffer.from(new Uint8Array(response));
       
        if(file.mimeType == 'application/pdf')
@@ -192,6 +209,34 @@ export const viewFile =  async (req, res) => {
       else 
         res.setHeader("Content-Type", "image/png");
       res.send(imageBuffer);
+    } catch (error) {
+      res.status(404).json({ error: "File not found or access expired" });
+    }
+  });
+
+};
+
+
+export const viewPres =  async (req, res) => {
+  const { fileId } = req.params;
+
+  const token = req.query.token;
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+    jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, async (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ error: "Access denied" });
+    }
+    try {
+      const response = await storage1.getFileView("Prescription",fileId);
+      // console.log(file)
+      const imageBuffer = Buffer.from(new Uint8Array(response));
+      
+        res.setHeader("Content-Type", "application/pdf");
+      res.send(imageBuffer);
+
     } catch (error) {
       res.status(404).json({ error: "File not found or access expired" });
     }
