@@ -1,4 +1,4 @@
-# Hemil36 MedCare
+# MedCare
 
 A comprehensive medical care application for managing appointments, prescriptions, and patient-doctor interactions. Built with a modern tech stack for both web and desktop environments.
 
