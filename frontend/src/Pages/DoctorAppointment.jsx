@@ -105,7 +105,7 @@ const DoctorAppointment = () => {
     const getAppointmentDetails = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/getappointmentdetails?appointmentID=${myParam}` ,{
+          `https://med-id-backend.vercel.app/api/getappointmentdetails?appointmentID=${myParam}` ,{
             withCredentials : true,
           }
             
@@ -123,7 +123,7 @@ const DoctorAppointment = () => {
   useEffect(() => {
     const getPatient = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/getuser?patientID=${patient?.patientID}`);
+        const response = await axios.get(`https://med-id-backend.vercel.app/api/getuser?patientID=${patient?.patientID}`);
         console.log(response)
         setPatient(response.data[0]);
       } catch (error) {
@@ -180,7 +180,7 @@ const DoctorAppointment = () => {
       const getRecords = async () => {
         try {
           const response = await axios.get(
-            "http://localhost:3000/api/getrecords?patientID=" +patient.patientID,
+            "https://med-id-backend.vercel.app/api/getrecords?patientID=" +patient.patientID,
           );
           console.log(response)
           setRecords(response.data.filteredFiles);
@@ -194,7 +194,7 @@ const DoctorAppointment = () => {
       const getAppointments = async () => {
         try {
           const response = await axios.get(
-            "http://localhost:3000/api/getpatientappointment?patientID=" + patient.patientID,
+            "https://med-id-backend.vercel.app/api/getpatientappointment?patientID=" + patient.patientID,
           );
           setAppointments(response.data);
           if(response.data.length!=0){

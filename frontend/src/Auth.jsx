@@ -12,7 +12,7 @@ const Auth = ({}) => {
         const Auth = async ()=>{
             try{
     
-             const res =  await axiosPrivate.get('http://localhost:3000/api/isauth',{
+             const res =  await axiosPrivate.get('https://med-id-backend.vercel.app/api/isauth',{
                 withCredentials: true
               })
 

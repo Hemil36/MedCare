@@ -1,12 +1,11 @@
 // src/hooks/RefreshToken.js
 import { setAccessToken } from '../lib/store/UserSlice';
 import { store } from '../lib/store/store';
-import axios from 'axios';
-
+import { axiosurl as axios } from '@/lib/axios/axios';
 const RefreshToken = () => {
   const refresh = async () => {
 
-    const response = await axios.get('http://localhost:3000/api/refresh', {
+    const response = await axios.get('/refresh', {
       withCredentials: true,
     });
 

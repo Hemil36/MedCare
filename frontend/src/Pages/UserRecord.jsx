@@ -94,7 +94,7 @@ const UserRecord = () => {
     if (!patientID) return;
   
     const fetchRecords = async () => {
-      const { data } = await axios.get(`/api/getrecords?patientID=${patientID}`);
+      const { data } = await axios.get(`getrecords?patientID=${patientID}`);
       setRecords(data.filteredFiles);
     };
   
@@ -103,7 +103,7 @@ const UserRecord = () => {
   
 
   const delete1 = async (fileid) => {
-    const t = await axios.delete(`/api/delete?fileId=${fileid}`);
+    const t = await axios.delete(`delete?fileId=${fileid}`);
     if (t.status === 200) {
       setLoad((state) => !state);
       toast({
@@ -147,7 +147,7 @@ const UserRecord = () => {
                         email,
                         patientName
                       );
-                      const { data } = await axios.get(`/api/getrecords?patientID=${patientID}`);
+                      const { data } = await axios.get(`getrecords?patientID=${patientID}`);
                       setRecords(data.filteredFiles);
                                             setOpen(false);
                       setUploadLoading(false);
